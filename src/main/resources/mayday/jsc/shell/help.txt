@@ -1,0 +1,35 @@
+Available commands:
+	HELP, FILE:filepath, REPLACE:regex=>replacement, !REPLACE:regex,
+	?REPLACE, INFO:object, importClass(), importPackage(), KILL
+
+FILE:filepath
+Executes the script found at filepath.
+Example: 'FILE:/a/path/to/myScript.js'
+		
+REPLACE:regex=>replacement
+This will replace all matches of regex in all further commands with the
+specified replacement. Previously defined rules for the same regex will be
+overwritten. Use with care.
+Example: 'REPLACE:lastDS=>DataSetManager.getDataSets().size()-1'
+	lastDS now *always* specifies the index of the last available DataSet.
+
+!REPLACE:regex
+Removes defined rule.
+
+?REPLACE
+Prints a list of all defined replacement rules.		
+		
+INFO:object
+Displays some lines of information about the specified object.		
+
+importClass()
+To import any Java class, type 'importClass(Packages.whatever.Class.you.need)'
+
+importPackage()
+To import any Java package, type 'importPackage(Packages.whatever.you.need)'		
+
+KILL
+Forcefully ends the currently running evaluation of any command.
+
+@NOOPERATORS
+Has to be at the very first position of a Script. This command implies that no overloaded Operators will be used on the following input. 
