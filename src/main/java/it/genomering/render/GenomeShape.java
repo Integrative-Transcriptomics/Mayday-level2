@@ -16,8 +16,8 @@ import java.awt.Stroke;
 import java.util.List;
 import java.util.Set;
 
-import mayday.GWAS.data.SNP;
-import mayday.GWAS.viewmodel.RevealViewModel;
+import mayday.Reveal.data.SNP;
+import mayday.Reveal.viewmodel.RevealViewModel;
 import mayday.core.Probe;
 import mayday.core.meta.MIGroup;
 import mayday.core.meta.MIGroupSelection;

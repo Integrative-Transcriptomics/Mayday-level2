@@ -49,6 +49,9 @@ public class NativeLibraryExtractor extends AbstractPlugin implements GenericPlu
 			os = os.toLowerCase();
 			arch = arch.toLowerCase();
 			
+			if(os.equals("windows 8")) // try to use "old" windows libraries on the new windows
+				os= "windows";
+			
 			if (os.equals("windows 7")) // try to use "old" windows libraries on the new windows
 				os = "windows";
 			

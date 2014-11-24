@@ -2,7 +2,6 @@ package mayday.standaloneapps;
 
 
 
-import mayday.GWAS.RevealStandalonePlugin;
 import mayday.core.pluma.AbstractPlugin;
 import mayday.core.pluma.Constants;
 import mayday.core.pluma.PluginInfo;

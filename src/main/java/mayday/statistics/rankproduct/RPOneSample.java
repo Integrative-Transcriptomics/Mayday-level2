@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import mayday.GWAS.data.meta.MetaInformationManager;
+import mayday.Reveal.data.meta.MetaInformationManager;
 import mayday.core.ClassSelectionModel;
 import mayday.core.MasterTable;
 import mayday.core.MaydayDefaults;
