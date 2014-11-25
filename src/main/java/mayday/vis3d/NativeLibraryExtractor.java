@@ -15,7 +15,7 @@ import mayday.core.pluma.prototypes.GenericPlugin;
 
 /**
  * @author G\u00FCnter J\u00E4ger
- * @date Jun 10, 2010
+ * @date Nov 24, 2014
  */
 public class NativeLibraryExtractor extends AbstractPlugin implements GenericPlugin {
 
@@ -49,41 +49,45 @@ public class NativeLibraryExtractor extends AbstractPlugin implements GenericPlu
 			os = os.toLowerCase();
 			arch = arch.toLowerCase();
 			
-			if(os.equals("windows 8")) // try to use "old" windows libraries on the new windows
-				os= "windows";
-			
-			if (os.equals("windows 7")) // try to use "old" windows libraries on the new windows
-				os = "windows";
-			
-			if (os.startsWith("windows server 2008")) // try to use "old" windows libraries on the new windows
-				os = "windows";
-			
-			if (os.equals("windows") && arch.equals("x86_64")) 
-				arch = "amd64";
-			
-			if (os.equals("windows") && arch.equals("x86"))
-				arch = "i586";
-			
-			else if (os.equals("sunos")) {
-				os = "solaris";
-				if (arch.equals("x86"))
-					arch = "i586";
-				else if (arch.equals("x86_64"))
-					arch = "amd64";
+			if(os.contains("windows")) {
+				os="windows";
+				if(arch.contains("64")) {
+					arch="amd64";
+				} else {
+					arch="i586";
+				}
 			}
 			
-			else if (os.equals("linux")) {
-				if (arch.equals("i386") || arch.equals("x86"))
-					arch = "i586";
-				else if (arch.equals("x86_64"))
-					arch = "amd64";
+			else if(os.contains("linux")) {
+				os="linux";
+				if(arch.contains("64")) {
+					arch="amd64";
+				} else {
+					arch="i586";
+				}
 			}
 			
-			else if (os.equals("mac os x")) {
+			else if(os.contains("sunos")) {
+				os="solaris";
+				if(arch.contains("64")) {
+					arch="amd64";
+				} else if(arch.contains("86")){
+					arch="i586";
+				} else if(arch.contains("sparcv9")) {
+					arch="sparcv9";
+				} else {
+					arch="sparc";
+				}
+			}
+			
+			else if(os.contains("mac")) {
 				os="macosx";
-				if (!arch.equals("ppc"))
+				if(arch.contains("ppc")) {
+					arch="ppc";
+				} else {
 					arch="universal";
-			}				
+				}
+			}			
 			
 			String dirS = "mayday/native/jogl/"+os+"-"+arch;
 			
