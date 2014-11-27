@@ -32,10 +32,10 @@ public class SNPSummaryPlotSetting extends HierarchicalSetting {
 	private BooleanSetting horizontalAggregation;
 	private BooleanSetting refWithChange;
 	
-	private ChangeSortingSetting sortingSetting;
+	private ChangeSNPOrderSetting snpOrderSetting;
 	
-	private String currentSNPOrdering = SNPSorter.NONE;
-	private String oldSNPOrdering = SNPSorter.GENOMIC_LOCATION;
+	private String currentSNPOrder = SNPSorter.NONE;
+	private String oldSNPOrder = SNPSorter.GENOMIC_LOCATION;
 	private StatisticalTestResult currentSTR = null;
 	
 	/**
@@ -50,18 +50,18 @@ public class SNPSummaryPlotSetting extends HierarchicalSetting {
 		addSetting(horizontalAggregation = new BooleanSetting("Stacked genotype cohort summary", null, false));
 		refWithChange = new BooleanSetting("Reference nucleotide change", null, false);
 		
-		JButton changeSortingButton = new JButton("Change Sorting");
-		changeSortingButton.addActionListener(new ActionListener() {
+		JButton changeOrderButton = new JButton("Change SNP Order");
+		changeOrderButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sortingSetting = new ChangeSortingSetting(SNPSummaryPlotSetting.this.plot.getData());
-				sortingSetting.setOrdering(getSNPOrder());
-				SettingDialog sd = new SettingDialog(SNPSummaryPlotSetting.this.plot.getData().getProjectHandler().getGUI(), sortingSetting.getName(), sortingSetting);
+				snpOrderSetting = new ChangeSNPOrderSetting(SNPSummaryPlotSetting.this.plot.getData());
+				snpOrderSetting.setOrdering(getSNPOrder());
+				SettingDialog sd = new SettingDialog(SNPSummaryPlotSetting.this.plot.getData().getProjectHandler().getGUI(), snpOrderSetting.getName(), snpOrderSetting);
 				sd.setModal(true);
 				sd.setVisible(true);
 				if(sd.closedWithOK()) {
-					currentSNPOrdering = sortingSetting.getOrdering();
-					currentSTR = sortingSetting.getSelectedStatTestResult();
+					currentSNPOrder = snpOrderSetting.getOrdering();
+					currentSTR = snpOrderSetting.getSelectedStatTestResult();
 					if(sortingChanged()) {
 						SNPSummaryPlotSetting.this.plot.getSNPSorter().sortSNPs(
 								SNPSummaryPlotSetting.this.plot.getSNPs(), getSNPOrder(), 
@@ -72,7 +72,7 @@ public class SNPSummaryPlotSetting extends HierarchicalSetting {
 			}
 		});
 		
-		addSetting(new ComponentPlaceHolderSetting("Sorting", changeSortingButton));
+		addSetting(new ComponentPlaceHolderSetting("Sorting", changeOrderButton));
 		
 		this.addChangeListener(new SNPSummaryChangeListener());
 	}
@@ -101,7 +101,7 @@ public class SNPSummaryPlotSetting extends HierarchicalSetting {
 	 * @return snp ordering method
 	 */
 	public String getSNPOrder() {
-		return this.currentSNPOrdering;
+		return this.currentSNPOrder;
 	}
 	
 	private StatisticalTestResult getSelectedStatTestResult() {
@@ -135,9 +135,9 @@ public class SNPSummaryPlotSetting extends HierarchicalSetting {
 	}
 	
 	private boolean sortingChanged() {
-		boolean change = !oldSNPOrdering.equals(getSNPOrder());
+		boolean change = !oldSNPOrder.equals(getSNPOrder());
 		if(change) {
-			oldSNPOrdering = getSNPOrder();
+			oldSNPOrder = getSNPOrder();
 			return true;
 		}
 		return false;
