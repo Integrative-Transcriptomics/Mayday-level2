@@ -36,6 +36,8 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 	//mapping identifiers to indices for faster SNP retrieval
 	private Map<String, Integer> idMapping = new HashMap<String, Integer>();
 	
+	private List<Integer> indexList;
+	
 	private boolean isSilent; // indicates whether listeners are notified or not
 	private boolean topPriority = false;
 	
@@ -335,5 +337,15 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 
 	public void setRuleSet(RuleSet ruleSet) {
 		this.ruleSet = ruleSet;
+	}
+
+	public List<Integer> getIndexList() {
+		if(this.indexList == null) {
+			indexList = new ArrayList<Integer>();
+			for(int i = 0; i < size(); i++) {
+				indexList.add(get(i).getIndex());
+			}
+		}
+		return indexList;
 	}
 }

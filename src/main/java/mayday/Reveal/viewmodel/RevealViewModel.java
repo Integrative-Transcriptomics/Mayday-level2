@@ -24,7 +24,6 @@ public class RevealViewModel extends ViewModel {
 	
 	Set<SNP> snpSelection;
 	Set<Subject> personSelection;
-	SNPSorter snpSorter;
 	private DataStorage dataStorage;
 	
 	private SNPList topPrioritySNPList;
@@ -50,8 +49,6 @@ public class RevealViewModel extends ViewModel {
 		
 		if(initialPersonSelection != null)
 			personSelection.addAll(initialPersonSelection);
-		
-		snpSorter = new SNPSorter(dataStorage);
 	}
 	
 	/**
@@ -228,15 +225,6 @@ public class RevealViewModel extends ViewModel {
 			persons.add(person);
 		}
 		setPersonSelection(persons);
-	}
-	
-	/**
-	 * @param snps
-	 * @param sortOption
-	 * @return sorted list of snps
-	 */
-	public SNPList sortSNPs(SNPList snps, String sortOption) {
-		return snpSorter.getSortedSNPList(snps, sortOption);
 	}
 	
 	/**

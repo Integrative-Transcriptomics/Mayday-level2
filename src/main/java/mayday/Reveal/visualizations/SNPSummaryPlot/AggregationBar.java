@@ -7,7 +7,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
 
 /**
  * @author jaeger
@@ -174,7 +173,11 @@ public class AggregationBar {
 	protected double getAggregatedHeight(double[] values) {
 		double[] aggregated = this.aggregate(values, reference);
 		int index = this.getMaxIndex(aggregated);
-		return aggregated[index];
+		if(index > -1) {
+			return aggregated[index];
+		} else {
+			return 0;
+		}
 	}
 	
 	protected Color getAggregatedColor(double[] values) {
@@ -204,8 +207,8 @@ public class AggregationBar {
 				maxIndex = i;
 			}
 		}
-		if(maxIndex == -1)
-			System.out.println(Arrays.toString(values));
+//		if(maxIndex == -1)
+//			System.out.println(Arrays.toString(values));
 		return maxIndex;
 	}
 	

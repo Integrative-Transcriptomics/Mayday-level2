@@ -19,7 +19,6 @@ import mayday.Reveal.data.meta.MetaInformationManager;
 import mayday.Reveal.listeners.DataStorageEvent;
 import mayday.Reveal.listeners.DataStorageListener;
 import mayday.Reveal.utilities.DateTimeProvider;
-import mayday.Reveal.viewmodel.SNPSorter;
 import mayday.core.DataSet;
 import mayday.core.EventFirer;
 
@@ -220,12 +219,9 @@ public class DataStorage {
 	 */
 	public void setGlobalSNPList(SNPList snps) {
 		if(getGlobalSNPList() == null) {
-			SNPSorter sorter = new SNPSorter(this);
-			SNPList sorted = sorter.getSortedSNPList(snps, SNPSorter.GENOMIC_LOCATION);
-			sorted.getAttribute().setName("Global");
-			sorted.getAttribute().setInformation("Unmodifyable");
-			snpLists.add(0, sorted);
-			
+			snps.getAttribute().setName("Global");
+			snps.getAttribute().setInformation("Unmodifyable");
+			snpLists.add(0, snps);
 			this.fireDataStorageChanged(DataStorageEvent.DATA_CHANGED);
 		}
 	}

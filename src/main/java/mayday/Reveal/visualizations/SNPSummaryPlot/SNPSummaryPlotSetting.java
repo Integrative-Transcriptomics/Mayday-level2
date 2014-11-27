@@ -1,18 +1,21 @@
 package mayday.Reveal.visualizations.SNPSummaryPlot;
 
 import java.awt.Color;
-import java.util.Set;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import mayday.Reveal.data.GeneList;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.viewmodel.SNPSorter;
+import javax.swing.JButton;
+
+import mayday.Reveal.data.meta.StatisticalTestResult;
+import mayday.Reveal.utilities.SNPSorter;
+import mayday.core.settings.SettingDialog;
 import mayday.core.settings.events.SettingChangeEvent;
 import mayday.core.settings.events.SettingChangeListener;
+import mayday.core.settings.generic.ComponentPlaceHolderSetting;
 import mayday.core.settings.generic.HierarchicalSetting;
 import mayday.core.settings.typed.BooleanSetting;
 import mayday.core.settings.typed.ColorSetting;
 import mayday.core.settings.typed.IntSetting;
-import mayday.core.settings.typed.RestrictedStringSetting;
 
 /**
  * @author jaeger
@@ -25,12 +28,15 @@ public class SNPSummaryPlotSetting extends HierarchicalSetting {
 	private IntSetting cellWidth;
 	
 	private ColorSetting selectionColor;
-	private RestrictedStringSetting snpOrder;
 	
 	private BooleanSetting horizontalAggregation;
 	private BooleanSetting refWithChange;
 	
-	private String oldSNPOrder = SNPSorter.GENOMIC_LOCATION;
+	private ChangeSortingSetting sortingSetting;
+	
+	private String currentSNPOrdering = SNPSorter.NONE;
+	private String oldSNPOrdering = SNPSorter.GENOMIC_LOCATION;
+	private StatisticalTestResult currentSTR = null;
 	
 	/**
 	 * @param plot
@@ -38,23 +44,35 @@ public class SNPSummaryPlotSetting extends HierarchicalSetting {
 	public SNPSummaryPlotSetting(SNPSummaryPlot plot) {
 		super("SNP Summary Plot Setting");
 		this.plot = plot;
-		
-		GeneList genes = plot.getData().getGenes();
-		String[] geneNames = new String[genes.size()];
-		for(int i = 0; i < genes.size(); i++)
-			geneNames[i] = genes.getGene(i).getName();
-		
-		Set<String> externalSNPListNames = plot.getData().getSNPListNames();
-		String[] extNames = new String[externalSNPListNames.size()];
-		int i = 0;
-		for(String name : externalSNPListNames)
-			extNames[i++] = name;
 			
 		addSetting(cellWidth = new IntSetting("Cell Width", null, 20));
 		addSetting(selectionColor = new ColorSetting("Selection Color", null, Color.RED));
 		addSetting(horizontalAggregation = new BooleanSetting("Stacked genotype cohort summary", null, false));
 		refWithChange = new BooleanSetting("Reference nucleotide change", null, false);
-		addSetting(snpOrder = new RestrictedStringSetting("Sort SNPs", null, 0, SNPSorter.GENOMIC_LOCATION));
+		
+		JButton changeSortingButton = new JButton("Change Sorting");
+		changeSortingButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sortingSetting = new ChangeSortingSetting(SNPSummaryPlotSetting.this.plot.getData());
+				sortingSetting.setOrdering(getSNPOrder());
+				SettingDialog sd = new SettingDialog(SNPSummaryPlotSetting.this.plot.getData().getProjectHandler().getGUI(), sortingSetting.getName(), sortingSetting);
+				sd.setModal(true);
+				sd.setVisible(true);
+				if(sd.closedWithOK()) {
+					currentSNPOrdering = sortingSetting.getOrdering();
+					currentSTR = sortingSetting.getSelectedStatTestResult();
+					if(sortingChanged()) {
+						SNPSummaryPlotSetting.this.plot.getSNPSorter().sortSNPs(
+								SNPSummaryPlotSetting.this.plot.getSNPs(), getSNPOrder(), 
+								getSelectedStatTestResult());
+						SNPSummaryPlotSetting.this.plot.updatePlot();
+					}
+				}
+			}
+		});
+		
+		addSetting(new ComponentPlaceHolderSetting("Sorting", changeSortingButton));
 		
 		this.addChangeListener(new SNPSummaryChangeListener());
 	}
@@ -83,22 +101,22 @@ public class SNPSummaryPlotSetting extends HierarchicalSetting {
 	 * @return snp ordering method
 	 */
 	public String getSNPOrder() {
-		return this.snpOrder.getStringValue();
+		return this.currentSNPOrdering;
+	}
+	
+	private StatisticalTestResult getSelectedStatTestResult() {
+		return this.currentSTR;
 	}
 	
 	private class SNPSummaryChangeListener implements SettingChangeListener {
 		
 		@Override
 		public void stateChanged(SettingChangeEvent e) {
-			if(sortingChanged()) {
-				SNPList newList = plot.getViewModel().sortSNPs(plot.getSNPs(), getSNPOrder());
-				plot.setSNPList(newList);
-				plot.calculateViewElements();
+			if(e.getSource() == cellWidth) {
+				plot.resizePlot();
+			} else {
 				plot.updatePlot();
-				System.gc();
 			}
-			
-			plot.updatePlot();
 		}
 	}
 	
@@ -117,9 +135,9 @@ public class SNPSummaryPlotSetting extends HierarchicalSetting {
 	}
 	
 	private boolean sortingChanged() {
-		boolean change = !oldSNPOrder.equals(getSNPOrder());
+		boolean change = !oldSNPOrdering.equals(getSNPOrder());
 		if(change) {
-			oldSNPOrder = getSNPOrder();
+			oldSNPOrdering = getSNPOrder();
 			return true;
 		}
 		return false;

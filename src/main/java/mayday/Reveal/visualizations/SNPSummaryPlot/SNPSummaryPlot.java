@@ -26,6 +26,7 @@ import mayday.Reveal.data.meta.SLResults;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
 import mayday.Reveal.utilities.ATCGColors;
 import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNPSorter;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.core.MaydayDefaults;
@@ -40,6 +41,8 @@ import mayday.vis3.model.ViewModelEvent;
 @SuppressWarnings("serial")
 public class SNPSummaryPlot extends RevealVisualization {
 
+	protected SNPSorter snpSorter;
+	
 	protected HaplotypesList haplotypesList;
 	protected SNPList snpList;
 	protected SubjectList personList;
@@ -56,7 +59,6 @@ public class SNPSummaryPlot extends RevealVisualization {
 	protected FrequencyBar[] freqBars;
 	protected AggregationBar[] agBars;
 	protected ReferenceBar[] refBars;
-	protected IndividualPersonBar[] persBars;
 	
 	double[][] affected, unaffected;
 	
@@ -70,6 +72,8 @@ public class SNPSummaryPlot extends RevealVisualization {
 		haplotypesList = getData().getHaplotypes();
 		snpList = SNPLists.createUniqueSNPList(projectHandler.getSelectedSNPLists());
 		personList = getData().getSubjects();
+		
+		snpSorter = new SNPSorter(snpList);
 		
 		affected = new double[snpList.size()][];
 		unaffected = new double[snpList.size()][];
@@ -131,7 +135,7 @@ public class SNPSummaryPlot extends RevealVisualization {
 				double transX = i * snpBoxWidth;
 				double h = 0;
 				
-				SNP snp = snpList.get(i);
+				SNP snp = snpList.get(snpSorter.get(i));
 				boolean selected = getViewModel().isSelected(snp);
 				
 				if(selected) {
@@ -142,21 +146,21 @@ public class SNPSummaryPlot extends RevealVisualization {
 					g2d.fill(r2d);
 				}
 				
-				labelBars[i].draw(g2d, af, transX, 0, snpBoxWidth, labelHeight);
+				labelBars[snpSorter.get(i)].draw(g2d, af, transX, 0, snpBoxWidth, labelHeight);
 				
 				//frequencyBar
 				h += labelHeight;
-				freqBars[i].draw(g2d, af, transX, h, snpBoxWidth, frequencyHeight);
+				freqBars[snpSorter.get(i)].draw(g2d, af, transX, h, snpBoxWidth, frequencyHeight);
 				
 				g2d.setTransform(af);
 				
 				//aggregationBar
 				h += frequencyHeight;
-				agBars[i].draw(g2d, af, transX, h, snpBoxWidth, aggregationHeight, setting.getHorizontalAggregation());
+				agBars[snpSorter.get(i)].draw(g2d, af, transX, h, snpBoxWidth, aggregationHeight, setting.getHorizontalAggregation());
 				
 				//referenceBox
 				h += aggregationHeight; 
-				refBars[i].draw(g2d, af, transX, h, snpBoxWidth, referenceHeight, setting.getRefWithChange());
+				refBars[snpSorter.get(i)].draw(g2d, af, transX, h, snpBoxWidth, referenceHeight, setting.getRefWithChange());
 			}
 		}
 	}
@@ -219,8 +223,7 @@ public class SNPSummaryPlot extends RevealVisualization {
 	 */
 	public void resizePlot() {
 		int snpBoxWidth = setting.getCellWidth();
-		this.setPreferredSize(new Dimension(snpList.size() * snpBoxWidth, getHeight()));
-		this.setSize(new Dimension(snpList.size() * snpBoxWidth, getHeight()));
+		this.setPreferredSize(new Dimension(snpList.size() * snpBoxWidth, 0));
 		revalidate();
 		repaint();
 	}
@@ -281,5 +284,9 @@ public class SNPSummaryPlot extends RevealVisualization {
 
 	public void setSNPList(SNPList newList) {
 		this.snpList = newList;
+	}
+
+	public SNPSorter getSNPSorter() {
+		return this.snpSorter;
 	}
 }

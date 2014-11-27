@@ -28,7 +28,10 @@ public class FrequencyBar {
 		this.affected = affected;
 		this.unaffected = unaffected;
 		
-		maxSum = getMaxSum(); 
+		maxSum = getMaxSum();
+		
+		if(Double.isNaN(maxSum))
+			maxSum = 1;
 	}
 	
 	private double getMaxSum() {
@@ -54,8 +57,8 @@ public class FrequencyBar {
 		float w2 = (float)w/2.f;
 		
 		for(int i = 0; i < affected.length; i++) {
-			Rectangle2D a = new Rectangle2D.Double(0, 0, w2, affected[i] * factor);
-			Rectangle2D b = new Rectangle2D.Double(0, 0, w2, unaffected[i] * factor);
+			Rectangle2D a = new Rectangle2D.Double(0, 0, w2, Double.isNaN(affected[i]) ? 0 : affected[i] * factor);
+			Rectangle2D b = new Rectangle2D.Double(0, 0, w2, Double.isNaN(unaffected[i]) ? 0: unaffected[i] * factor);
 			
 			colorPairs = ATCGColors.getColorPairs(i);
 			
