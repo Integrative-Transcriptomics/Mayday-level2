@@ -39,16 +39,12 @@ public class ChangeSortingSetting extends HierarchicalSetting {
 	}
 
 	public void setOrdering(String snpOrder) {
-		switch(snpOrder) {
-		case SNPSorter.NONE:
+		if(snpOrder.equals(SNPSorter.NONE)) {
 			orderingChooser.setSelectedIndex(0);
-			break;
-		case SNPSorter.GENOMIC_LOCATION:
+		} else if(snpOrder.equals(SNPSorter.GENOMIC_LOCATION)) {
 			orderingChooser.setSelectedIndex(1);
-			break;
-		case SNPSorter.STATISTICAL_TEST:
+		} else if(snpOrder.equals(SNPSorter.STATISTICAL_TEST)) {
 			orderingChooser.setSelectedIndex(2);
-			break;
 		}
 	}
 	
