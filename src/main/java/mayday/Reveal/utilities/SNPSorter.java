@@ -33,12 +33,16 @@ public class SNPSorter {
 	public void sortSNPs(SNPList unsorted, String sortOption, StatisticalTestResult str) {
 		List<Integer> indexList = unsorted.getIndexList();
 		
-		if(sortOption.equals(GENOMIC_LOCATION)) {
+		switch(sortOption) {
+		case GENOMIC_LOCATION:
 			Collections.sort(indexList, ComparatorFactory.getLocationComparator(unsorted));
-		} else if(sortOption.equals(STATISTICAL_TEST)) {
+			break;
+		case STATISTICAL_TEST:
 			Collections.sort(indexList, ComparatorFactory.getStatTestComparator(unsorted, str));
-		} else if(sortOption.equals(NONE)) {
+			break;
+		case NONE:
 			restoreOrdering(unsorted);
+			break;
 		}
 		
 		for(int i = 0; i < indexList.size(); i++) {
