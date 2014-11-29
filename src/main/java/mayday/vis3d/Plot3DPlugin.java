@@ -11,18 +11,21 @@ import mayday.vis3.components.PlotWithLegendAndTitle;
 
 public abstract class Plot3DPlugin extends PlotPlugin {
 
-	public static String author = "G\u00FCnter J\u00E4ger";
-	public static String email = "jaeger@informatik.uni-tuebingen.de";
-	public static String description = "";
-	public static String plotName = "";
-	public static String iconPath = "";
-	public static String category = "Three Dimensional";
-	public static String pluginClass = "";
+	public String author = "G\u00FCnter J\u00E4ger";
+	public String email = "jaeger@informatik.uni-tuebingen.de";
+	public String description = "";
+	public String plotName = "";
+	public String iconPath = "";
+	public String category = "Three Dimensional";
+	public String pluginClass = "";
 	
 	
 	@Override
 	public Component getComponent() {
-		return new PlotWithLegendAndTitle(this.getPlot3DComponent());
+		Component c = this.getPlot3DComponent();
+		if(c == null)
+			return null;
+		return new PlotWithLegendAndTitle(c);
 	}
 	
 	public void init(){};

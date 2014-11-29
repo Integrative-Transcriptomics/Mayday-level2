@@ -12,7 +12,7 @@ public class PCAPlot3DPlugin extends Plot3DPlugin {
 
 	@Override
 	public Component getPlot3DComponent() {
-		return new PCAPlot3DPanel();
+		return new PCAPlot3DPanel(false);
 	}
 
 	@Override

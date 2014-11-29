@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.GLContext;
 import javax.swing.JMenu;
 
 import mayday.core.Probe;
@@ -66,6 +67,10 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 	private int cross;
 	private int centroid;
 	private int centroidsList;
+
+	public PCAPlot3DPanel(boolean transpose_first) {
+		this.transpose_first = transpose_first;
+	}
 
 	@Override
 	public void drawNotSelectable(GL gl) {
@@ -305,11 +310,15 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 		this.centroidsList = gl.glGenLists(1);
 
 		this.coordSystem.initAxesLabeling(gl);
-
-		this.updateDrawTypes(gl);
 	}
 
 	private void updateDrawTypes(GL gl) {
+		
+		if(PCAData == null) {
+			setBackground(Color.WHITE);
+			return;
+		}
+		
 		float r = (float) settings.getSphereRadius();
 		CoordinateSystem3DSetting coordSettings = settings
 				.getCoordianteSystemSetting();
@@ -497,6 +506,8 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 
 			// initialize the eigen-values histogram
 			this.evPlot = new PCAEigenValuesPlot(this);
+			GL gl = GLContext.getCurrent().getGL();
+			this.updateDrawTypes(gl);
 		}
 	}
 
