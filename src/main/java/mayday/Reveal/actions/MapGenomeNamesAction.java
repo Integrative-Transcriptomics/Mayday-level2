@@ -5,7 +5,7 @@ import java.util.Collection;
 import javax.swing.JOptionPane;
 
 import mayday.Reveal.RevealPlugin;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.gui.genome.GenomeNameMappingDialog;
 import mayday.Reveal.utilities.RevealMenuConstants;
 
@@ -32,7 +32,7 @@ public class MapGenomeNamesAction extends RevealPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		if(this.projectHandler.getSelectedProject() == null) {
 			JOptionPane.showMessageDialog(null, "No project has been selected!");
 			return;

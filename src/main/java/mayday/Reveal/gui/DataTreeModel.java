@@ -9,7 +9,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 
 @SuppressWarnings("serial")
 public class DataTreeModel extends DefaultTreeModel {
@@ -98,10 +98,10 @@ public class DataTreeModel extends DefaultTreeModel {
 		if(project.getGenes() != null)
 			projectNode.add(genesNode);
 		
-		DefaultMutableTreeNode snpsNode = new DefaultMutableTreeNode("SNPLists");
+		DefaultMutableTreeNode snpsNode = new DefaultMutableTreeNode("SNVLists");
 		projectNode.add(snpsNode);
 		
-		for(SNPList l : project.getSNPLists()) {
+		for(SNVList l : project.getSNVLists()) {
 			DefaultMutableTreeNode extSNPsNode = new DefaultMutableTreeNode(l);
 			snpsNode.add(extSNPsNode);
 		}

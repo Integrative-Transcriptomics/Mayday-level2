@@ -8,8 +8,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
 import mayday.Reveal.RevealPlugin;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.core.pluma.Constants;
 import mayday.core.pluma.PluginInfo;
 import mayday.core.pluma.PluginManagerException;
@@ -19,7 +19,7 @@ public abstract class AbstractDataProcessor<InType, OutType> extends RevealPlugi
 	public static final String CATEGORY = "SNPList/Data Processor";
 	public static final String MC = Constants.MC_REVEAL + "/" + CATEGORY;
 	
-	protected SNPList snpList;
+	protected SNVList snpList;
 	protected AbstractDataProcessor<OutType, ?> nextInChain;
 	private EventListenerList eventListenerList = new EventListenerList();
 	
@@ -28,7 +28,7 @@ public abstract class AbstractDataProcessor<InType, OutType> extends RevealPlugi
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Boolean passesFilter(SNP snp) {
+	public Boolean passesFilter(SNV snp) {
 		return processChain((InType)snp); // should only be called if intype is probe
 	}
 	
@@ -90,11 +90,11 @@ public abstract class AbstractDataProcessor<InType, OutType> extends RevealPlugi
 		}
 	}
 	
-	public void setSNPList(SNPList snpList) {
+	public void setSNPList(SNVList snpList) {
 		this.snpList = snpList;
 	}
 	
-	public SNPList getSNPList() {
+	public SNVList getSNPList() {
 		return this.snpList;
 	}
 	
@@ -103,7 +103,7 @@ public abstract class AbstractDataProcessor<InType, OutType> extends RevealPlugi
 	}
 	
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		return; //nothing to do
 	}
 	

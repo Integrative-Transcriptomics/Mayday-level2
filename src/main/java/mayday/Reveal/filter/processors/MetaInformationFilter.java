@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.data.meta.MetaInformationManager;
 import mayday.Reveal.data.meta.SLResults;
@@ -29,7 +29,7 @@ import mayday.core.io.StorageNode;
  * @author jaeger
  *
  */
-public class MetaInformationFilter extends AbstractDataProcessor<SNP, Object> implements StorageNodeStorable, OptionPanelProvider {
+public class MetaInformationFilter extends AbstractDataProcessor<SNV, Object> implements StorageNodeStorable, OptionPanelProvider {
 
 	private MetaInformation metaInfo = null;
 	private String gene = "";
@@ -200,7 +200,7 @@ public class MetaInformationFilter extends AbstractDataProcessor<SNP, Object> im
 
 	@Override
 	public boolean isAcceptableInput(Class<?>[] inputClass) {
-		return SNP.class.isAssignableFrom(inputClass[0]);
+		return SNV.class.isAssignableFrom(inputClass[0]);
 	}
 
 	@Override
@@ -212,7 +212,7 @@ public class MetaInformationFilter extends AbstractDataProcessor<SNP, Object> im
 	}
 
 	@Override
-	protected Object convert(SNP value) {
+	protected Object convert(SNV value) {
 		if(metaInfo instanceof StatisticalTestResult) {
 			return ((StatisticalTestResult)metaInfo).getPValue(value);
 		}

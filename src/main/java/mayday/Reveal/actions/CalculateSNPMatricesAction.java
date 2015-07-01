@@ -8,8 +8,8 @@ import java.io.FileWriter;
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.visualizations.SNPExpHeatMap.SNPExpressionCalculator;
 import mayday.core.settings.SettingDialog;
 import mayday.core.settings.generic.HierarchicalSetting;
@@ -54,7 +54,7 @@ public class CalculateSNPMatricesAction extends RevealAction {
 			@Override
 			protected void doWork() throws Exception {
 				DataStorage ds = projectHandler.getSelectedProject();
-				SNPList snps = SNPLists.createUniqueSNPList(projectHandler.getSelectedSNPLists());
+				SNVList snps = SNVLists.createUniqueSNVList(projectHandler.getSelectedSNVLists());
 				SNPExpressionCalculator c = new SNPExpressionCalculator(ds, snps);
 				writeLog("Calculating SNP Expression Vectors for " + snps.size() + " SNPs...\n");
 				DoubleMatrix[] matrices = c.calculateSNPVectors(weightedExp);
@@ -74,7 +74,7 @@ public class CalculateSNPMatricesAction extends RevealAction {
 		t.start();
 	}
 	
-	private void write(SNPList snps, GeneList genes, DoubleMatrix m, File output) {
+	private void write(SNVList snps, GeneList genes, DoubleMatrix m, File output) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(output));
 			//header row

@@ -17,8 +17,8 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.core.io.BufferedRandomAccessFile;
 import mayday.core.settings.SettingDialog;
 import mayday.core.settings.typed.PathSetting;
@@ -147,7 +147,7 @@ public class Genome extends MetaInformationPlugin {
 		}
 		
 		//sort the names
-		Collections.sort(seqNames);
+		Collections.sort(seqNames, new AlphanumComparator());
 		
 		if(task != null) {
 			if(!task.hasBeenCancelled()) {
@@ -174,11 +174,11 @@ public class Genome extends MetaInformationPlugin {
 	}
 	
 	public void updateReferenceNucleotides() throws Exception {
-		SNPList snps = dataStorage.getGlobalSNPList();
+		SNVList snps = dataStorage.getGlobalSNVList();
 		this.updateReferenceNucleotides(snps);
 	}
 	
-	public void updateReferenceNucleotides(SNPList snps) throws Exception {
+	public void updateReferenceNucleotides(SNVList snps) throws Exception {
 		if(!indexCreated) {
 			int approve = JOptionPane.showConfirmDialog(null, "The index has not been created yet!\nCreate index first!");
 			
@@ -195,7 +195,7 @@ public class Genome extends MetaInformationPlugin {
 		BufferedRandomAccessFile braf = new BufferedRandomAccessFile(filePath, "r");
 		
 		for(int i = 0; i < snps.size(); i++) {
-			SNP s = snps.get(i);
+			SNV s = snps.get(i);
 			String seq = s.getChromosome();
 			
 			if(seqNameMapping.get(seq) != null) {
@@ -444,8 +444,8 @@ public class Genome extends MetaInformationPlugin {
 	public long getSequencLength(String seqName) {
 		String name = seqName;
 		//use original name if possible
-		if(seqNameMapping.get(seqName) != null)
-			name = seqNameMapping.get(seqName);
+		if(seqNameMapping.getRight(seqName) != null)
+			name = seqNameMapping.getRight(seqName);
 		return indexMap.get(name).seqLength;
 	}
 

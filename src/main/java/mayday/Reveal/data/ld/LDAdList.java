@@ -1,18 +1,18 @@
 package mayday.Reveal.data.ld;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.data.SNVPair;
 import mayday.clustering.qt.algorithm.clustering.QTPAdList;
 import mayday.clustering.qt.algorithm.clustering.QTPPair;
 
 public class LDAdList extends QTPAdList {
 
-	private SNPList snps;
+	private SNVList snps;
 	private LDResults ldResults;
 	private double threshold;
 	
-	public LDAdList(SNPList snps, LDResults ldResults, double threshold) {
+	public LDAdList(SNVList snps, LDResults ldResults, double threshold) {
 		super(null, snps.size(), null);
 		this.ldResults = ldResults;
 		this.snps = snps;
@@ -20,10 +20,10 @@ public class LDAdList extends QTPAdList {
 	}
 	
 	public synchronized void add(int i, int j) {
-		SNP a = snps.get(i);
-		SNP b = snps.get(j);
+		SNV a = snps.get(i);
+		SNV b = snps.get(j);
 		
-		Double r2 = ldResults.get(new SNPPair(a, b));
+		Double r2 = ldResults.get(new SNVPair(a, b));
 		//no r2 value available -> these two SNPs are not in LD
 		if(r2 == null)
 			return;

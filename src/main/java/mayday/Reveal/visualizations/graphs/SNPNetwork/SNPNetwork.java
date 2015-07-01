@@ -18,13 +18,13 @@ import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.GenePair;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.data.SNVPair;
 import mayday.Reveal.data.meta.TLResults;
 import mayday.Reveal.data.meta.TwoLocusResult;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.visualizations.graphs.AssociationGraph;
 import mayday.core.Probe;
 import mayday.core.settings.generic.HierarchicalSetting;
@@ -55,8 +55,8 @@ public class SNPNetwork extends AssociationGraph<String, Integer> {
 	public static final String TITLE = "SNP Network";
 	public static final String DESCRIPTION = "Create a new SNP Network based on selected SNPs";
 
-	protected HashMap<Integer, SNPPair> edgeToSNPPair = new HashMap<Integer, SNPPair>();
-	protected HashMap<SNPPair, Integer> edgeWeights = new HashMap<SNPPair, Integer>();
+	protected HashMap<Integer, SNVPair> edgeToSNPPair = new HashMap<Integer, SNVPair>();
+	protected HashMap<SNVPair, Integer> edgeWeights = new HashMap<SNVPair, Integer>();
 	
 	@SuppressWarnings("rawtypes")
 	protected Class subLayoutType = CircleLayout.class;
@@ -66,7 +66,7 @@ public class SNPNetwork extends AssociationGraph<String, Integer> {
 	private VertexShapeFunction vertexShapeFunction;
 	private VertexLabelTransformer<String> vertexLabelTransformer;
 	
-	protected SNPList snps;
+	protected SNVList snps;
 	
 	protected SNPNetworkSetting setting;
 	
@@ -76,7 +76,7 @@ public class SNPNetwork extends AssociationGraph<String, Integer> {
 	public SNPNetwork(DataStorage ds) {
 		super("SNP Graph");
 		setData(ds);
-		this.snps = SNPLists.createUniqueSNPList(ds.getProjectHandler().getSelectedSNPLists());
+		this.snps = SNVLists.createUniqueSNVList(ds.getProjectHandler().getSelectedSNVLists());
 		
 		this.start();
 		
@@ -101,7 +101,7 @@ public class SNPNetwork extends AssociationGraph<String, Integer> {
 				pickedState.pick(snps.get(i).getID(), false);
 			}		
 			
-			for(SNP s: snps) {
+			for(SNV s: snps) {
 				if(geneNames.contains(s.getGene())) {
 					pickedState.pick(s.getID(), true);
 				}
@@ -117,7 +117,7 @@ public class SNPNetwork extends AssociationGraph<String, Integer> {
 		GeneList allGenes = getData().getGenes();
 		Set<Gene> genes = new HashSet<Gene>();
 		
-		for(SNP s: snps) {
+		for(SNV s: snps) {
 			g.addVertex(s.getID());
 			genes.add(allGenes.getGene(s.getGene()));
 		}
@@ -130,8 +130,8 @@ public class SNPNetwork extends AssociationGraph<String, Integer> {
 			if(tlr != null) {
 				System.out.println("Processing gene " + gene.getDisplayName());
 				for(GenePair gp : tlr.keySet()) {
-					List<SNPPair> snpPairs = tlr.get(gp);
-					for(SNPPair sp : snpPairs) {
+					List<SNVPair> snpPairs = tlr.get(gp);
+					for(SNVPair sp : snpPairs) {
 						if(snps.contains(sp.snp1) && snps.contains(sp.snp2)) {
 							if(edgeWeights.containsKey(sp)) {
 								edgeWeights.put(sp, edgeWeights.get(sp)+1);
@@ -150,7 +150,7 @@ public class SNPNetwork extends AssociationGraph<String, Integer> {
 		
 		System.out.println("---- SNPs with edge weight > 1 ----");
 		
-		for(SNPPair sp : edgeWeights.keySet()) {
+		for(SNVPair sp : edgeWeights.keySet()) {
 			if(edgeWeights.get(sp) > 1) {
 				System.out.println(sp.snp1.getID() + " - " + sp.snp2.getID() + " : " + edgeWeights.get(sp));
 			}
@@ -298,7 +298,7 @@ public class SNPNetwork extends AssociationGraph<String, Integer> {
 	/**
 	 * @param selectedSNPs
 	 */
-	public void setSNPs(SNPList selectedSNPs) {
+	public void setSNPs(SNVList selectedSNPs) {
 		this.snps = selectedSNPs;
 		this.graph = buildGraph();
 	}

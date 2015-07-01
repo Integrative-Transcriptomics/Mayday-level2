@@ -5,8 +5,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.StringReader;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.MetaInformationPlugin;
 import cern.colt.Arrays;
 
@@ -15,11 +15,11 @@ public class LDBlocks extends MetaInformationPlugin {
 	public static final String MYTYPE = "LDBLOCKS";
 	
 	private int[] blockIndices;
-	private SNPList snps;
+	private SNVList snps;
 	
 	public LDBlocks() {};
 	
-	public void setSNPs(SNPList snps) {
+	public void setSNPs(SNVList snps) {
 		this.snps = snps;
 	}
 	
@@ -27,12 +27,12 @@ public class LDBlocks extends MetaInformationPlugin {
 		this.blockIndices = indices;
 	}
 	
-	public LDBlocks(SNPList unionList, int[] blockIndices) {
+	public LDBlocks(SNVList unionList, int[] blockIndices) {
 		this.blockIndices = blockIndices;
 		this.snps = unionList;
 	}
 	
-	public boolean inLD(SNP a, SNP b) {
+	public boolean inLD(SNV a, SNV b) {
 		int ia = snps.indexOf(a);
 		int ib = snps.indexOf(b);
 		
@@ -69,7 +69,7 @@ public class LDBlocks extends MetaInformationPlugin {
 			String snpListName = br.readLine();
 			String blockIndicesString = br.readLine();
 			
-			this.snps = this.dataStorage.getSNPList(snpListName);
+			this.snps = this.dataStorage.getSNVList(snpListName);
 			blockIndicesString = blockIndicesString.substring(1, blockIndicesString.length()-1);
 			String[] split = blockIndicesString.split(", ");
 			
@@ -110,7 +110,7 @@ public class LDBlocks extends MetaInformationPlugin {
 		return "LD Blocks for " + snps.size() + " SNPs";
 	}
 
-	public int getBlockID(SNP s) {
+	public int getBlockID(SNV s) {
 		int index = snps.indexOf(s);
 		if(index == -1)
 			return -1;

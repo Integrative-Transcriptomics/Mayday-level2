@@ -1,8 +1,8 @@
 package mayday.Reveal.filter;
 
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 
 public interface SNPListSelectionFilter {
 
-	public boolean pass(SNPList sl);
+	public boolean pass(SNVList sl);
 }

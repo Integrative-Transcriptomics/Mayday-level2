@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.core.math.pcorrection.PCorrectionPlugin;
 
 /**
@@ -25,7 +25,7 @@ public class StatisticalTestResult extends MetaInformationPlugin {
 	
 	private String testName;
 	private double min = Double.MAX_VALUE;
-	Map<SNP, Double> snpIndexToPVal = new HashMap<SNP, Double>();
+	Map<SNV, Double> snpIndexToPVal = new HashMap<SNV, Double>();
 	
 	public StatisticalTestResult() {
 		this("Statistical Test");
@@ -42,7 +42,7 @@ public class StatisticalTestResult extends MetaInformationPlugin {
 	 * @param snpIndex
 	 * @param pVal
 	 */
-	public void setPValue(SNP s, double pVal) {
+	public void setPValue(SNV s, double pVal) {
 		this.snpIndexToPVal.put(s, pVal);
 	}
 	
@@ -50,7 +50,7 @@ public class StatisticalTestResult extends MetaInformationPlugin {
 	 * @param index
 	 * @return p value at the specified index
 	 */
-	public double getPValue(SNP s) {
+	public double getPValue(SNV s) {
 		Double p = this.snpIndexToPVal.get(s);
 		if(p == null) {
 			return Double.NaN;
@@ -80,9 +80,9 @@ public class StatisticalTestResult extends MetaInformationPlugin {
 		return min;
 	}
 	
-	public SNPList getSNPs(double pThreshold, DataStorage ds) {
-		SNPList sigSNPs = new SNPList("p value Threshold SNPs", ds);
-		for(SNP s : snpIndexToPVal.keySet()) {
+	public SNVList getSNPs(double pThreshold, DataStorage ds) {
+		SNVList sigSNPs = new SNVList("p value Threshold SNPs", ds);
+		for(SNV s : snpIndexToPVal.keySet()) {
 			if(Double.compare(snpIndexToPVal.get(s), pThreshold) < 0) {
 				sigSNPs.add(s);
 			}
@@ -99,7 +99,7 @@ public class StatisticalTestResult extends MetaInformationPlugin {
 		bw.append(getStatTestName());
 		bw.append("\n");
 		
-		for(SNP s : snpIndexToPVal.keySet()) {
+		for(SNV s : snpIndexToPVal.keySet()) {
 			bw.append(s.getID());
 			bw.append("\t");
 			bw.append(String.valueOf(snpIndexToPVal.get(s)));
@@ -134,9 +134,9 @@ public class StatisticalTestResult extends MetaInformationPlugin {
 				}
 					
 				String[] snpLine = line.split("\t");
-				SNPList global = dataStorage.getGlobalSNPList(); 
+				SNVList global = dataStorage.getGlobalSNVList(); 
 				if(global.contains(snpLine[0])) {
-					SNP s = global.get(snpLine[0]);
+					SNV s = global.get(snpLine[0]);
 					snpIndexToPVal.put(s, Double.parseDouble(snpLine[1]));
 				}
 			}
@@ -168,12 +168,12 @@ public class StatisticalTestResult extends MetaInformationPlugin {
 	}
 
 	public void correctPValues(PCorrectionPlugin method) {
-		HashMap<Integer, SNP> snpToIndex = new HashMap<Integer, SNP>();
+		HashMap<Integer, SNV> snpToIndex = new HashMap<Integer, SNV>();
 		List<Double> pValues = new LinkedList<Double>();
 		
 		//get values from map
 		int index = 0;
-		for(SNP s : snpIndexToPVal.keySet()) {
+		for(SNV s : snpIndexToPVal.keySet()) {
 			snpToIndex.put(index, s);
 			pValues.add(snpIndexToPVal.get(s));
 			index++;

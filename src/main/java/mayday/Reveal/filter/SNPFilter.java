@@ -2,7 +2,7 @@ package mayday.Reveal.filter;
 
 import javax.swing.event.ChangeListener;
 
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 
 
 /**
@@ -11,7 +11,7 @@ import mayday.Reveal.data.SNP;
  */
 public interface SNPFilter {
 	
-	public Boolean passesFilter(SNP snp);
+	public Boolean passesFilter(SNV snp);
 	
 	public void addChangeListener( ChangeListener listener );
 	public void removeChangeListener( ChangeListener listener );

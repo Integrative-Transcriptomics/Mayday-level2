@@ -5,12 +5,12 @@ import java.util.Collection;
 import javax.swing.JOptionPane;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.Genome;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.core.tasks.AbstractTask;
 
-public class UpdateSNPReferences extends SNPListPlugin {
+public class UpdateSNPReferences extends SNVListPlugin {
 
 	@Override
 	public String getName() {
@@ -33,14 +33,14 @@ public class UpdateSNPReferences extends SNPListPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		try {
 			DataStorage ds = projectHandler.getSelectedProject();
 			
 			if(ds == null)
 				throw new Exception("No project has been selected.");
 			
-			final SNPList snpList = SNPLists.createUniqueSNPList(snpLists);
+			final SNVList snpList = SNVLists.createUniqueSNVList(snpLists);
 			final Genome genome = ds.getGenome();
 			
 			AbstractTask task = new AbstractTask("Update SNPs") {

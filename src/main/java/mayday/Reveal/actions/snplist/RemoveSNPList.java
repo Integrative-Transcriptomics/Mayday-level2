@@ -5,9 +5,9 @@ import java.util.Collection;
 import javax.swing.JOptionPane;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 
-public class RemoveSNPList extends SNPListPlugin {
+public class RemoveSNPList extends SNVListPlugin {
 
 	@Override
 	public String getName() {
@@ -30,7 +30,7 @@ public class RemoveSNPList extends SNPListPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		DataStorage ds = projectHandler.getSelectedProject();
 		
 		if(ds == null) {
@@ -38,6 +38,6 @@ public class RemoveSNPList extends SNPListPlugin {
 			return;
 		}
 		
-		ds.removeSNPLists(snpLists);
+		ds.removeSNVLists(snpLists);
 	}
 }

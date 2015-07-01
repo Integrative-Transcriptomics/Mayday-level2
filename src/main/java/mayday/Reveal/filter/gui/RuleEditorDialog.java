@@ -6,17 +6,17 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.events.SNPListEvent;
-import mayday.Reveal.events.SNPListListener;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.events.SNVListEvent;
+import mayday.Reveal.events.SNVListListener;
 import mayday.core.gui.MaydayFrame;
 
 @SuppressWarnings("serial")
 public class RuleEditorDialog extends MaydayFrame {
 	
-	private SNPList snpList;
+	private SNVList snpList;
 	
-	public RuleEditorDialog(SNPList snpList) {
+	public RuleEditorDialog(SNVList snpList) {
 		this.snpList = snpList;
 		setName(snpList);
 		getContentPane().add(new RuleEditorPanel(snpList), BorderLayout.CENTER);
@@ -25,19 +25,19 @@ public class RuleEditorDialog extends MaydayFrame {
     	pack();
 	}
 	
-	protected void setName(SNPList snpList) {
+	protected void setName(SNVList snpList) {
 		setTitle("Rule Set Editor: " + snpList.getAttribute().getName()); 
 	}
 	
-	protected SNPListListener slListener = new SNPListListener() {
+	protected SNVListListener slListener = new SNVListListener() {
 
-		public void snpListChanged(SNPListEvent event) {
+		public void snpListChanged(SNVListEvent event) {
 			switch(event.getChange()){
-			case SNPListEvent.SNPLIST_CLOSED:
+			case SNVListEvent.SNPLIST_CLOSED:
 				dispose();
 				break;
-			case SNPListEvent.ANNOTATION_CHANGE:
-				setName((SNPList)event.getSource());
+			case SNVListEvent.ANNOTATION_CHANGE:
+				setName((SNVList)event.getSource());
 				break;
 			}
 		}
@@ -50,14 +50,14 @@ public class RuleEditorDialog extends MaydayFrame {
 		 }		
 	};
 
-	protected void addListenersTo(SNPList snpList) {
+	protected void addListenersTo(SNVList snpList) {
 		addWindowListener(windowClosingAdapter);
-		snpList.addSNPListListener(slListener);		
+		snpList.addSNVListListener(slListener);		
 	}
 	
-	protected void removeListenersFrom(SNPList snpList) {
+	protected void removeListenersFrom(SNVList snpList) {
 		removeWindowListener(windowClosingAdapter);
-		snpList.removeSNPListListener(slListener);
+		snpList.removeSNVListListener(slListener);
 	}
 	
 	protected void finalizeWork() {

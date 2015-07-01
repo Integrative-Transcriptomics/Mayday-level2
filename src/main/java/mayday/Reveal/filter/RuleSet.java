@@ -7,8 +7,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.filter.gui.RuleSetGUI;
 import mayday.Reveal.gui.OptionPanelProvider;
 import mayday.core.io.StorageNode;
@@ -18,14 +18,14 @@ public class RuleSet implements SNPFilter, ChangeListener, StorageNodeStorable, 
 	private int combinationMode = COMBINE_AND;
 	public static final int COMBINE_AND = 0;
 	public static final int COMBINE_OR = 1;
-	private SNPList snpList;
+	private SNVList snpList;
 	
 	private LinkedList<SNPFilter> subRules = new LinkedList<SNPFilter>();
 	private EventListenerList eventListenerList = new EventListenerList();
 	private boolean isSilent=false;
 	private boolean isInactive=false;
 	
-	public RuleSet(SNPList snpList) {
+	public RuleSet(SNVList snpList) {
 		this.snpList = snpList;
 	}
 	
@@ -55,7 +55,7 @@ public class RuleSet implements SNPFilter, ChangeListener, StorageNodeStorable, 
 	}
 	
 	@Override
-	public Boolean passesFilter(SNP snp) {
+	public Boolean passesFilter(SNV snp) {
 		if (isInactive)
 			return null;  //let parent ruleset decide what to do here.
 		
@@ -202,11 +202,11 @@ public class RuleSet implements SNPFilter, ChangeListener, StorageNodeStorable, 
 		fireChanged();
 	}
 	
-	public SNPList getSNPList() {
+	public SNVList getSNPList() {
 		return this.snpList;
 	}
 	
-	public void setDynamicSNPList(SNPList snpList) {
+	public void setDynamicSNPList(SNVList snpList) {
 		this.snpList = snpList;
 	}
 

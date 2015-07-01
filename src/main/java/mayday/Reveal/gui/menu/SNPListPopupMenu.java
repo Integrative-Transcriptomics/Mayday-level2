@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import mayday.Reveal.actions.snplist.SNPListPlugin;
+import mayday.Reveal.actions.snplist.SNVListPlugin;
 import mayday.Reveal.data.ProjectHandler;
 
 @SuppressWarnings("serial")
@@ -15,13 +15,13 @@ public class SNPListPopupMenu extends RevealPopupMenu {
 		super(projectHandler);
 	}
 
-	public void addMenuItem(final SNPListPlugin plugin) {
+	public void addMenuItem(final SNVListPlugin plugin) {
 		JMenuItem item = new JMenuItem(plugin.getMenuName());
 		item.getAccessibleContext().setAccessibleDescription(plugin.getDescription());
 		item.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				plugin.run(projectHandler.getSelectedSNPLists());
+				plugin.run(projectHandler.getSelectedSNVLists());
 			}
 		});
 		insertInto(this, item);

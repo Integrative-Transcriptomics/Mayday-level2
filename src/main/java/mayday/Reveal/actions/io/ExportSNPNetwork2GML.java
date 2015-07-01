@@ -14,14 +14,14 @@ import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GenePair;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.data.SNVPair;
 import mayday.Reveal.data.ld.old.LDBlock;
 import mayday.Reveal.data.ld.old.LDStructure;
 import mayday.Reveal.data.meta.TLResults;
 import mayday.Reveal.data.meta.TwoLocusResult;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.core.settings.SettingDialog;
 import mayday.core.settings.typed.PathSetting;
 import mayday.core.tasks.AbstractTask;
@@ -69,30 +69,30 @@ public class ExportSNPNetwork2GML extends RevealAction {
 			bw.write("graph [id 0 version 0 graphics [] LabelGraphics []");
 			bw.newLine();
 			
-			SNPList snps = SNPLists.createUniqueSNPList(projectHandler.getSelectedSNPLists());
+			SNVList snps = SNVLists.createUniqueSNVList(projectHandler.getSelectedSNVLists());
 			
 			LDStructure lds = ds.getLDStructure(0);
 			Set<LDBlock> blocks = lds.getBlocks();
-			int groupCounter = ds.getGlobalSNPList().size()+1;
+			int groupCounter = ds.getGlobalSNVList().size()+1;
 			
 			
-			HashMap<LDBlock, List<SNP>> blocksToSNPs = new HashMap<LDBlock, List<SNP>>();
+			HashMap<LDBlock, List<SNV>> blocksToSNPs = new HashMap<LDBlock, List<SNV>>();
 			
-			for(SNP s: snps) {
+			for(SNV s: snps) {
 				LDBlock b = lds.getBlock(s);
 				if(b != null) {
 					if(blocksToSNPs.containsKey(b)) {
-						List<SNP> blockSNPs = blocksToSNPs.get(b);
+						List<SNV> blockSNPs = blocksToSNPs.get(b);
 						blockSNPs.add(s);
 					} else {
-						List<SNP> blockSNPs = new ArrayList<SNP>();
+						List<SNV> blockSNPs = new ArrayList<SNV>();
 						blockSNPs.add(s);
 						blocksToSNPs.put(b, blockSNPs);
 					}
 				}
 			}
 			
-			for(SNP s: snps) {
+			for(SNV s: snps) {
 				//TODO color nodes according to lds
 				if(lds.getBlock(s) != null) {
 					if(blocksToSNPs.get(lds.getBlock(s)).size() > 1) {
@@ -124,8 +124,8 @@ public class ExportSNPNetwork2GML extends RevealAction {
 				TwoLocusResult tlr = tlrs.get(gene);
 				if(tlr != null) {
 					for(GenePair gp : tlr.keySet()) {
-						List<SNPPair> snpPairs = tlr.get(gp);
-						for(SNPPair sp : snpPairs) {
+						List<SNVPair> snpPairs = tlr.get(gp);
+						for(SNVPair sp : snpPairs) {
 							if(snps.contains(sp.snp1) && snps.contains(sp.snp2)) {
 								int source = sp.snp1.getIndex();
 								int target = sp.snp2.getIndex();

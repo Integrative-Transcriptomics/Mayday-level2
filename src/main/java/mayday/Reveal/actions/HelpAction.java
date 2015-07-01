@@ -3,7 +3,7 @@ package mayday.Reveal.actions;
 import java.util.Collection;
 
 import mayday.Reveal.RevealPlugin;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.utilities.BrowserToolkit;
 import mayday.Reveal.utilities.RevealMenuConstants;
 
@@ -34,7 +34,7 @@ public class HelpAction extends RevealPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		BrowserToolkit.openURL("http://www-ps.informatik.uni-tuebingen.de/it/software/reveal/");
 	}
 

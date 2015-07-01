@@ -14,7 +14,7 @@ public class DataStorageEvent extends EventObject {
 	 */
 	public static final int DATA_CHANGED = 0;
 
-	public static final int SNPLIST_SELECTION_CHANGED = 1;
+	public static final int SNVLIST_SELECTION_CHANGED = 1;
 	
 	public static final int STATTEST_SELECTION_CHANGED = 2;
 

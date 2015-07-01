@@ -8,8 +8,7 @@ import java.util.StringTokenizer;
 
 import mayday.Reveal.RevealPlugin;
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNPList;
-import mayday.core.tasks.AbstractTask;
+import mayday.Reveal.data.SNVList;
 
 /**
  * @author jaeger
@@ -42,12 +41,33 @@ public abstract class AbstractDataParser extends RevealPlugin {
 		for (int i = 0; i < delimiters.length; i++) {
 			elements = strLine.split(delimiters[i]);
 			if (elements.length > 1) {
-				return elements;
+				String[] trimmed = trim(elements);
+				return trimmed;
 			}
 		}
 		return new String[]{strLine};
 	}
 	
+	private String[] trim(String[] elements) {
+		int length = 0;
+		for(int i = 0; i < elements.length; i++) {
+			if(elements[i].length() != 0) {
+				length++;
+			}
+		}
+		
+		String[] res = new String[length];
+		
+		int c = 0;
+		for(int i = 0; i < elements.length; i++) {
+			if(elements[i].length() != 0) {
+				res[c++] = elements[i];
+			}
+		}
+		
+		return res;
+	}
+
 	protected StringTokenizer tokenize(String line) {
 		String[] delimiters = new String[] { "\t", " ", ",", ";" };
 		for(int i = 0; i < delimiters.length; i++) {
@@ -74,7 +94,7 @@ public abstract class AbstractDataParser extends RevealPlugin {
 	}
 	
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		return; //nothing to do here!
 	}
 	

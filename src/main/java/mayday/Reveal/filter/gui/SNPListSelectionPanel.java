@@ -24,7 +24,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.filter.SNPListSelectionFilter;
 import mayday.Reveal.listeners.DataStorageEvent;
 import mayday.Reveal.listeners.DataStorageListener;
@@ -68,14 +68,14 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 	// copy current selection on tab change
 	public void stateChanged(ChangeEvent arg0) {
 		if (this.getSelectedIndex()!=lastSelectedTab) {
-			List<SNPList> sel = byTabIndex.get(lastSelectedTab).getSelectedSNPLists();
+			List<SNVList> sel = byTabIndex.get(lastSelectedTab).getSelectedSNPLists();
 			for (SelectionComponent sc : byTabIndex)
 				sc.setSelectedSNPLists(sel);
 			lastSelectedTab = this.getSelectedIndex();
 		}
 	}
 	
-	public List<SNPList> getSelection() {
+	public List<SNVList> getSelection() {
 		return byTabIndex.get(lastSelectedTab).getSelectedSNPLists(); 
 	}
 	
@@ -120,9 +120,9 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 		
 		protected abstract void rebuild();
 		
-		public abstract List<SNPList> getSelectedSNPLists();
+		public abstract List<SNVList> getSelectedSNPLists();
 
-		public abstract void setSelectedSNPLists(List<SNPList> sls);
+		public abstract void setSelectedSNPLists(List<SNVList> sls);
 		
 		public abstract Component getComponent();
 		
@@ -133,7 +133,7 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 		}
 		
 		public void dataChanged(DataStorageEvent dse) {
-			List<SNPList>  oldSel = getSelectedSNPLists();
+			List<SNVList>  oldSel = getSelectedSNPLists();
 			rebuild();
 			setSelectedSNPLists(oldSel);
 		}
@@ -154,12 +154,12 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 		}
 		
 		@Override
-		public List<SNPList> getSelectedSNPLists() {
-			List<SNPList> ret = new LinkedList<SNPList>();
+		public List<SNVList> getSelectedSNPLists() {
+			List<SNVList> ret = new LinkedList<SNVList>();
 			TreePath[] selectedRows = plTree.getSelectionModel().getSelectionPaths();
 			if (selectedRows!=null)
 				for (TreePath tp : selectedRows) {
-					SNPList sl = nodeToSNPList(((DefaultMutableTreeNode)tp.getLastPathComponent()));
+					SNVList sl = nodeToSNPList(((DefaultMutableTreeNode)tp.getLastPathComponent()));
 					if (sl!=null)
 							ret.add(sl);				
 				}
@@ -167,10 +167,10 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 		}
 
 		@Override
-		public void setSelectedSNPLists(List<SNPList> groups) {
+		public void setSelectedSNPLists(List<SNVList> groups) {
 			TreePath[] paths = new TreePath[groups.size()];
 			int pathi=0;
-			for (SNPList pl : groups) {				
+			for (SNVList pl : groups) {				
 				paths[pathi] = findInTree(new TreePath(rootNode), pl);
 				pathi++;
 			}
@@ -182,10 +182,10 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 			return new JScrollPane(plTree);
 		}
 		
-		protected abstract SNPList nodeToSNPList(DefaultMutableTreeNode node);
+		protected abstract SNVList nodeToSNPList(DefaultMutableTreeNode node);
 		
 		@SuppressWarnings({ "rawtypes" })
-		protected TreePath findInTree(TreePath parent, SNPList object) {
+		protected TreePath findInTree(TreePath parent, SNVList object) {
 	        DefaultMutableTreeNode startnode = (DefaultMutableTreeNode)parent.getLastPathComponent();
 	        	    
 	        if (nodeToSNPList(startnode)==object)
@@ -210,7 +210,7 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 			public void mouseClicked( MouseEvent e ) {       
 				if ( e.getButton() == MouseEvent.BUTTON1 ) 
 					if ( e.getClickCount() == 2 ) { 
-						List<SNPList> mgs = getSelectedSNPLists();
+						List<SNVList> mgs = getSelectedSNPLists();
 						if (mgs.size()>0) {
 							AbstractPropertiesDialog dlg;
 							//Object selected = mgs.get(0);
@@ -244,10 +244,10 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 			selectableCount=0;
 			rootNode.removeAllChildren();
 			
-			HashMap<SNPList, DefaultMutableTreeNode> listsWeHaveSeen = new HashMap<SNPList, DefaultMutableTreeNode>();
+			HashMap<SNVList, DefaultMutableTreeNode> listsWeHaveSeen = new HashMap<SNVList, DefaultMutableTreeNode>();
 			listsWeHaveSeen.put(null, rootNode);
 			
-			for (SNPList sl : ds.getSNPLists()) {				
+			for (SNVList sl : ds.getSNVLists()) {				
 				if (filter == null || filter.pass(sl)) {
 					addSNPListNode(sl, listsWeHaveSeen);
 					++selectableCount;					
@@ -261,7 +261,7 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 
 		}
 		
-		protected void addSNPListNode(SNPList sl, HashMap<SNPList, DefaultMutableTreeNode> lwhs) {
+		protected void addSNPListNode(SNVList sl, HashMap<SNVList, DefaultMutableTreeNode> lwhs) {
 //			SNPList parent = sl.getParent();
 //			if (!lwhs.containsKey(parent)) {
 //				// add a parent node 
@@ -277,10 +277,10 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 			lwhs.put(sl, slNode);
 		}
 		
-		protected SNPList nodeToSNPList(DefaultMutableTreeNode node) {
+		protected SNVList nodeToSNPList(DefaultMutableTreeNode node) {
 			Object o = node.getUserObject();
-			if (o instanceof SNPList)
-				return (SNPList)node.getUserObject();
+			if (o instanceof SNVList)
+				return (SNVList)node.getUserObject();
 			return null;
 		}
 		
@@ -308,7 +308,7 @@ public class SNPListSelectionPanel extends JTabbedPane implements ChangeListener
 			
 			Object val = ((DefaultMutableTreeNode)value).getUserObject();
 			
-			if (val instanceof SNPList) {
+			if (val instanceof SNVList) {
 				return slcr.getListCellRendererComponent(list,val,0,selected,hasFocus);
 			} 
 			return super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);			

@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.filter.SNPListSelectionFilter;
 import mayday.core.gui.MaydayDialog;
 
@@ -134,9 +134,9 @@ public class SNPListSelectionDialog extends MaydayDialog implements WindowListen
 		return canceled;
 	}
 	
-	public List<SNPList> getSelection() {
+	public List<SNVList> getSelection() {
 		if (canceled)
-			return new LinkedList<SNPList>();
+			return new LinkedList<SNVList>();
 		else 
 			return selPanel.getSelection();
 	}

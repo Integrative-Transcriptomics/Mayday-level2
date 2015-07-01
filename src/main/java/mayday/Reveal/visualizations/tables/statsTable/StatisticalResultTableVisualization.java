@@ -12,10 +12,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.core.settings.generic.HierarchicalSetting;
@@ -31,11 +31,11 @@ public class StatisticalResultTableVisualization extends RevealVisualization {
 
 	private StatisticalResultTable table;
 	private StatisticalResultTableSetting setting;
-	private SNPList snpList;
+	private SNVList snpList;
 	
 	public StatisticalResultTableVisualization(ProjectHandler projectHandler) {
 		setData(projectHandler.getSelectedProject());
-		this.snpList = SNPLists.createUniqueSNPList(projectHandler.getSelectedSNPLists());
+		this.snpList = SNVLists.createUniqueSNVList(projectHandler.getSelectedSNVLists());
 		this.table = new StatisticalResultTable(getData());
 		this.table.getSelectionModel().addListSelectionListener(new MetaInfoListSelectionListener());
 		
@@ -81,7 +81,7 @@ public class StatisticalResultTableVisualization extends RevealVisualization {
 		public void valueChanged(ListSelectionEvent e) {
 			if(!e.getValueIsAdjusting() && table.isInternalChange()) {
 				int[] viewRows = table.getSelectedRows();
-				Set<SNP> toggleSNPs = new HashSet<SNP>();
+				Set<SNV> toggleSNPs = new HashSet<SNV>();
 				for(int i = 0; i < viewRows.length; i++) {
 					int viewRow = viewRows[i];
 					if (viewRow >= 0) {

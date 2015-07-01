@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 
 /**
  * @author jaeger
@@ -36,15 +36,15 @@ public class ESNPLParser extends AbstractDataParser {
 	 */
 	public void read(File esf) {
 		try {
-			SNPList external = new SNPList("External SNPs " + (ds.numberOfSNPLists()+1), ds);
+			SNVList external = new SNVList("External SNPs " + (ds.numberOfSNVLists()+1), ds);
 			BufferedReader br = new BufferedReader(new FileReader(esf));
 			String line = null;
 			while((line = br.readLine()) != null) {
 				String snpID = line;
-				SNP s = new SNP(null, snpID, null, 0, 'N', -1);
+				SNV s = new SNV(null, snpID, null, 0, 'N', -1);
 				external.add(s);
 			}
-			ds.addSNPList("External SNPs " + (ds.numberOfSNPLists()+1), external);
+			ds.addSNVList("External SNPs " + (ds.numberOfSNVLists()+1), external);
 			br.close();
 		} catch(Exception ex) {
 			ex.printStackTrace();

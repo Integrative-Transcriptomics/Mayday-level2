@@ -18,7 +18,7 @@ import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.GenePair;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.meta.SLResults;
 import mayday.Reveal.data.meta.SingleLocusResult;
 import mayday.Reveal.data.meta.SingleLocusResult.Statistics;
@@ -243,9 +243,9 @@ public class SLN extends AssociationGraph<String, Integer> {
 		edgeWeights.clear();
 		
 		String externalSNPListName = setting.getExternalSNPListName();
-		HashSet<SNP> externalSNPs = new HashSet<SNP>();
+		HashSet<SNV> externalSNPs = new HashSet<SNV>();
 		if(externalSNPListName != null) {
-			externalSNPs.addAll(getData().getSNPList(externalSNPListName));
+			externalSNPs.addAll(getData().getSNVList(externalSNPListName));
 		}
 		
 		HashMap<GenePair, Integer> edgeCounts = new HashMap<GenePair, Integer>();
@@ -254,7 +254,7 @@ public class SLN extends AssociationGraph<String, Integer> {
 			Gene gene = genes.getGene(i);
 			SingleLocusResult slr = slrs.get(gene);
 			
-			for(SNP s: slr.keySet()) {
+			for(SNV s: slr.keySet()) {
 				//use only snps from the chosen SNPList
 				if(externalSNPs.size() != 0) {
 					if(!externalSNPs.contains(s)) {

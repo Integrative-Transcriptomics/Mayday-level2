@@ -6,15 +6,15 @@ import java.util.Collection;
 import javax.swing.JOptionPane;
 
 import mayday.Reveal.actions.RevealTask;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.io.vcf.VCFParser;
 import mayday.Reveal.settings.SubjectListSetting;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.core.settings.SettingDialog;
 import mayday.core.settings.generic.HierarchicalSetting;
 import mayday.core.settings.typed.PathSetting;
 
-public class ExportSNPList extends SNPListPlugin {
+public class ExportSNPList extends SNVListPlugin {
 
 	@Override
 	public String getName() {
@@ -37,7 +37,7 @@ public class ExportSNPList extends SNPListPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		HierarchicalSetting exportSNPsSetting = new HierarchicalSetting("Export SNPs Setting");
 		
 		PathSetting filePath = new PathSetting("File", "Select the file path for export", null, false, false, true);
@@ -50,7 +50,7 @@ public class ExportSNPList extends SNPListPlugin {
 		sd.showAsInputDialog();
 		
 		if(sd.closedWithOK()) {
-			SNPList allSNPs = SNPLists.createUniqueSNPList(snpLists);
+			SNVList allSNPs = SNVLists.createUniqueSNVList(snpLists);
 			final VCFParser parser = new VCFParser();
 			parser.setProject(projectHandler.getSelectedProject());
 			parser.setSNPs(allSNPs);

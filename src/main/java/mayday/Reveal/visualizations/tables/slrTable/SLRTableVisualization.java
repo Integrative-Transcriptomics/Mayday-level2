@@ -11,10 +11,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.core.settings.generic.HierarchicalSetting;
@@ -25,7 +25,7 @@ public class SLRTableVisualization extends RevealVisualization {
 
 	private SLRTableSetting setting;
 	private SLRTable table;
-	private SNPList snpList;
+	private SNVList snpList;
 	
 	/**
 	 * 
@@ -35,7 +35,7 @@ public class SLRTableVisualization extends RevealVisualization {
 	public SLRTableVisualization(ProjectHandler projectHandler) {
 		setData(projectHandler.getSelectedProject());
 		table = new SLRTable(getData());
-		snpList = SNPLists.createUniqueSNPList(projectHandler.getSelectedSNPLists());
+		snpList = SNVLists.createUniqueSNVList(projectHandler.getSelectedSNVLists());
 		table.getSelectionModel().addListSelectionListener(new SLRTableListSelectionListener());
 		
 		JScrollPane tableScroller = new JScrollPane(table);
@@ -82,7 +82,7 @@ public class SLRTableVisualization extends RevealVisualization {
 		public void valueChanged(ListSelectionEvent e) {
 			if(!e.getValueIsAdjusting() && table.isInternalChange()) {
 				int[] viewRows = table.getSelectedRows();
-				Set<SNP> toggleSNPs = new HashSet<SNP>();
+				Set<SNV> toggleSNPs = new HashSet<SNV>();
 				for(int i = 0; i < viewRows.length; i++) {
 					int viewRow = viewRows[i];
 					if (viewRow >= 0) {

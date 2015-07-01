@@ -6,7 +6,7 @@ import java.util.Collection;
 import javax.swing.JFileChooser;
 
 import mayday.Reveal.RevealPlugin;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.io.SnapshotReader;
 import mayday.Reveal.utilities.RevealMenuConstants;
 import mayday.core.tasks.AbstractTask;
@@ -38,7 +38,7 @@ public class LoadProject extends RevealPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fc.setDialogTitle("Load Reveal-Snapshot File ...");

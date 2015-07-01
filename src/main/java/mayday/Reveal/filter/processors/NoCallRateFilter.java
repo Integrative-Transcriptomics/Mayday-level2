@@ -2,12 +2,12 @@ package mayday.Reveal.filter.processors;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Haplotypes;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.data.SubjectList;
 import mayday.Reveal.filter.AbstractDataProcessor;
 
-public class NoCallRateFilter extends AbstractDataProcessor<SNP, Double> {
+public class NoCallRateFilter extends AbstractDataProcessor<SNV, Double> {
 
 	@Override
 	public void dispose() {}
@@ -19,7 +19,7 @@ public class NoCallRateFilter extends AbstractDataProcessor<SNP, Double> {
 
 	@Override
 	public boolean isAcceptableInput(Class<?>[] inputClass) {
-		return SNP.class.isAssignableFrom(inputClass[0]);
+		return SNV.class.isAssignableFrom(inputClass[0]);
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class NoCallRateFilter extends AbstractDataProcessor<SNP, Double> {
 	}
 
 	@Override
-	protected Double convert(SNP value) {
+	protected Double convert(SNV value) {
 		DataStorage ds = snpList.getDataStorage();
 		
 		int snpIndex = value.getIndex();

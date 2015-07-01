@@ -14,15 +14,15 @@ import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.GenePair;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.data.SNVPair;
 import mayday.Reveal.data.ld.old.LDStructure;
 import mayday.Reveal.data.meta.TLResults;
 import mayday.Reveal.data.meta.TwoLocusResult;
 import mayday.Reveal.data.meta.TwoLocusResult.Statistics;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.core.Probe;
 import mayday.core.settings.generic.HierarchicalSetting;
@@ -53,13 +53,13 @@ public class AssociationMatrix extends RevealVisualization {
 	
 	protected Map<String, List<Integer>> genesToCells = new HashMap<String, List<Integer>>();
 	
-	protected Map<Integer, Set<SNP>> cellsToSNPs = new HashMap<Integer, Set<SNP>>();
+	protected Map<Integer, Set<SNV>> cellsToSNPs = new HashMap<Integer, Set<SNV>>();
 	
-	protected SNPList selectedSNPS;
+	protected SNVList selectedSNPS;
 	
 	protected GeneList genesToUse;
 	
-	private SNPList snps;
+	private SNVList snps;
 	
 	/**
 	 * create a new association matrix
@@ -69,12 +69,12 @@ public class AssociationMatrix extends RevealVisualization {
 		setData(projectHandler.getSelectedProject());
 		
 		this.plotComponent = new AssociationMatrixComponent(this);
-		this.selectedSNPS = new SNPList("Selected SNPs", getData());
+		this.selectedSNPS = new SNVList("Selected SNPs", getData());
 		
 		this.setLayout(new BorderLayout());
 		this.add(plotComponent, BorderLayout.CENTER);
 		
-		this.snps = SNPLists.createUniqueSNPList(projectHandler.getSelectedSNPLists());
+		this.snps = SNVLists.createUniqueSNVList(projectHandler.getSelectedSNVLists());
 		
 		genesToUse = findUnnecessaryGenes();
 	}
@@ -129,7 +129,7 @@ public class AssociationMatrix extends RevealVisualization {
 		cellsToSNPs.clear();
 		maxCellIntensity = 0;
 		genesToCells.clear();
-		Set<SNP> distinctSNPs = new HashSet<SNP>();
+		Set<SNV> distinctSNPs = new HashSet<SNV>();
 		
 		for(int i = 0; i < genes.size(); i++) {
 			Gene gene = genes.getGene(i);
@@ -141,14 +141,14 @@ public class AssociationMatrix extends RevealVisualization {
 				for(GenePair gp : genePairs) {
 					
 					//get snp pairs
-					List<SNPPair> snpPairs = tlr.get(gp);
+					List<SNVPair> snpPairs = tlr.get(gp);
 					List<Statistics> stats = tlr.statMapping.get(gp);
 					
 					double currentIntensity = 0;
 					int snpCount = 0;
 					
 					for(int j = 0; j < snpPairs.size(); j++) {
-						SNPPair sp = snpPairs.get(j);
+						SNVPair sp = snpPairs.get(j);
 						
 						if(!snps.contains(sp.snp1) && !snps.contains(sp.snp2)) {
 							//skip if not at least one snp from the snp pair
@@ -202,7 +202,7 @@ public class AssociationMatrix extends RevealVisualization {
 						cellsToGenePairs.put(cell, gp);
 						cellsToGene.put(cell, gene.getName());
 						cellsToSNPs.put(cell, distinctSNPs);
-						distinctSNPs = new HashSet<SNP>();
+						distinctSNPs = new HashSet<SNV>();
 						cellIDs.add(cell);
 						//increase edge identifier
 						cell++;

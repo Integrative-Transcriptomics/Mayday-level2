@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.util.Collection;
 import java.util.Set;
 
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.vis3.gui.PlotContainer;
 import mayday.vis3.vis2base.ChartComponent;
 import mayday.vis3.vis2base.DataSeries;
@@ -31,9 +31,9 @@ public abstract class AbstractManhattanPlotComponent extends ChartComponent {
 		select();
 	}
 	
-	public abstract DataSeries doSelect(Collection<SNP> snps);
+	public abstract DataSeries doSelect(Collection<SNV> snps);
 	
-	public abstract DataSeries viewSNPs(Collection<SNP> snps, boolean isSelectionLayer);
+	public abstract DataSeries viewSNPs(Collection<SNV> snps, boolean isSelectionLayer);
 	
 	public void select() {
 		Color selectionColor = plot.setting.getSelectionColor();
@@ -41,7 +41,7 @@ public abstract class AbstractManhattanPlotComponent extends ChartComponent {
 			removeDataSeries(selectionLayer);
 		}
 		
-		Set<SNP> selectedSNPs = plot.getViewModel().getSelectedSNPs();
+		Set<SNV> selectedSNPs = plot.getViewModel().getSelectedSNPs();
 		selectionLayer = doSelect(selectedSNPs);
 		
 		if(selectionLayer != null) {

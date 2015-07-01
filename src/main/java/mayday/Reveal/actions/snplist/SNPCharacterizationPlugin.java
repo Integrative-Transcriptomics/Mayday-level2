@@ -8,8 +8,8 @@ import javax.swing.JOptionPane;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Haplotypes;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.data.SubjectList;
 import mayday.Reveal.data.meta.Genome;
@@ -23,14 +23,14 @@ import mayday.Reveal.io.gff3.ChromosomalLocation;
 import mayday.Reveal.io.gff3.GFFElement;
 import mayday.Reveal.io.gff3.GFFTree;
 import mayday.Reveal.settings.SubjectListSetting;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.core.settings.SettingDialog;
 import mayday.core.settings.generic.HierarchicalSetting;
 import mayday.core.settings.typed.LongSetting;
 import mayday.core.settings.typed.RestrictedStringSetting;
 import mayday.core.tasks.AbstractTask;
 
-public class SNPCharacterizationPlugin extends SNPListPlugin {
+public class SNPCharacterizationPlugin extends SNVListPlugin {
 
 	@Override
 	public String getName() {
@@ -53,7 +53,7 @@ public class SNPCharacterizationPlugin extends SNPListPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		if(snpLists == null) {
 			JOptionPane.showMessageDialog(null, "No SNPList selected!");
 			return;
@@ -95,7 +95,7 @@ public class SNPCharacterizationPlugin extends SNPListPlugin {
 		dialog.showAsInputDialog();
 		
 		if(dialog.closedWithOK()) {
-			SNPList snps = SNPLists.createUniqueSNPList(snpLists);
+			SNVList snps = SNVLists.createUniqueSNVList(snpLists);
 			GFFTree tree = (GFFTree)gff3mios.get(gff3Selection.getSelectedIndex());
 			Genome genome = ds.getGenome();
 			SubjectList selPersons = personSetting.getSelectedSubjects();
@@ -112,7 +112,7 @@ public class SNPCharacterizationPlugin extends SNPListPlugin {
 		}
 	}
 	
-	public void characterizeSNPs(final SubjectList persons, final SNPList snps, final GFFTree tree, final Genome genome, final long upstream, final long downstream) {
+	public void characterizeSNPs(final SubjectList persons, final SNVList snps, final GFFTree tree, final Genome genome, final long upstream, final long downstream) {
 		AbstractTask task = new AbstractTask("Characterize SNPs") {
 			@Override
 			protected void initialize() {}
@@ -133,7 +133,7 @@ public class SNPCharacterizationPlugin extends SNPListPlugin {
 				for(Subject person : persons) {
 					for(int i = 0; i < snps.size(); i++) {
 						count++;
-						SNP s = snps.get(i);
+						SNV s = snps.get(i);
 						
 						String chromosome = genome.getOriginalSequenceName(s.getChromosome());
 						int position = s.getPosition();
@@ -168,7 +168,7 @@ public class SNPCharacterizationPlugin extends SNPListPlugin {
 		task.start();
 	}
 	
-	private SNPCharacterization characterizeSNPs(Subject p, Genome g, GFFElement e, SNP snp) throws Exception {
+	private SNPCharacterization characterizeSNPs(Subject p, Genome g, GFFElement e, SNV snp) throws Exception {
 		SNPCharacterization snpChar = new SNPCharacterization(p.getID(), p.getName(), snp);
 		
 		CodonsAminoacids cas = new CodonsAminoacids();
@@ -781,7 +781,7 @@ public class SNPCharacterizationPlugin extends SNPListPlugin {
 		return aa.oneLetter+"";
 	}
 	
-	public int getLocalSNPPosition(GFFElement gffElement, SNP snp) {
+	public int getLocalSNPPosition(GFFElement gffElement, SNV snp) {
 		int start =  gffElement.getChromosomalLocation().getStart();
 		int snpPos = snp.getPosition();
 		return snpPos - start;

@@ -6,8 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 
 /**
  * @author jaeger
@@ -39,7 +39,7 @@ public class REFParser extends AbstractDataParser {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(refFile));
 			String line = null;
-			SNPList snps = ds.getGlobalSNPList();
+			SNVList snps = ds.getGlobalSNVList();
 			while((line = br.readLine()) != null) {
 				String[] split = split(line);
 				String snpId = split[0];
@@ -47,7 +47,7 @@ public class REFParser extends AbstractDataParser {
 					continue;
 				}
 				char referenceNucleotide = split[1] != null && split[1].length() > 0 ? split[1].charAt(0) : 'N';
-				SNP s = snps.get(snpId);
+				SNV s = snps.get(snpId);
 				if(s == null) {
 					continue;
 				}

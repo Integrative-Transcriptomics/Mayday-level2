@@ -1,18 +1,18 @@
 package mayday.Reveal.data.ld.old;
 
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 
 public class LDSNP implements Comparable<LDSNP> {
 
-	private SNP s;
+	private SNV s;
 	private double r2;
 	
-	public LDSNP(SNP s, double r2) {
+	public LDSNP(SNV s, double r2) {
 		this.s = s;
 		this.r2 = r2;
 	}
 	
-	public SNP getSNP() {
+	public SNV getSNP() {
 		return this.s;
 	}
 	

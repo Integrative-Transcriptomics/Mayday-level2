@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.data.SNVPair;
 import mayday.Reveal.data.ld.LDResults;
 import mayday.core.tasks.AbstractTask;
 
@@ -48,7 +48,7 @@ public class LDParser extends AbstractDataParser {
 			
 			boolean curHeader = header;
 			
-			SNPList global = ds.getGlobalSNPList();
+			SNVList global = ds.getGlobalSNVList();
 			
 			while((line = br.readLine()) != null) {
 				if(curHeader == true) {
@@ -75,17 +75,17 @@ public class LDParser extends AbstractDataParser {
 				
 				double r2Value = Double.parseDouble(splitted[6]);
 				
-				SNP a = global.get(snpA);
+				SNV a = global.get(snpA);
 				
 				//if a is null, we don't need this pair
 				if(a == null)
 					continue;
 				
-				SNP b = global.get(snpB);
+				SNV b = global.get(snpB);
 				
 				//a is not null and b is not null
 				if(b != null) {
-					ldResults.put(new SNPPair(a, b), r2Value);
+					ldResults.put(new SNVPair(a, b), r2Value);
 				}
 			}
 			

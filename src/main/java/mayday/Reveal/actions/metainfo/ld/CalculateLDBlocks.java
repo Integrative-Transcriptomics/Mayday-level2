@@ -6,15 +6,15 @@ import javax.swing.JOptionPane;
 
 import mayday.Reveal.RevealPlugin;
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.data.SNVPair;
 import mayday.Reveal.data.ld.LDBlocks;
 import mayday.Reveal.data.ld.LDClustering;
 import mayday.Reveal.data.ld.LDResults;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.utilities.RevealMenuConstants;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.clustering.ClusterTask;
 import mayday.core.settings.SettingDialog;
 import mayday.core.settings.typed.DoubleSetting;
@@ -43,7 +43,7 @@ public class CalculateLDBlocks extends RevealPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		final DataStorage ds = projectHandler.getSelectedProject();
 		
 		if(ds == null) {
@@ -66,7 +66,7 @@ public class CalculateLDBlocks extends RevealPlugin {
 		
 		final double threshold = r2T.getDoubleValue();
 		
-		final SNPList unionList = SNPLists.createUniqueSNPList(snpLists);
+		final SNVList unionList = SNVLists.createUniqueSNVList(snpLists);
 		
 		final MetaInformation mi = projectHandler.getSelectedMetaInformation();
 		
@@ -99,9 +99,9 @@ public class CalculateLDBlocks extends RevealPlugin {
 					LDBlocks blocks = new LDBlocks(unionList, clusterIndices);
 					
 					for(int i = 1; i < clusterIndices.length; i++) {
-						SNP a = unionList.get(i-1);
-						SNP b = unionList.get(i);
-						Double r2 = ldRes.get(new SNPPair(a,b));
+						SNV a = unionList.get(i-1);
+						SNV b = unionList.get(i);
+						Double r2 = ldRes.get(new SNVPair(a,b));
 						
 						System.out.println(unionList.get(i-1).getID() + "\t" + clusterIndices[i-1] + "\t" + r2);
 					}

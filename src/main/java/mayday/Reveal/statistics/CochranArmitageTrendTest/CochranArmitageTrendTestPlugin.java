@@ -7,18 +7,18 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import mayday.Reveal.actions.RevealTask;
-import mayday.Reveal.actions.snplist.SNPListPlugin;
+import mayday.Reveal.actions.snplist.SNVListPlugin;
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.HaplotypesList;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.data.SubjectList;
 import mayday.Reveal.data.meta.StatisticalTestResult;
 import mayday.Reveal.statistics.StatisticalTest;
 import mayday.Reveal.utilities.ContingencyTable;
 import mayday.Reveal.utilities.RevealMenuConstants;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.core.math.pcorrection.PCorrectionPlugin;
 import mayday.core.pluma.PluginInfo;
 import mayday.core.pluma.PluginManager;
@@ -31,7 +31,7 @@ import mayday.core.settings.typed.StringSetting;
 
 import org.apache.commons.math.MathException;
 
-public class CochranArmitageTrendTestPlugin extends SNPListPlugin {
+public class CochranArmitageTrendTestPlugin extends SNVListPlugin {
 
 	@Override
 	public String getName() {
@@ -54,8 +54,8 @@ public class CochranArmitageTrendTestPlugin extends SNPListPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
-		final SNPList allSNPs = SNPLists.createUniqueSNPList(snpLists);
+	public void run(Collection<SNVList> snpLists) {
+		final SNVList allSNPs = SNVLists.createUniqueSNVList(snpLists);
 		
 		RevealTask task = new RevealTask("Cochran-Armitage Trend Test", getProjectHandler()) {
 
@@ -120,7 +120,7 @@ public class CochranArmitageTrendTestPlugin extends SNPListPlugin {
 		task.start();
 	}
 	
-	private StatisticalTestResult applyTest(RevealTask task, StatisticalTest test, DataStorage ds, SNPList snps, boolean one_sided) throws MathException {
+	private StatisticalTestResult applyTest(RevealTask task, StatisticalTest test, DataStorage ds, SNVList snps, boolean one_sided) throws MathException {
 		StatisticalTestResult res = new StatisticalTestResult(test.getName());
 		
 		SubjectList persons = ds.getSubjects();
@@ -132,7 +132,7 @@ public class CochranArmitageTrendTestPlugin extends SNPListPlugin {
 		double numSNPs = snps.size();
 		int count = 0;
 		
-		for(SNP snp : snps) {
+		for(SNV snp : snps) {
 			double[][] table = ContingencyTable.get2x3ContingencyTable(affectedPersons, unaffectedPersons, haplotypes, snp.getIndex());
 			double p = test.test(table, one_sided);
 			res.setPValue(snp, p);

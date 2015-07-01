@@ -12,11 +12,11 @@ import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.SLResults;
 import mayday.Reveal.data.meta.SingleLocusResult;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.core.Probe;
 import mayday.core.settings.SettingDialog;
 import mayday.core.settings.generic.HierarchicalSetting;
@@ -81,7 +81,7 @@ public class ExportSLRSNPsAction extends RevealAction {
 					geneToWriter.put(genes.getGene(i), bw);
 				}
 				
-				SNPList selectedSNPs = SNPLists.createUniqueSNPList(projectHandler.getSelectedSNPLists());
+				SNVList selectedSNPs = SNVLists.createUniqueSNVList(projectHandler.getSelectedSNVLists());
 				
 				SLResults slrs = (SLResults) ds.getMetaInformationManager().get(SLResults.MYTYPE).get(0);
 				
@@ -101,7 +101,7 @@ public class ExportSLRSNPsAction extends RevealAction {
 					SingleLocusResult slr = slrs.get(g);
 					BufferedWriter bw = geneToWriter.get(g);
 					
-					for(SNP s : slr.keySet()) {
+					for(SNV s : slr.keySet()) {
 						if(selectedSNPs != null && !selectedSNPs.contains(s)) {
 							continue;
 						}

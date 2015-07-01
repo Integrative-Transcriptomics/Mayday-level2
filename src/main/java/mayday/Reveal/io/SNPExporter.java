@@ -9,9 +9,9 @@ import java.util.Map;
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.core.tasks.AbstractTask;
 
 public class SNPExporter {
@@ -54,14 +54,14 @@ public class SNPExporter {
 					geneToWriter.put(genes.getGene(i), bw);
 				}
 				
-				SNPList snps = SNPLists.createUniqueSNPList(ds.getProjectHandler().getSelectedSNPLists());
+				SNVList snps = SNVLists.createUniqueSNVList(ds.getProjectHandler().getSelectedSNVLists());
 				
 				if(snps == null) {
 					writeLog("No SNPs have been selected for export");
 					return;
 				}
 				
-				for(SNP s : snps) {
+				for(SNV s : snps) {
 					if(hasBeenCancelled()) {
 						for(BufferedWriter bw : geneToWriter.values()) {
 							bw.close();

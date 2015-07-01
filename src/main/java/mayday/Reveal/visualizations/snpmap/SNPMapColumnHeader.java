@@ -15,8 +15,8 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
 import mayday.vis3.model.ViewModelEvent;
 import mayday.vis3.model.ViewModelListener;
@@ -48,7 +48,7 @@ public class SNPMapColumnHeader extends JComponent implements MouseListener, Vie
 	
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
-		SNPList snps = snpMap.snps;
+		SNVList snps = snpMap.snps;
 		int cellWidth = snpMap.setting.getCellWidth();
 		
 		Rectangle vBounds = snpMap.compScroller.getVisibleRect();
@@ -68,7 +68,7 @@ public class SNPMapColumnHeader extends JComponent implements MouseListener, Vie
 		
 		int count = 0;
 		for(int i = start; i < stop; i++) {
-			SNP s = snps.get(i);
+			SNV s = snps.get(i);
 			String snpID = s.getID();
 			Rectangle2D bounds = g2.getFontMetrics().getStringBounds(snpID, g2);
 			
@@ -103,7 +103,7 @@ public class SNPMapColumnHeader extends JComponent implements MouseListener, Vie
 			int snpIndex = x / cellSize;
 			
 			if(snpIndex < snpMap.snps.size()) {
-				SNP s = snpMap.snps.get(snpIndex);
+				SNV s = snpMap.snps.get(snpIndex);
 				
 				if(e.isControlDown()) {
 					snpMap.getViewModel().toggleSNPSelected(s);
@@ -146,12 +146,12 @@ public class SNPMapColumnHeader extends JComponent implements MouseListener, Vie
 						&& stopIndex < snpMap.snps.size() && stopIndex >= 0) {
 					
 					if(startIndex != stopIndex) {
-						Set<SNP> selection = new HashSet<SNP>();
+						Set<SNV> selection = new HashSet<SNV>();
 						for(int i = startIndex; i <= stopIndex; i++) {
 							selection.add(snpMap.snps.get(i));
 						}
 						
-						Set<SNP> newSelection = new HashSet<SNP>(snpMap.getViewModel().getSelectedSNPs());
+						Set<SNV> newSelection = new HashSet<SNV>(snpMap.getViewModel().getSelectedSNPs());
 						
 						if(e.isControlDown()) {
 							if(newSelection.containsAll(selection)) {

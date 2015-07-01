@@ -10,13 +10,13 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
 import mayday.Reveal.gui.OptionPanelProvider;
 import mayday.core.io.StorageNode;
 
-public class SNPChromLocFilter extends AbstractDataProcessor<SNP, Boolean> implements OptionPanelProvider, StorageNodeStorable {
+public class SNPChromLocFilter extends AbstractDataProcessor<SNV, Boolean> implements OptionPanelProvider, StorageNodeStorable {
 
 	private String chromosome = "";
 	private Integer startPosition = 0;
@@ -116,7 +116,7 @@ public class SNPChromLocFilter extends AbstractDataProcessor<SNP, Boolean> imple
 
 	@Override
 	public boolean isAcceptableInput(Class<?>[] inputClass) {
-		return SNP.class.isAssignableFrom(inputClass[0]);
+		return SNV.class.isAssignableFrom(inputClass[0]);
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class SNPChromLocFilter extends AbstractDataProcessor<SNP, Boolean> imple
 	}
 
 	@Override
-	protected Boolean convert(SNP value) {
+	protected Boolean convert(SNV value) {
 		if(chromosome != null && startPosition <= stopPosition) {
 			if(value.getChromosome().equals(chromosome)) {
 				int position = value.getPosition();

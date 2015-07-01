@@ -18,7 +18,7 @@ import javax.swing.JComponent;
 
 import mayday.Reveal.data.Haplotypes;
 import mayday.Reveal.data.HaplotypesList;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.viewmodel.RevealViewModel;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
@@ -179,7 +179,7 @@ public class SNPMapComponent extends JComponent implements MouseListener, ViewMo
 			Haplotypes h = haplotypes.get(index);
 			AffineTransform af2 = g.getTransform();
 			for(int i = start; i < stop; i++) {
-				SNP s = snpMap.snps.get(i);
+				SNV s = snpMap.snps.get(i);
 				char A = h.getSNPA(s.getIndex());
 				char B = h.getSNPB(s.getIndex());
 				char R = s.getReferenceNucleotide();
@@ -210,7 +210,7 @@ public class SNPMapComponent extends JComponent implements MouseListener, ViewMo
 			int snpIndex = x / cellWidth;
 			
 			if(snpIndex < snpMap.snps.size()) {
-				SNP s = snpMap.snps.get(snpIndex);
+				SNV s = snpMap.snps.get(snpIndex);
 				
 				int y = e.getY();
 				Integer pIndex = y / cellHeight;

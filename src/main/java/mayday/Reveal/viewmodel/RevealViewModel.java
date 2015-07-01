@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.core.DataSet;
 import mayday.core.ProbeList;
@@ -22,11 +22,11 @@ import mayday.vis3.model.Visualizer;
  */
 public class RevealViewModel extends ViewModel {
 	
-	Set<SNP> snpSelection;
+	Set<SNV> snpSelection;
 	Set<Subject> personSelection;
 	private DataStorage dataStorage;
 	
-	private SNPList topPrioritySNPList;
+	private SNVList topPrioritySNPList;
 
 	/**
 	 * @param viz
@@ -36,11 +36,11 @@ public class RevealViewModel extends ViewModel {
 	 * @param initialSNPSelection
 	 */
 	public RevealViewModel(Visualizer viz, DataSet dataset,
-			List<ProbeList> initialSelection, DataStorage dataStorage, List<SNP> initialSNPSelection, List<Subject> initialPersonSelection) {
+			List<ProbeList> initialSelection, DataStorage dataStorage, List<SNV> initialSNPSelection, List<Subject> initialPersonSelection) {
 		super(viz, dataset, initialSelection);
 		
 		this.dataStorage = dataStorage;
-		this.snpSelection = new HashSet<SNP>();
+		this.snpSelection = new HashSet<SNV>();
 		this.personSelection = new HashSet<Subject>();
 		
 		if(initialSNPSelection != null) {
@@ -55,18 +55,18 @@ public class RevealViewModel extends ViewModel {
 	 * get SNPs used for this visualizations
 	 * @return all snps used for that visualization
 	 */
-	public List<SNP> getTopPrioritySNPList() {
+	public List<SNV> getTopPrioritySNPList() {
 		return Collections.unmodifiableList(this.topPrioritySNPList);
 	}
 	
-	public void setTopPrioritySNPList(SNPList snpList) {
+	public void setTopPrioritySNPList(SNVList snpList) {
 		this.topPrioritySNPList = snpList;
 	}
 	
 	/**
 	 * @return set of selected snps
 	 */
-	public Set<SNP> getSelectedSNPs() {
+	public Set<SNV> getSelectedSNPs() {
 		return Collections.unmodifiableSet(snpSelection);
 	}
 	
@@ -78,7 +78,7 @@ public class RevealViewModel extends ViewModel {
 	 * @param snp
 	 * @return true if snp is selected, else false
 	 */
-	public boolean isSelected(SNP snp) {
+	public boolean isSelected(SNV snp) {
 		return snpSelection.contains(snp);
 	}
 	
@@ -89,7 +89,7 @@ public class RevealViewModel extends ViewModel {
 	/**
 	 * @param snp
 	 */
-	public void selectSNP(SNP snp) {
+	public void selectSNP(SNV snp) {
 		if (snpSelection.add(snp)) {
 			eventfirer.fireEvent(new RevealViewModelEvent(this, RevealViewModelEvent.SNP_SELECTION_CHANGED));
 		}
@@ -104,7 +104,7 @@ public class RevealViewModel extends ViewModel {
 	/**
 	 * @param snp
 	 */
-	public void unselectSNP(SNP snp) {
+	public void unselectSNP(SNV snp) {
 		if(snpSelection.remove(snp)) {
 			eventfirer.fireEvent(new RevealViewModelEvent(this, RevealViewModelEvent.SNP_SELECTION_CHANGED));
 		}
@@ -118,7 +118,7 @@ public class RevealViewModel extends ViewModel {
 	/**
 	 * @param snp
 	 */
-	public void toggleSNPSelected(SNP snp) {
+	public void toggleSNPSelected(SNV snp) {
 		if(snpSelection.contains(snp)) {
 			unselectSNP(snp);
 		} else {
@@ -137,8 +137,8 @@ public class RevealViewModel extends ViewModel {
 	/**
 	 * @param snps
 	 */
-	public void toggleSNPsSelected(Set<SNP> snps) {
-		for(SNP snp : snps) {
+	public void toggleSNPsSelected(Set<SNV> snps) {
+		for(SNV snp : snps) {
 			if(snpSelection.contains(snp)) {
 				snpSelection.remove(snp);
 			} else {
@@ -162,7 +162,7 @@ public class RevealViewModel extends ViewModel {
 	/**
 	 * @param newSelection
 	 */
-	public void setSNPSelection(Collection<SNP> newSelection) {
+	public void setSNPSelection(Collection<SNV> newSelection) {
 		setSNPSelectionSilent(newSelection);
 		eventfirer.fireEvent(new RevealViewModelEvent(this, RevealViewModelEvent.SNP_SELECTION_CHANGED));
 	}
@@ -177,13 +177,13 @@ public class RevealViewModel extends ViewModel {
 	/**
 	 * @param newSelection
 	 */
-	public void setSNPSelectionSilent(Collection<SNP> newSelection) {
+	public void setSNPSelectionSilent(Collection<SNV> newSelection) {
 		if(newSelection == null) {
 			snpSelection.clear();
 			return;
 		}
 		if (newSelection.size()==snpSelection.size()) {
-			Set<SNP> tmp = new HashSet<SNP>(snpSelection);
+			Set<SNV> tmp = new HashSet<SNV>(snpSelection);
 			tmp.removeAll(newSelection);
 			if (tmp.size()==0)
 				return;  // identical, no change
@@ -211,8 +211,8 @@ public class RevealViewModel extends ViewModel {
 	/**
 	 * @param snp
 	 */
-	public void setSNPSelection(SNP snp) {
-		LinkedList<SNP> snps = new LinkedList<SNP>();
+	public void setSNPSelection(SNV snp) {
+		LinkedList<SNV> snps = new LinkedList<SNV>();
 		if(snp != null) {
 			snps.add(snp);
 		}

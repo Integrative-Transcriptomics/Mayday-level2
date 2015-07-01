@@ -11,9 +11,9 @@ import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.GenePair;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.data.SNVPair;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.data.meta.TLResults;
 import mayday.Reveal.data.meta.TwoLocusResult;
@@ -53,7 +53,7 @@ public class TLRParser extends AbstractDataParser {
 			Gene gene = null;
 			TwoLocusResult tlr = null;
 			GeneList genes = data.getGenes();
-			SNPList snps = data.getGlobalSNPList();
+			SNVList snps = data.getGlobalSNVList();
 			
 			//get gene from filename
 			String filename = tlrFile.getName();
@@ -106,8 +106,8 @@ public class TLRParser extends AbstractDataParser {
 						snpName2 = splitSNPNames[1];
 					}
 					
-					SNP snp1 = snps.get(snpName1);
-					SNP snp2 = snps.get(snpName2);
+					SNV snp1 = snps.get(snpName1);
+					SNV snp2 = snps.get(snpName2);
 					
 					double beta = elements[4].equals("NA") ? Double.NaN : Double.parseDouble(elements[4]);
 					double stat = elements[5].equals("NA") ? Double.NaN : Double.parseDouble(elements[5]);
@@ -115,18 +115,18 @@ public class TLRParser extends AbstractDataParser {
 					
 					GenePair gp = new GenePair(gene1, gene2);
 					
-					List<SNPPair> snpPairs = tlr.get(gp);
+					List<SNVPair> snpPairs = tlr.get(gp);
 					
 					if(snpPairs != null) {
 						List<TwoLocusResult.Statistics> stats = tlr.statMapping.get(gp);
-						SNPPair snpPair = new SNPPair(snp1, snp2);
+						SNVPair snpPair = new SNVPair(snp1, snp2);
 						//assume snpPair is not already contained in the snpPairs list
 						snpPairs.add(snpPair);
 						stats.add(tlr.new Statistics(beta, stat, p));
 					} else {
-						snpPairs = new LinkedList<SNPPair>();
+						snpPairs = new LinkedList<SNVPair>();
 						tlr.put(gp, snpPairs);
-						snpPairs.add(new SNPPair(snp1, snp2));
+						snpPairs.add(new SNVPair(snp1, snp2));
 						tlr.statMapping.put(gp, new LinkedList<TwoLocusResult.Statistics>());
 						List<TwoLocusResult.Statistics> stats = tlr.statMapping.get(gp);
 						stats.add(tlr.new Statistics(beta, stat, p));

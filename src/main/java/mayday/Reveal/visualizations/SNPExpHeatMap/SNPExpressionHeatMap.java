@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
@@ -68,11 +68,11 @@ public class SNPExpressionHeatMap extends RevealVisualization {
 		MasterTable mt = new MasterTable(ds);
 		ds.setMasterTable(mt);
 		
-		SNPList snps = getData().getGlobalSNPList();
+		SNVList snps = getData().getGlobalSNVList();
 		List<Subject> affected = getData().getSubjects().getAffectedSubjects();
 		List<Subject> unaffected = getData().getSubjects().getUnaffectedSubjects();
 		
-		for(SNP s : snps) {
+		for(SNV s : snps) {
 			int cRefA = 0;
 			int cHeteroA = 0;
 			int cHomoA = 0;

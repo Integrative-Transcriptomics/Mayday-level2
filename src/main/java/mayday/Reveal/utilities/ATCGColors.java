@@ -70,6 +70,13 @@ public class ATCGColors {
 	 * @return index of the provided pairs
 	 */
 	public static int getPairIndex(char a, char b) {
+		
+		if(a > b) {
+			char t = a;
+			a = b;
+			b = t;
+		}
+		
 		if(a == 'A') {
 			if(b == 'A') 
 				return 0;

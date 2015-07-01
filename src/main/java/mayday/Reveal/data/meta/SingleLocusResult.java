@@ -1,14 +1,14 @@
 package mayday.Reveal.data.meta;
 
 import mayday.Reveal.data.Gene;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 
 /**
  * @author jaeger
  *
  */
 @SuppressWarnings("serial")
-public class SingleLocusResult extends LocusResult<SNP, SingleLocusResult.Statistics> {
+public class SingleLocusResult extends LocusResult<SNV, SingleLocusResult.Statistics> {
 	
 	private Gene g;
 	
@@ -67,7 +67,7 @@ public class SingleLocusResult extends LocusResult<SNP, SingleLocusResult.Statis
 	public String serialize() {
 		StringBuffer serial = new StringBuffer();
 		int count = 0;
-		for(SNP s : keySet()) {
+		for(SNV s : keySet()) {
 			if(s == null)
 				continue;
 			count++;

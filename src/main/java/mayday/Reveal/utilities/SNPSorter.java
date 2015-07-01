@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.StatisticalTestResult;
 
 /**
@@ -19,7 +19,7 @@ public class SNPSorter {
 	
 	private HashMap<Integer, Integer> sortedSNPs = new HashMap<Integer, Integer>();
 
-	public SNPSorter(SNPList initial) {
+	public SNPSorter(SNVList initial) {
 		for(int i = 0; i < initial.size(); i++) {
 			sortedSNPs.put(i, initial.get(i).getIndex());
 		}
@@ -30,7 +30,7 @@ public class SNPSorter {
 	 * @param sortOption
 	 * @return sorted SNPList
 	 */
-	public void sortSNPs(SNPList unsorted, String sortOption, StatisticalTestResult str) {
+	public void sortSNPs(SNVList unsorted, String sortOption, StatisticalTestResult str) {
 		List<Integer> indexList = unsorted.getIndexList();
 		
 		switch(sortOption) {
@@ -50,7 +50,7 @@ public class SNPSorter {
 		}
 	}
 
-	private void restoreOrdering(SNPList unsorted) {
+	private void restoreOrdering(SNVList unsorted) {
 		for(int i = 0; i < unsorted.size(); i++) {
 			sortedSNPs.put(i, unsorted.get(i).getIndex());
 		}

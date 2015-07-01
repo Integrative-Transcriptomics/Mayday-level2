@@ -14,9 +14,9 @@ import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.GenePair;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.data.SNVPair;
 import mayday.Reveal.data.ld.LDBlocks;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.data.meta.SLResults;
@@ -26,7 +26,7 @@ import mayday.Reveal.data.meta.TwoLocusResult;
 import mayday.Reveal.data.meta.SingleLocusResult.Statistics;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
 import mayday.Reveal.utilities.MultiArraySorter;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.core.Probe;
@@ -56,8 +56,8 @@ public class AssociationMatrix extends RevealVisualization {
 	private DoubleMatrix betaMatrix;
 	private HashMap<Gene, Integer> geneIDs;
 	private HashMap<String, Integer> geneCombiIDs;
-	private SNPList snps;
-	private HashMap<String, Set<SNP>> indexSnpMapping;
+	private SNVList snps;
+	private HashMap<String, Set<SNV>> indexSnpMapping;
 	
 	public BidirectionalHashMap<Integer, Integer> sortedIndices;
 	
@@ -115,7 +115,7 @@ public class AssociationMatrix extends RevealVisualization {
 			matrix = new DoubleMatrix(numGenesRow, numGenesColumn);
 			betaMatrix = new DoubleMatrix(numGenesRow, numGenesColumn);
 			
-			indexSnpMapping = new HashMap<String, Set<SNP>>();
+			indexSnpMapping = new HashMap<String, Set<SNV>>();
 			
 			String[] geneNamesRow = new String[genesInRow.size()];
 			String[] geneNamesColumn = new String[genesInColumn.size()];
@@ -133,7 +133,7 @@ public class AssociationMatrix extends RevealVisualization {
 				geneNamesColumn[i] = genesInColumn.getGene(i).getDisplayName();
 			}
 			
-			snps = SNPLists.createUniqueSNPList(ds.getProjectHandler().getSelectedSNPLists());
+			snps = SNVLists.createUniqueSNVList(ds.getProjectHandler().getSelectedSNVLists());
 			
 			matrixComp = new MatrixComponent(this, geneNamesColumn, geneNamesRow);
 			
@@ -165,7 +165,7 @@ public class AssociationMatrix extends RevealVisualization {
 			matrix = new DoubleMatrix(combis, numGenes);
 			betaMatrix = new DoubleMatrix(combis, numGenes);
 			
-			indexSnpMapping = new HashMap<String, Set<SNP>>();
+			indexSnpMapping = new HashMap<String, Set<SNV>>();
 			
 			String[] geneNames = new String[genesInColumn.size()];
 			String[] geneCombinations = new String[combis];
@@ -185,7 +185,7 @@ public class AssociationMatrix extends RevealVisualization {
 				}
 			}
 			
-			snps = SNPLists.createUniqueSNPList(ds.getProjectHandler().getSelectedSNPLists());
+			snps = SNVLists.createUniqueSNVList(ds.getProjectHandler().getSelectedSNVLists());
 			
 			matrixComp = new MatrixComponent(this, geneNames, geneCombinations);
 			
@@ -247,7 +247,7 @@ public class AssociationMatrix extends RevealVisualization {
 //		cellsToSNPs.clear();
 //		maxCellIntensity = 0;
 //		genesToCells.clear();
-		Set<SNP> distinctSNPs = new HashSet<SNP>();
+		Set<SNV> distinctSNPs = new HashSet<SNV>();
 		
 		Set<Double> distinctBeta = new HashSet<Double>();
 		double betaMin = Double.MAX_VALUE;
@@ -265,7 +265,7 @@ public class AssociationMatrix extends RevealVisualization {
 				for(GenePair gp : genePairs) {
 					
 					//get snp pairs
-					List<SNPPair> snpPairs = tlr.get(gp);
+					List<SNVPair> snpPairs = tlr.get(gp);
 					List<TwoLocusResult.Statistics> stats = tlr.statMapping.get(gp);
 					
 					double currentIntensity = 0;
@@ -273,7 +273,7 @@ public class AssociationMatrix extends RevealVisualization {
 //					int snpCount = 0;
 					
 					for(int j = 0; j < snpPairs.size(); j++) {
-						SNPPair sp = snpPairs.get(j);
+						SNVPair sp = snpPairs.get(j);
 						
 						if(!snps.contains(sp.snp1) && !snps.contains(sp.snp2)) {
 							//skip if not at least one snp from the snp pair
@@ -450,7 +450,7 @@ public class AssociationMatrix extends RevealVisualization {
 				continue;
 			
 			int geneIndex1 = geneIDs.get(g1);
-			for(SNP s : snps) {
+			for(SNV s : snps) {
 				//only look at SNPs that are contained in the respective selected snp list
 				if(!slr.containsKey(s))
 					continue;
@@ -463,7 +463,7 @@ public class AssociationMatrix extends RevealVisualization {
 				
 				String key = geneIndex2 + "" + geneIndex1;
 				if(!indexSnpMapping.containsKey(key)) {
-					indexSnpMapping.put(key, new HashSet<SNP>());
+					indexSnpMapping.put(key, new HashSet<SNV>());
 				}
 				
 				Statistics stat = slr.get(s);
@@ -592,7 +592,7 @@ public class AssociationMatrix extends RevealVisualization {
 		return setting;
 	}
 
-	public Set<SNP> getSNPsInCell(int xIndex, int yIndex) {
+	public Set<SNV> getSNPsInCell(int xIndex, int yIndex) {
 		String key = xIndex + "" + yIndex;
 		return indexSnpMapping.get(key);
 	}

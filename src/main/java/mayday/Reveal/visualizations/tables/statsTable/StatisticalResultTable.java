@@ -7,11 +7,11 @@ import java.util.Set;
 import javax.swing.ListSelectionModel;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.data.meta.StatisticalTestResult;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.visualizations.tables.AbstractMetaInformationTable;
 
 public class StatisticalResultTable extends AbstractMetaInformationTable {
@@ -29,14 +29,14 @@ public class StatisticalResultTable extends AbstractMetaInformationTable {
 		repaint();
 	}
 	
-	public void updateAfterSelectionChange(Set<SNP> selectedSNPs) {
+	public void updateAfterSelectionChange(Set<SNV> selectedSNPs) {
 		MetaInfoTableModel model = getModel();
 		ListSelectionModel selectionModel = getSelectionModel();
-		Set<SNP> copySelected = new HashSet<SNP>(selectedSNPs);
+		Set<SNV> copySelected = new HashSet<SNV>(selectedSNPs);
 		
 		selectionModel.clearSelection();
 		
-		for(SNP s : copySelected) {
+		for(SNV s : copySelected) {
 			int snpIndex = model.getFirstColumnPosition(s.getID());
 			if(snpIndex != -1)
 				selectionModel.addSelectionInterval(snpIndex, snpIndex);
@@ -45,8 +45,8 @@ public class StatisticalResultTable extends AbstractMetaInformationTable {
 
 	public void initializeData(MetaInfoTableModel model) {
 		DataStorage ds = getDataStorage();
-		Set<SNPList> selectedSNPLists = ds.getProjectHandler().getSelectedSNPLists();
-		SNPList snps = SNPLists.createUniqueSNPList(selectedSNPLists);
+		Set<SNVList> selectedSNPLists = ds.getProjectHandler().getSelectedSNVLists();
+		SNVList snps = SNVLists.createUniqueSNVList(selectedSNPLists);
 		
 		List<MetaInformation> mis = ds.getMetaInformationManager().get(StatisticalTestResult.MYTYPE);
 		
@@ -65,7 +65,7 @@ public class StatisticalResultTable extends AbstractMetaInformationTable {
 			columnNames[i+1] = str.getStatTestName();
 			
 			for(int j = 0; j < snps.size(); j++) {
-				SNP s = snps.get(j);
+				SNV s = snps.get(j);
 				tableData[j][i+1] = str.getPValue(s);
 			}
 		}

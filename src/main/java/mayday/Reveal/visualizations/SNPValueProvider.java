@@ -5,8 +5,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
 import mayday.Reveal.data.Gene;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.Genome;
 import mayday.Reveal.data.meta.SingleLocusResult;
 import mayday.Reveal.data.meta.StatisticalTestResult;
@@ -15,14 +15,14 @@ import mayday.Reveal.viewmodel.RevealViewModel;
 public class SNPValueProvider {
 
 	public interface Provider {
-		public double getValue(SNP s);
+		public double getValue(SNV s);
 		public String getName();
 		public int getSourceType();
 	}
 	
 	public class ChromosomalLocationProvider implements Provider {
 		@Override
-		public double getValue(SNP s) {
+		public double getValue(SNV s) {
 			String chromosome = s.getChromosome();
 			int position = s.getPosition();
 			
@@ -51,7 +51,7 @@ public class SNPValueProvider {
 	
 	public class SNPIndexProvider implements Provider {
 		@Override
-		public double getValue(SNP s) {
+		public double getValue(SNV s) {
 			return s.getIndex();
 		}
 
@@ -76,7 +76,7 @@ public class SNPValueProvider {
 		}
 		
 		@Override
-		public double getValue(SNP s) {
+		public double getValue(SNV s) {
 			SingleLocusResult slr = setting.getSelectedSingleLocusResult(gene);
 			if(slr == null)
 				return 0;
@@ -109,7 +109,7 @@ public class SNPValueProvider {
 	public class StatisticalTestResultProvider implements Provider {
 		
 		@Override
-		public double getValue(SNP s) {
+		public double getValue(SNV s) {
 			StatisticalTestResult statResult = setting.getSelectedStatResult();
 			if(statResult == null) {
 				return Double.NaN;
@@ -147,7 +147,7 @@ public class SNPValueProvider {
 		eventListenerList.remove(ChangeListener.class, cl);
 	}
 	
-	public double getValue(SNP s) {
+	public double getValue(SNV s) {
 		return provider.getValue(s);
 	}
 	
@@ -211,9 +211,9 @@ public class SNPValueProvider {
 		return provider.getSourceType();
 	}
 
-	public double getMinValue(SNPList snps) {
+	public double getMinValue(SNVList snps) {
 		double min = Double.MAX_VALUE;
-		for(SNP s : snps) {
+		for(SNV s : snps) {
 			double value = getValue(s);
 			if(value < min)
 				min = value;
@@ -221,9 +221,9 @@ public class SNPValueProvider {
 		return min;
 	}
 	
-	public double getMaxValue(SNPList snps) {
+	public double getMaxValue(SNVList snps) {
 		double max = Double.MIN_VALUE;
-		for(SNP s : snps) {
+		for(SNV s : snps) {
 			double value = getValue(s);
 			if(value > max)
 				max = value;

@@ -8,12 +8,12 @@ import javax.swing.ListSelectionModel;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Gene;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.data.meta.SLResults;
 import mayday.Reveal.data.meta.SingleLocusResult;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.visualizations.tables.AbstractMetaInformationTable;
 
 public class SLRTable extends AbstractMetaInformationTable {
@@ -36,8 +36,8 @@ public class SLRTable extends AbstractMetaInformationTable {
 	@Override
 	public void initializeData(MetaInfoTableModel model) {
 		DataStorage ds = getDataStorage();
-		Set<SNPList> selectedSNPLists = ds.getProjectHandler().getSelectedSNPLists();
-		SNPList snpList = SNPLists.createUniqueSNPList(selectedSNPLists);
+		Set<SNVList> selectedSNPLists = ds.getProjectHandler().getSelectedSNVLists();
+		SNVList snpList = SNVLists.createUniqueSNVList(selectedSNPLists);
 		
 		List<MetaInformation> slrMis = ds.getMetaInformationManager().get(SLResults.MYTYPE);
 		
@@ -57,7 +57,7 @@ public class SLRTable extends AbstractMetaInformationTable {
 		
 		SingleLocusResult slr = slResults.get(gene);
 		
-		Set<SNP> availableSNPs = slr.keySet();
+		Set<SNV> availableSNPs = slr.keySet();
 		availableSNPs.retainAll(snpList);
 		
 		int numSNPs = availableSNPs.size();
@@ -76,13 +76,13 @@ public class SLRTable extends AbstractMetaInformationTable {
 		
 		
 		int snpIndex = 0;
-		for(SNP s : availableSNPs) {
+		for(SNV s : availableSNPs) {
 			tableData[snpIndex++][0] = s.getID();
 		}
 		
 		snpIndex = 0;
 		for(int i = 0; i < slrMis.size(); i++) {
-			for(SNP s : availableSNPs) {
+			for(SNV s : availableSNPs) {
 				SingleLocusResult.Statistics stats = slr.get(s);
 				if(stats != null) {
 					tableData[snpIndex][1] = stats.p;
@@ -110,14 +110,14 @@ public class SLRTable extends AbstractMetaInformationTable {
 		repaint();
 	}
 	
-	public void updateAfterSelectionChange(Set<SNP> selectedSNPs) {
+	public void updateAfterSelectionChange(Set<SNV> selectedSNPs) {
 		MetaInfoTableModel model = getModel();
 		ListSelectionModel selectionModel = getSelectionModel();
-		Set<SNP> copySelected = new HashSet<SNP>(selectedSNPs);
+		Set<SNV> copySelected = new HashSet<SNV>(selectedSNPs);
 		
 		selectionModel.clearSelection();
 		
-		for(SNP s : copySelected) {
+		for(SNV s : copySelected) {
 			int snpIndex = model.getFirstColumnPosition(s.getID());
 			if(snpIndex != -1)
 				selectionModel.addSelectionInterval(snpIndex, snpIndex);

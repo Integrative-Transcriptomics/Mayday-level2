@@ -5,7 +5,7 @@ import java.util.Collection;
 import javax.swing.JOptionPane;
 
 import mayday.Reveal.RevealPlugin;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.utilities.RevealMenuConstants;
 
 /**
@@ -35,7 +35,7 @@ public class AboutReveal extends RevealPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		String infoText = "Reveal - Visual eQTL Analytics\n\n"
 				+ "Author:\nGünter Jäger\n"
 				+ "Center for Bioinformatics Tübingen\n"

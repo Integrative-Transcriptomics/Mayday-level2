@@ -18,7 +18,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import mayday.Reveal.data.Gene;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.meta.Genome;
 import mayday.Reveal.visualizations.SNPValueProvider;
 import mayday.vis3.SparseZBuffer;
@@ -55,7 +55,7 @@ public class SLProfilePlotComponent extends ChartComponent {
 			public void mouseClicked(MouseEvent e) {
 				int CONTROLMASK = getToolkit().getMenuShortcutKeyMask();
 				double[] clicked = getPoint(e.getX(), e.getY());
-				SNP s = (SNP)szb.getObject(clicked[0], clicked[1]);
+				SNV s = (SNV)szb.getObject(clicked[0], clicked[1]);
 				switch(e.getButton()) {
 				case MouseEvent.BUTTON1:
 					if(s != null) {
@@ -121,7 +121,7 @@ public class SLProfilePlotComponent extends ChartComponent {
 	}
 
 	public void select(Color selectionColor) {
-		Set<SNP> snps = new HashSet<SNP>();
+		Set<SNV> snps = new HashSet<SNV>();
 		snps.addAll(plot.snps);
 		
 		snps.retainAll(plot.getViewModel().getSelectedSNPs());
@@ -180,11 +180,11 @@ public class SLProfilePlotComponent extends ChartComponent {
 	}
 	
 	protected void selectByRectangle(Rectangle r, boolean control, boolean alt) {
-		Set<SNP> newSelection = new HashSet<SNP>();
+		Set<SNV> newSelection = new HashSet<SNV>();
 		double[] clicked1 = getPoint(r.x, r.y);
 		double[] clicked2 = getPoint(r.x+r.width, r.y+r.height);
 		
-		for(SNP s : plot.snps) {
+		for(SNV s : plot.snps) {
 			double xval = X.getValue(s);
 			double yval = Y.getValue(s);
 			boolean inX = (xval >= clicked1[0] && xval < clicked2[0]);
@@ -193,9 +193,9 @@ public class SLProfilePlotComponent extends ChartComponent {
 				newSelection.add(s);
 		}
 		
-		Set<SNP> previousSelection = plot.getViewModel().getSelectedSNPs();
+		Set<SNV> previousSelection = plot.getViewModel().getSelectedSNPs();
 		if(control && alt) {
-			previousSelection = new HashSet<SNP>(previousSelection);
+			previousSelection = new HashSet<SNV>(previousSelection);
 			previousSelection.removeAll(newSelection);
 			newSelection = previousSelection;
 		} else if(control) {
@@ -207,23 +207,23 @@ public class SLProfilePlotComponent extends ChartComponent {
 		plot.getViewModel().setSNPSelection(newSelection);
 	}
 	
-	public SNP getClickedSNP(Point coordinates) {
+	public SNV getClickedSNP(Point coordinates) {
 		return getClickedSNP(coordinates, layers);
 	}
 
-	public SNP getClickedSNP(Point coordinates, DataSeries[] layers) {
+	public SNV getClickedSNP(Point coordinates, DataSeries[] layers) {
 		double[] clicked = getPoint(coordinates.x, coordinates.y);
 		if(clicked ==null)
 			return null;
 		
-		SNP best_snpid = null;
+		SNV best_snpid = null;
 		double min_imprecision = 1;
 		double cutoff_imprecision = .1;
 		
 		double cx = clicked[0];
 		double cy = clicked[1];
 		
-		PointIterator<SNP> it = new PointIterator<SNP>(layers);
+		PointIterator<SNV> it = new PointIterator<SNV>(layers);
 		while(it.hasNext()) {
 			Double[] point = it.next();
 			double px = point[0];
@@ -284,7 +284,7 @@ public class SLProfilePlotComponent extends ChartComponent {
 		return geneLayer;
 	}
 	
-	protected DataSeries view(Collection<SNP> snps, boolean isSelectionLayer) {
+	protected DataSeries view(Collection<SNV> snps, boolean isSelectionLayer) {
 		DataSeries series = new DataSeries();
 		if(plot.setting.showDots()) {
 			series.setShape(new Shape() {
@@ -298,7 +298,7 @@ public class SLProfilePlotComponent extends ChartComponent {
 		}
 		
 		if(X != null && Y != null) {
-			for(SNP s: snps) {
+			for(SNV s: snps) {
 				double xx = X.getValue(s);
 				double yy = Y.getValue(s);
 				series.addPoint(xx, yy, s);

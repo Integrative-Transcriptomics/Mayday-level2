@@ -4,7 +4,7 @@ package mayday.Reveal.data;
  * @author jaeger
  *
  */
-public class SNP implements Comparable<SNP> {
+public class SNV implements Comparable<SNV> {
 	
 	private String id;
 	private int position;
@@ -14,7 +14,7 @@ public class SNP implements Comparable<SNP> {
 	private int index;
 	private double geneticDistance;
 	
-	public SNP(String id, char referenceNucleotide, int index) {
+	public SNV(String id, char referenceNucleotide, int index) {
 		this(id, null, 0., 0, index);
 		this.referenceNucleotide = referenceNucleotide;
 	}
@@ -27,7 +27,7 @@ public class SNP implements Comparable<SNP> {
 	 * @param referenceNucleotide 
 	 * @param index 
 	 */
-	public SNP(String gene, String id, String chromosome, int position, char referenceNucleotide, int index) {
+	public SNV(String gene, String id, String chromosome, int position, char referenceNucleotide, int index) {
 		this(id, chromosome, 0., position, index);
 		this.referenceNucleotide = referenceNucleotide;
 		this.gene = gene;
@@ -40,7 +40,7 @@ public class SNP implements Comparable<SNP> {
 	 * @param position
 	 * @param index
 	 */
-	public SNP(String id, String chromosome, double geneticDistance, int position, int index) {
+	public SNV(String id, String chromosome, double geneticDistance, int position, int index) {
 		this.id = id;
 		this.position = position;
 		this.chromosome = chromosome;
@@ -115,10 +115,10 @@ public class SNP implements Comparable<SNP> {
 	public boolean equals(Object o) {
 		if(o == this)
 			return true;
-		if(!(o instanceof SNP)){
+		if(!(o instanceof SNV)){
 			return false;
 		}
-		return ((SNP)o).id.equals(this.id);
+		return ((SNV)o).id.equals(this.id);
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class SNP implements Comparable<SNP> {
 	}
 
 	@Override
-	public int compareTo(SNP o) {
+	public int compareTo(SNV o) {
 		return getID().compareTo(o.getID());
 	}
 }

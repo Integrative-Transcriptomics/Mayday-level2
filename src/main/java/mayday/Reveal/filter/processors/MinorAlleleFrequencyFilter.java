@@ -4,12 +4,12 @@ import java.util.Arrays;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Haplotypes;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.data.SubjectList;
 import mayday.Reveal.filter.AbstractDataProcessor;
 
-public class MinorAlleleFrequencyFilter extends AbstractDataProcessor<SNP, Double> {
+public class MinorAlleleFrequencyFilter extends AbstractDataProcessor<SNV, Double> {
 
 	@Override
 	public void dispose() {}
@@ -21,7 +21,7 @@ public class MinorAlleleFrequencyFilter extends AbstractDataProcessor<SNP, Doubl
 
 	@Override
 	public boolean isAcceptableInput(Class<?>[] inputClass) {
-		return SNP.class.isAssignableFrom(inputClass[0]);
+		return SNV.class.isAssignableFrom(inputClass[0]);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class MinorAlleleFrequencyFilter extends AbstractDataProcessor<SNP, Doubl
 	}
 
 	@Override
-	protected Double convert(SNP value) {
+	protected Double convert(SNV value) {
 		
 		//f(a) = (1 x Aa + 2x aa) / ( 2x(AA + Aa + aa) )
 		

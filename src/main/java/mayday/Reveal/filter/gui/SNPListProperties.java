@@ -6,9 +6,9 @@ import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.events.SNPListEvent;
-import mayday.Reveal.events.SNPListListener;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.events.SNVListEvent;
+import mayday.Reveal.events.SNVListListener;
 import mayday.Reveal.listeners.DataStorageEvent;
 import mayday.Reveal.listeners.DataStorageListener;
 import mayday.core.gui.properties.PropertiesDialogFactory;
@@ -35,7 +35,7 @@ public class SNPListProperties extends AbstractPlugin {
 				"SNP List Properties Dialog",
 				"SNPList"
 				);
-		pli.getProperties().put(PropertiesDialogFactory.PropertyKey1, SNPList.class);
+		pli.getProperties().put(PropertiesDialogFactory.PropertyKey1, SNVList.class);
 		pli.getProperties().put(PropertiesDialogFactory.PropertyKey2, Dialog.class);
 		return pli;
 	}
@@ -51,18 +51,18 @@ public class SNPListProperties extends AbstractPlugin {
 			setTitle("SNPList Properties");
 		}
 		
-		private SNPList snpList;
+		private SNVList snpList;
 		private NameItem ni;
 		private RuleSetEditorItem rep;
 		
 		@Override
 		public void assignObject(Object o) {
-			snpList = (SNPList)o;
+			snpList = (SNVList)o;
 			ni = new NameItem(snpList.getAttribute().getName());
 			
-			final SNPListListener closingSNPListListener = new SNPListListener() {
-				public void snpListChanged(SNPListEvent event) {
-					if (event.getChange()==SNPListEvent.SNPLIST_CLOSED)
+			final SNVListListener closingSNPListListener = new SNVListListener() {
+				public void snpListChanged(SNVListEvent event) {
+					if (event.getChange()==SNVListEvent.SNPLIST_CLOSED)
 						dispose();
 				}
 			};
@@ -72,12 +72,12 @@ public class SNPListProperties extends AbstractPlugin {
 						dispose();
 				}
 			};
-			snpList.addSNPListListener(closingSNPListListener);
+			snpList.addSNVListListener(closingSNPListListener);
 			snpList.getDataStorage().addDataStorageListener(closingDSListener);
 			this.addWindowListener(new WindowListener() {
 				public void windowActivated(WindowEvent arg0) {}
 				public void windowClosed(WindowEvent arg0) {
-					snpList.removeSNPListListener(closingSNPListListener);
+					snpList.removeSNVListListener(closingSNPListListener);
 					snpList.getDataStorage().removeDataStorageListener(closingDSListener);
 				}
 				public void windowClosing(WindowEvent arg0) {}
@@ -107,7 +107,7 @@ public class SNPListProperties extends AbstractPlugin {
 			if (newName.equals(snpList.getAttribute().getName()))
 				return;
 			
-			while (snpList.getDataStorage().getSNPListNames().contains(newName)) {
+			while (snpList.getDataStorage().getSNVListNames().contains(newName)) {
 				newName = JOptionPane.showInputDialog(null, "Enter a unique SNPList name: ",newName); 
 			}
 				

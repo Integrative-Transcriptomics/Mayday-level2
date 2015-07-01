@@ -20,7 +20,7 @@ import javax.swing.tree.TreeSelectionModel;
 import mayday.Reveal.actions.snplist.ModifySNPList;
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.Reveal.listeners.ProjectEvent;
 import mayday.Reveal.listeners.ProjectEventListener;
@@ -35,7 +35,7 @@ public class RevealDataPanel extends JTree implements ProjectEventListener, Tree
 	private RevealGUI gui;
 	private DataTreeModel treeModel;
 	
-	private Set<SNPList> selectedSNPLists;
+	private Set<SNVList> selectedSNPLists;
 	private List<DataStorage> lastSelectedProjects;
 	
 	/**
@@ -58,7 +58,7 @@ public class RevealDataPanel extends JTree implements ProjectEventListener, Tree
 		
 		this.gui.getProjectHandler().getProjectEventHandler().addProjectEventListener(this);
 		
-		this.selectedSNPLists = new HashSet<SNPList>();
+		this.selectedSNPLists = new HashSet<SNVList>();
 		this.lastSelectedProjects = new LinkedList<DataStorage>();
 		
 		this.addMouseListener(new DataMouseListener());
@@ -127,17 +127,17 @@ public class RevealDataPanel extends JTree implements ProjectEventListener, Tree
 			if(e.isAddedPath(p)) {
 				DefaultMutableTreeNode n = (DefaultMutableTreeNode)p.getLastPathComponent();
 				Object o = n.getUserObject();
-				if(o instanceof SNPList) {
+				if(o instanceof SNVList) {
 					if(selectedSNPLists.size() > 0) {
 						DataStorage ds1 = selectedSNPLists.iterator().next().getDataStorage();
-						DataStorage ds2 = ((SNPList)o).getDataStorage();
+						DataStorage ds2 = ((SNVList)o).getDataStorage();
 						if(ds1 == ds2) {
-							selectedSNPLists.add((SNPList)o);
+							selectedSNPLists.add((SNVList)o);
 						} else {
 							System.out.println("It is not allowed to select SNPLists from different projects.");
 						}
 					} else {
-						selectedSNPLists.add((SNPList)o); 
+						selectedSNPLists.add((SNVList)o); 
 					}
 				}
 				DefaultMutableTreeNode projectNode = (DefaultMutableTreeNode)p.getPathComponent(1);
@@ -151,8 +151,8 @@ public class RevealDataPanel extends JTree implements ProjectEventListener, Tree
 			} else {
 				DefaultMutableTreeNode n = (DefaultMutableTreeNode)p.getLastPathComponent();
 				Object o = n.getUserObject();
-				if(o instanceof SNPList) {
-					selectedSNPLists.remove((SNPList)o);
+				if(o instanceof SNVList) {
+					selectedSNPLists.remove((SNVList)o);
 				} 
 				DefaultMutableTreeNode projectNode = (DefaultMutableTreeNode)p.getPathComponent(1);
 				if(projectNode.getUserObject() instanceof DataStorage) {
@@ -163,7 +163,7 @@ public class RevealDataPanel extends JTree implements ProjectEventListener, Tree
 			}
 		}
 
-		gui.getProjectHandler().setSelectedSNPLists(selectedSNPLists);
+		gui.getProjectHandler().setSelectedSNVLists(selectedSNPLists);
 		if(lastSelectedProjects.size() > 0) {
 			int lastProject = lastSelectedProjects.size() - 1;
 			gui.getProjectHandler().setSelectedProject(lastSelectedProjects.get(lastProject));
@@ -220,8 +220,8 @@ public class RevealDataPanel extends JTree implements ProjectEventListener, Tree
 	        		DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
 	                Object o = node.getUserObject();
 	                
-	                if(o instanceof SNPList) {
-	                	if(gui.getProjectHandler().getSelectedSNPLists().contains(o)) {
+	                if(o instanceof SNVList) {
+	                	if(gui.getProjectHandler().getSelectedSNVLists().contains(o)) {
 	                		if(e.getButton() == MouseEvent.BUTTON2) {
 			        			//TODO
 			        		} else if(e.getButton() == MouseEvent.BUTTON1) {
@@ -236,8 +236,8 @@ public class RevealDataPanel extends JTree implements ProjectEventListener, Tree
 	            else if(e.getClickCount() == 2) {
 	                DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
 	                Object o = node.getUserObject();
-	                if(o instanceof SNPList) {
-	                	SNPList snpList = (SNPList)o;
+	                if(o instanceof SNVList) {
+	                	SNVList snpList = (SNVList)o;
 	                	ModifySNPList a = new ModifySNPList();
 	                	a.setProjectHandler(gui.getProjectHandler());
 		               	try {

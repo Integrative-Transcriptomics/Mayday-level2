@@ -8,7 +8,7 @@ import java.util.List;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Gene;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.data.meta.SLResults;
 import mayday.Reveal.data.meta.SingleLocusResult;
@@ -104,7 +104,7 @@ public class SLRParser extends AbstractDataParser {
 					double p = elements[8].equals("NA") ? Double.NaN : Double.parseDouble(elements[8]);
 					
 					SingleLocusResult.Statistics statistics = slr.new Statistics(beta, se, r2, t, p);
-					SNP snp = data.getGlobalSNPList().get(snpID); 
+					SNV snp = data.getGlobalSNVList().get(snpID); 
 					slr.put(snp, statistics);
 				}
 				line++;

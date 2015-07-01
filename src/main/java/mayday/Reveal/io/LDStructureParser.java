@@ -6,11 +6,11 @@ import java.io.FileWriter;
 
 import mayday.Reveal.actions.RevealTask;
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.ld.old.LDBlock;
 import mayday.Reveal.data.ld.old.LDStructure;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 
 public class LDStructureParser extends AbstractDataParser {
 	
@@ -34,7 +34,7 @@ public class LDStructureParser extends AbstractDataParser {
 	public void write(File output, RevealTask task) {
 		try  {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(output));
-			SNPList snps = SNPLists.createUniqueSNPList(ds.getProjectHandler().getSelectedSNPLists());
+			SNVList snps = SNVLists.createUniqueSNVList(ds.getProjectHandler().getSelectedSNVLists());
 			LDStructure ldS = ds.getLDStructure(0);
 			
 			if(ldS == null) {
@@ -48,7 +48,7 @@ public class LDStructureParser extends AbstractDataParser {
 			double numSNPs = snps.size();
 			int count = 0;
 			
-			for(SNP s : snps) {
+			for(SNV s : snps) {
 				LDBlock b = ldS.getBlock(s);
 				
 				if(task != null && !task.hasBeenCancelled()) {

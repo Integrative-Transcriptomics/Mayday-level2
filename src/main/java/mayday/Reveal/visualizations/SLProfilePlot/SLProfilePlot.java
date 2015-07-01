@@ -8,10 +8,10 @@ import java.util.Set;
 
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.Genome;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.core.settings.generic.HierarchicalSetting;
@@ -25,13 +25,13 @@ public class SLProfilePlot extends RevealVisualization {
 	private SLProfilePlotComponent[] plotComponents;
 	protected SLProfilePlotSetting setting;
 	
-	protected SNPList snps;
+	protected SNVList snps;
 	
 	
 	public SLProfilePlot(ProjectHandler projectHandler) {
 		setData(projectHandler.getSelectedProject());
 		
-		snps = SNPLists.createUniqueSNPList(projectHandler.getSelectedSNPLists());
+		snps = SNVLists.createUniqueSNVList(projectHandler.getSelectedSNVLists());
 		
 		int numGenes = getData().getGenes().size();
 		plotComponents = new SLProfilePlotComponent[numGenes];

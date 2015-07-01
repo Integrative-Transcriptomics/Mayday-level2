@@ -9,18 +9,18 @@ import java.util.List;
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.HaplotypesList;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.data.SubjectList;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.core.Probe;
 import mayday.core.settings.SettingDialog;
 import mayday.core.settings.generic.HierarchicalSetting;
 import mayday.core.settings.typed.BooleanSetting;
 import mayday.core.settings.typed.PathSetting;
 
-public class HaplotypeStatistics extends SNPListPlugin {
+public class HaplotypeStatistics extends SNVListPlugin {
 
 	@Override
 	public String getName() {
@@ -43,8 +43,8 @@ public class HaplotypeStatistics extends SNPListPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
-		SNPList unionList = SNPLists.createUniqueSNPList(snpLists);
+	public void run(Collection<SNVList> snpLists) {
+		SNVList unionList = SNVLists.createUniqueSNVList(snpLists);
 		DataStorage ds = this.projectHandler.getSelectedProject();
 		
 		SubjectList subjects = ds.getSubjects();
@@ -78,7 +78,7 @@ public class HaplotypeStatistics extends SNPListPlugin {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(fDist));
 			
-			SNP snp = unionList.get("rs1520458");
+			SNV snp = unionList.get("rs1520458");
 			
 			List<Subject> chosenSubjects = null;
 			

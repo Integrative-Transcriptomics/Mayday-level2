@@ -26,9 +26,9 @@ import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.GenePair;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.data.SNVPair;
 import mayday.Reveal.data.ld.LDBlocks;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.data.meta.TLResults;
@@ -36,7 +36,7 @@ import mayday.Reveal.data.meta.TwoLocusResult;
 import mayday.Reveal.data.meta.TwoLocusResult.Statistics;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
 import mayday.Reveal.utilities.GeneColors;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
 import mayday.Reveal.visualizations.graphs.AssociationGraph;
 import mayday.Reveal.visualizations.matrices.twolocus.AssociationMatrixSetting;
@@ -91,7 +91,7 @@ public class TLN extends AssociationGraph<String, Integer> {
 	//map edges to genepairs
 	protected Map<Integer, GenePair> edgesToGenePairs = new HashMap<Integer, GenePair>();
 	
-	protected Map<Integer, Set<SNP>> edgesToSNPs = new HashMap<Integer, Set<SNP>>();
+	protected Map<Integer, Set<SNV>> edgesToSNPs = new HashMap<Integer, Set<SNV>>();
 	
 	protected double maxEdgeWeight = 0;
 	protected float maxEdgeWidth = 25.f;
@@ -104,7 +104,7 @@ public class TLN extends AssociationGraph<String, Integer> {
 	
 	private boolean internalChange = true;
 	
-	private SNPList snps;
+	private SNVList snps;
 	
 	/**
 	 * @param projectHandler 
@@ -122,27 +122,27 @@ public class TLN extends AssociationGraph<String, Integer> {
 			geneColors.put(genes.getGene(i).getName(), colors[i]);
 		}
 		
-		this.snps = SNPLists.createUniqueSNPList(projectHandler.getSelectedSNPLists());
+		this.snps = SNVLists.createUniqueSNVList(projectHandler.getSelectedSNVLists());
 	}
 
 	/**
 	 * @return list of selected snps
 	 */
-	public SNPList getSNPsFromSelectedEdges() {
+	public SNVList getSNPsFromSelectedEdges() {
 		Collection<Integer> pickedEdges = visualizationViewer.getPickedEdgeState().getPicked();
 		
 		if(pickedEdges.size() == 0) {
 			pickedEdges = graph.getEdges();
 		}
 		
-		HashSet<SNP> uniqueSNPs = new HashSet<SNP>();
-		SNPList snpList = new SNPList("Selected SNPs", getData());
+		HashSet<SNV> uniqueSNPs = new HashSet<SNV>();
+		SNVList snpList = new SNVList("Selected SNPs", getData());
 		
 		Predicate<Context<Graph<String,Integer>,Integer>> p = getVisualizationViewer().getRenderContext().getEdgeIncludePredicate();
 		for(Integer e : pickedEdges) {
 			boolean showEdge = p.evaluate(Context.getInstance(graph, e));
 			if(showEdge) {
-				Set<SNP> snps = edgesToSNPs.get(e);
+				Set<SNV> snps = edgesToSNPs.get(e);
 				uniqueSNPs.addAll(snps);
 			}
 		}
@@ -341,8 +341,8 @@ public class TLN extends AssociationGraph<String, Integer> {
 		maxEdgeWeight = 0;
 //		int sumWeights = 0;
 //		int sumSNPPairs = 0;
-		Set<SNP> distinctSNPs = new HashSet<SNP>();
-		Set<SNP> allDistinctSNPs = new HashSet<SNP>();
+		Set<SNV> distinctSNPs = new HashSet<SNV>();
+		Set<SNV> allDistinctSNPs = new HashSet<SNV>();
 		
 		Set<Integer> usedBlocks = new HashSet<Integer>();
 		
@@ -355,11 +355,11 @@ public class TLN extends AssociationGraph<String, Integer> {
 					double currentIntensity = 0;
 					int snpCount = 0;
 					
-					List<SNPPair> snpPairs = tlr.get(gp);
+					List<SNVPair> snpPairs = tlr.get(gp);
 					List<Statistics> stats = tlr.statMapping.get(gp);
 					
 					for(int j = 0; j < snpPairs.size(); j++) {
-						SNPPair sp = snpPairs.get(j);
+						SNVPair sp = snpPairs.get(j);
 						if(!snps.contains(sp.snp1) && !snps.contains(sp.snp2)) {
 							//skip if not at least one snp from the snp pair
 							//is contained in available snps list
@@ -434,7 +434,7 @@ public class TLN extends AssociationGraph<String, Integer> {
 						edgesToGenePairs.put(edge, gp);
 						edgesToGene.put(edge, gene.getName());
 						edgesToSNPs.put(edge, distinctSNPs);
-						distinctSNPs = new HashSet<SNP>();
+						distinctSNPs = new HashSet<SNV>();
 						//increase edge identifier
 						edge++;
 					}
@@ -644,7 +644,7 @@ public class TLN extends AssociationGraph<String, Integer> {
 		getVisualizationViewer().getRenderContext().getPickedEdgeState().addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				SNPList snps = getSNPsFromSelectedEdges();
+				SNVList snps = getSNPsFromSelectedEdges();
 				viewModel.setSNPSelection(snps);
 			}
 		});

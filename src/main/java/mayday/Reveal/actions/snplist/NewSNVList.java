@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import javax.swing.JOptionPane;
 
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.filter.DataProcessors;
 import mayday.Reveal.filter.Rule;
 import mayday.Reveal.filter.RuleSet;
@@ -13,21 +13,21 @@ import mayday.Reveal.filter.processors.ContainedInSNPListFilter;
 import mayday.core.gui.properties.PropertiesDialogFactory;
 import mayday.core.gui.properties.dialogs.AbstractPropertiesDialog;
 
-public class NewSNPList extends SNPListPlugin {
+public class NewSNVList extends SNVListPlugin {
 
 	@Override
 	public String getName() {
-		return "New SNPList";
+		return "New SNVList";
 	}
 
 	@Override
 	public String getType() {
-		return "data.snplist.newSNPList";
+		return "data.snvlist.newSNVList";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Create a new SNPList";
+		return "Create a new SNVList";
 	}
 
 	@Override
@@ -36,19 +36,19 @@ public class NewSNPList extends SNPListPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
-		SNPList snpList = new SNPList("New SNPList", projectHandler.getSelectedProject());
+	public void run(Collection<SNVList> snpLists) {
+		SNVList snpList = new SNVList("New SNVList", projectHandler.getSelectedProject());
 		
 		RuleSet parent = snpList.getRuleSet();
 		
         Item i = DataProcessors.getProcessorByID("mayday.Reveal.data.snplist.filter." + ContainedInSNPListFilter.MYTYPE);
         
         if(projectHandler.getSelectedProject() == null) {
-        	JOptionPane.showMessageDialog(null, "Can't create SNPList. There is no active project!");
+        	JOptionPane.showMessageDialog(null, "Can't create SNVList. There is no active project!");
         	return;
         }
         
-        SNPList globalSNPList = projectHandler.getSelectedProject().getGlobalSNPList();
+        SNVList globalSNPList = projectHandler.getSelectedProject().getGlobalSNVList();
         Rule r = new Rule(snpList);
         ContainedInSNPListFilter ciSL = (ContainedInSNPListFilter)i.newInstance(globalSNPList);
         ciSL.setCurrentSNPList(globalSNPList);
@@ -61,7 +61,7 @@ public class NewSNPList extends SNPListPlugin {
         apd.setVisible(true);
         
         if(!apd.isCancelled()) {
-            projectHandler.getSelectedProject().addSNPList(snpList.getAttribute().getName(), snpList);        	
+            projectHandler.getSelectedProject().addSNVList(snpList.getAttribute().getName(), snpList);        	
         }
 	}
 }

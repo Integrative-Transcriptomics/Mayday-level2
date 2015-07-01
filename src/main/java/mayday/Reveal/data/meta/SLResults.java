@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import mayday.Reveal.data.Gene;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.core.io.ReadyBufferedReader;
 
 public class SLResults extends MetaInformationPlugin {
@@ -92,7 +92,7 @@ public class SLResults extends MetaInformationPlugin {
 						continue;
 					
 					String[] slrLine = line.split("\t");
-					SNP snp = dataStorage.getGlobalSNPList().get(slrLine[0]);
+					SNV snp = dataStorage.getGlobalSNVList().get(slrLine[0]);
 					if(snp != null) {
 						double beta = Double.parseDouble(slrLine[1]);
 						double se = Double.parseDouble(slrLine[2]);

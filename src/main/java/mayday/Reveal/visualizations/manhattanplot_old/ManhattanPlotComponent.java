@@ -9,8 +9,8 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.data.meta.StatisticalTestResult;
 
@@ -40,7 +40,7 @@ public class ManhattanPlotComponent extends JComponent implements MouseListener 
 		g2d.clearRect(0, 0, getWidth(), getHeight());
 		
 		if(plot.getData() != null) {
-			SNPList snps = plot.getData().getGlobalSNPList();
+			SNVList snps = plot.getData().getGlobalSNVList();
 			
 			StatisticalTestResult ttr = null;
 			
@@ -56,7 +56,7 @@ public class ManhattanPlotComponent extends JComponent implements MouseListener 
 			double minP = ttr.getMin();
 			double mlogMinP = -Math.log10(minP);
 			
-			for(SNP s : snps) {
+			for(SNV s : snps) {
 				double snpPos = ((double)s.getIndex() / snps.size()) * getWidth();
 				double p = ttr.getPValue(s);
 				double mlogP = -Math.log10(p);

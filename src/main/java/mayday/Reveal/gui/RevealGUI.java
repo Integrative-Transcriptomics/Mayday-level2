@@ -21,16 +21,16 @@ import javax.swing.JTree;
 
 import mayday.Reveal.RevealPlugin;
 import mayday.Reveal.actions.ExitReveal;
-import mayday.Reveal.actions.snplist.SNPListPlugin;
+import mayday.Reveal.actions.snplist.SNVListPlugin;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.manipulation.MIManipulationPlugin;
 import mayday.Reveal.functions.prerequisite.PrerequisiteChecker;
 import mayday.Reveal.gui.menu.MetaInformationPopupMenu;
 import mayday.Reveal.gui.menu.RevealMenuBar;
 import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.Reveal.settings.SettingPanelCreator;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.Reveal.visualizations.RevealVisualizationPlugin;
 import mayday.core.gui.MaydayFrame;
@@ -159,8 +159,8 @@ public class RevealGUI extends MaydayFrame {
 						return;
 					}
 					
-					Set<SNPList> selection = plotPlugin.getProjectHandler().getSelectedSNPLists();
-					String snpListNames = SNPLists.createUniqueSNPListName(selection);
+					Set<SNVList> selection = plotPlugin.getProjectHandler().getSelectedSNVLists();
+					String snpListNames = SNVLists.createUniqueSNVListName(selection);
 					String title = plotPlugin.getMenuName() + " (" + snpListNames + ")";
 					
 					if(plotPlugin.usesViewSetting()) {
@@ -230,8 +230,8 @@ public class RevealGUI extends MaydayFrame {
 		String menu = plugin.getMenu();
 		
 		if(plugin.getCategory() != null) {
-			if(plugin.getCategory().startsWith(SNPListPlugin.CATEGORY)) {
-				snplistPopupMenu.addMenuItem((SNPListPlugin)plugin);
+			if(plugin.getCategory().startsWith(SNVListPlugin.CATEGORY)) {
+				snplistPopupMenu.addMenuItem((SNVListPlugin)plugin);
 			}
 			
 			if(plugin.getCategory().startsWith(MIManipulationPlugin.CATEGORY)) {
@@ -243,7 +243,7 @@ public class RevealGUI extends MaydayFrame {
 			AbstractAction a = new AbstractAction() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Set<SNPList>snpLists = projectHandler.getSelectedSNPLists();
+					Set<SNVList>snpLists = projectHandler.getSelectedSNVLists();
 					plugin.run(snpLists);
 				}
 			};

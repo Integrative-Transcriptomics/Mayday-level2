@@ -3,7 +3,7 @@ package mayday.Reveal.io.project;
 import java.util.Collection;
 
 import mayday.Reveal.RevealPlugin;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.io.project.factory.InputFormatSelector;
 import mayday.Reveal.io.project.factory.ProjectCreator;
 import mayday.Reveal.utilities.RevealMenuConstants;
@@ -31,7 +31,7 @@ public class NewProject extends RevealPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		ProjectMediator decorator = new ProjectMediator(getMenuName(), this.projectHandler.getGUI());
 		
 		InputFormatSelector inputFS = new InputFormatSelector();

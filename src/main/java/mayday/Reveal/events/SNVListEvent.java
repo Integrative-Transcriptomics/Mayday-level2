@@ -2,14 +2,14 @@ package mayday.Reveal.events;
 
 import java.util.EventObject;
 
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 
 @SuppressWarnings("serial")
-public class SNPListEvent extends EventObject {
+public class SNVListEvent extends EventObject {
 
 	private int change;
 	
-	public SNPListEvent(SNPList snpList, int change) {
+	public SNVListEvent(SNVList snpList, int change) {
 		super(snpList);
 		this.change = change;
 	}
@@ -23,8 +23,8 @@ public class SNPListEvent extends EventObject {
 	}
 	
 	public boolean equals(Object evt) {
-		if (evt instanceof SNPListEvent)
-			return ((SNPListEvent)evt).getSource()==source && ((SNPListEvent)evt).getChange()==change;
+		if (evt instanceof SNVListEvent)
+			return ((SNVListEvent)evt).getSource()==source && ((SNVListEvent)evt).getChange()==change;
 		return super.equals(evt);
 	}
 
