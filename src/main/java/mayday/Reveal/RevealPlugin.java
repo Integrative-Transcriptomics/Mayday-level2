@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.core.pluma.AbstractPlugin;
 import mayday.core.pluma.Constants;
 import mayday.core.pluma.PluginInfo;
@@ -54,7 +54,7 @@ public abstract class RevealPlugin extends AbstractPlugin {
 		return this.projectHandler;
 	}
 	
-	public abstract void run(Collection<SNPList> snpLists);
+	public abstract void run(Collection<SNVList> snpLists);
 	
 	public abstract String getMenu();
 	

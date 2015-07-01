@@ -5,10 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Collection;
 
-import mayday.Reveal.actions.snplist.SNPListPlugin;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.actions.snplist.SNVListPlugin;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.utilities.RevealMenuConstants;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.core.settings.SettingDialog;
 import mayday.core.settings.typed.PathSetting;
 
@@ -16,7 +16,7 @@ import mayday.core.settings.typed.PathSetting;
  * @author jaeger
  *
  */
-public class ImportExternalSNPsAction extends SNPListPlugin {
+public class ImportExternalSNPsAction extends SNVListPlugin {
 
 	@Override
 	public String getName() {
@@ -39,15 +39,15 @@ public class ImportExternalSNPsAction extends SNPListPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		PathSetting path = new PathSetting("SNP ID file", null, null, false, true, false);
 		SettingDialog sd = new SettingDialog(null, "Select the SNP ID file ...", path);
 		sd.showAsInputDialog();
 		
 		if(sd.closedWithOK()) {
-			SNPList snps = SNPLists.createUniqueSNPList(snpLists);
+			SNVList snps = SNVLists.createUniqueSNVList(snpLists);
 			File f = new File(path.getStringValue());
-			SNPList newSL = new SNPList(f.getName(), projectHandler.getSelectedProject());
+			SNVList newSL = new SNVList(f.getName(), projectHandler.getSelectedProject());
 			
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(path.getStringValue()));
@@ -65,7 +65,7 @@ public class ImportExternalSNPsAction extends SNPListPlugin {
 				br.close();
 				
 				if(newSL.size() > 0) {
-					projectHandler.getSelectedProject().addSNPList(newSL.getAttribute().getName(), newSL);
+					projectHandler.getSelectedProject().addSNVList(newSL.getAttribute().getName(), newSL);
 				}
 			} catch(Exception ex) {
 				ex.printStackTrace();

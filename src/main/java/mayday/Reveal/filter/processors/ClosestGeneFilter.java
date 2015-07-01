@@ -10,14 +10,14 @@ import javax.swing.JPanel;
 
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
 import mayday.Reveal.gui.OptionPanelProvider;
 import mayday.core.Probe;
 import mayday.core.io.StorageNode;
 
-public class ClosestGeneFilter extends AbstractDataProcessor<SNP, Boolean> implements OptionPanelProvider, StorageNodeStorable {
+public class ClosestGeneFilter extends AbstractDataProcessor<SNV, Boolean> implements OptionPanelProvider, StorageNodeStorable {
 
 	private String geneName = "";
 	private int index = 0;
@@ -80,7 +80,7 @@ public class ClosestGeneFilter extends AbstractDataProcessor<SNP, Boolean> imple
 
 	@Override
 	public boolean isAcceptableInput(Class<?>[] inputClass) {
-		return SNP.class.isAssignableFrom(inputClass[0]);
+		return SNV.class.isAssignableFrom(inputClass[0]);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class ClosestGeneFilter extends AbstractDataProcessor<SNP, Boolean> imple
 	}
 
 	@Override
-	protected Boolean convert(SNP value) {
+	protected Boolean convert(SNV value) {
 		return value.getGene().equals(geneName);
 	}
 

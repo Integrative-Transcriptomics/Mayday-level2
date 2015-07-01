@@ -3,6 +3,7 @@ package mayday.Reveal.functions.prerequisite;
 import java.util.List;
 
 import mayday.Reveal.data.DataStorage;
+import mayday.Reveal.data.ld.LDResults;
 import mayday.Reveal.data.meta.StatisticalTestResult;
 
 public class PrerequisiteChecker {
@@ -23,9 +24,9 @@ public class PrerequisiteChecker {
 				break;
 			case Prerequisite.GENOME_ANNOTATION:
 				break;
-			case Prerequisite.LD:
+			case Prerequisite.LD_STRUCTURE:
 				if(ds.getLDStructures().size() == 0) {
-					ERROR_MESSAGE = "LD Information is missing";
+					ERROR_MESSAGE = "LD Structure Information is missing";
 					fulfilled = false;
 				}
 				break;
@@ -42,8 +43,14 @@ public class PrerequisiteChecker {
 					fulfilled = false;
 				break;
 			case Prerequisite.SNP_LIST_SELECTED:
-				if(ds.getProjectHandler().getSelectedSNPLists().size() == 0) {
+				if(ds.getProjectHandler().getSelectedSNVLists().size() == 0) {
 					ERROR_MESSAGE = "No SNPList selected";
+					fulfilled = false;
+				}
+				break;
+			case Prerequisite.LD_VALUES:
+				if(!ds.getMetaInformationManager().containsKey(LDResults.MYTYPE)) {
+					ERROR_MESSAGE = "LD Structure Information is missing";
 					fulfilled = false;
 				}
 				break;

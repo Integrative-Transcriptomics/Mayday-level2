@@ -12,9 +12,9 @@ import java.util.Map;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import mayday.Reveal.data.attributes.SNPListAttribute;
-import mayday.Reveal.events.SNPListEvent;
-import mayday.Reveal.events.SNPListListener;
+import mayday.Reveal.data.attributes.SNVListAttribute;
+import mayday.Reveal.events.SNVListEvent;
+import mayday.Reveal.events.SNVListListener;
 import mayday.Reveal.filter.RuleSet;
 import mayday.core.EventFirer;
 
@@ -22,7 +22,7 @@ import mayday.core.EventFirer;
  * @author jaeger
  *
  */
-public class SNPList extends ArrayList<SNP> implements ChangeListener {
+public class SNVList extends ArrayList<SNV> implements ChangeListener {
 	
 	private RuleSet ruleSet;
 	
@@ -41,17 +41,17 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 	private boolean isSilent; // indicates whether listeners are notified or not
 	private boolean topPriority = false;
 	
-	private SNPListAttribute attribute;
+	private SNVListAttribute attribute;
 	private DataStorage dataStorage;
 	
-	private EventFirer<SNPListEvent, SNPListListener> eventfirer
-    = new EventFirer<SNPListEvent, SNPListListener>() {
-    	protected void dispatchEvent(SNPListEvent event, SNPListListener listener) {
+	private EventFirer<SNVListEvent, SNVListListener> eventfirer
+    = new EventFirer<SNVListEvent, SNVListListener>() {
+    	protected void dispatchEvent(SNVListEvent event, SNVListListener listener) {
     		listener.snpListChanged(event);
     	}		
     };
     
-    public void addSNPListListener(SNPListListener listener) {
+    public void addSNVListListener(SNVListListener listener) {
     	synchronized(this) {
     		eventfirer.addListener(listener);
     	}
@@ -59,69 +59,69 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
     
     public void setTopPriority(boolean topPriority) {
     	this.topPriority = topPriority;
-    	fireSNPListChanged(SNPListEvent.ANNOTATION_CHANGE);
+    	fireSNVListChanged(SNVListEvent.ANNOTATION_CHANGE);
     }
     
     public boolean isTopPriority() {
     	return this.topPriority;
     }
     
-    public void removeSNPListListener(SNPListListener listener) {
+    public void removeSNVListListener(SNVListListener listener) {
     	synchronized(this) {
     		eventfirer.removeListener(listener);
     	}
     }
     
-    public List<SNPListListener> getSNPListListeners() {
-    	return Collections.unmodifiableList(new ArrayList<SNPListListener>(eventfirer.getListeners()));
+    public List<SNVListListener> getSNVListListeners() {
+    	return Collections.unmodifiableList(new ArrayList<SNVListListener>(eventfirer.getListeners()));
     }
     
-    public void fireSNPListChanged(int change) {
+    public void fireSNVListChanged(int change) {
         if (isSilent())
             return;
     	synchronized(this) {    		
-    		eventfirer.fireEvent(new SNPListEvent(this, change));
+    		eventfirer.fireEvent(new SNVListEvent(this, change));
     	}
     }
     
 	/**
 	 * @param title
 	 */
-	public SNPList(String name, DataStorage dataStorage) {
+	public SNVList(String name, DataStorage dataStorage) {
 		super();
-		this.attribute = new SNPListAttribute(this, name, null);
+		this.attribute = new SNVListAttribute(this, name, null);
 		this.dataStorage = dataStorage;
     	ruleSet = new RuleSet(this);
 		ruleSet.addChangeListener(this);
 	}
 	
-	public SNPListAttribute getAttribute() {
+	public SNVListAttribute getAttribute() {
 		return this.attribute;
 	}
 
-	public boolean add(SNP snp) {
-		int pos = snp.getPosition();
+	public boolean add(SNV snv) {
+		int pos = snv.getPosition();
 		if(pos < start)
 			start = pos;
 		if(pos > stop)
 			stop = pos;
-		idMapping.put(snp.getID(), this.size());
-		boolean added = super.add(snp);
+		idMapping.put(snv.getID(), this.size());
+		boolean added = super.add(snv);
 		if(added)
-			fireSNPListChanged(SNPListEvent.CONTENT_CHANGE);
+			fireSNVListChanged(SNVListEvent.CONTENT_CHANGE);
 		return added;
 	}
 	
-	public boolean addAll(Collection<? extends SNP> snps) {
+	public boolean addAll(Collection<? extends SNV> snvs) {
 		boolean success = true;
-		for(SNP s: snps) {
+		for(SNV s: snvs) {
 			if(!add(s))
 				success = false;
 		}
 		if(!success) {
-			removeAll(snps);
+			removeAll(snvs);
 		} else {
-			fireSNPListChanged(SNPListEvent.CONTENT_CHANGE);
+			fireSNVListChanged(SNVListEvent.CONTENT_CHANGE);
 		}
 		return success;
 	}
@@ -129,22 +129,22 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 	public boolean removeAll(Collection<?> snps) {
 		boolean success = true;
 		for(Object o: snps) {
-			if(o instanceof SNP) {
-				SNP s = (SNP)o;
+			if(o instanceof SNV) {
+				SNV s = (SNV)o;
 				if(!remove(s))
 					success = false;
 			}
 		}
 		if(success)
-			fireSNPListChanged(SNPListEvent.CONTENT_CHANGE);
+			fireSNVListChanged(SNVListEvent.CONTENT_CHANGE);
 		return success;
 	}
 	
-	public boolean remove(SNP snp) {
+	public boolean remove(SNV snp) {
 		boolean removed = super.remove(snp);
 		if(removed) {
 			idMapping.remove(snp.getID());
-			fireSNPListChanged(SNPListEvent.CONTENT_CHANGE);
+			fireSNVListChanged(SNVListEvent.CONTENT_CHANGE);
 		}
 		return removed;
 	}
@@ -152,7 +152,7 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 	/**
 	 * @return snp range
 	 */
-	public int getSNPRange() {
+	public int getSNVRange() {
 		return stop - start + 1;
 	}
 	
@@ -185,7 +185,7 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 	 * @param identifier
 	 * @return SNP with the specified identifier
 	 */
-	public SNP get(String identifier) {
+	public SNV get(String identifier) {
 		Integer index = idMapping.get(identifier);
 		if(index != null) {
 			return get(index.intValue());
@@ -197,8 +197,8 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 	 * @param chromosome
 	 * @return SNPList of SNPs on the specified chromosome
 	 */
-	public SNPList getSNPsOnChromosome(String chromosome) {
-		SNPList snps = new SNPList(this.attribute.getName(), this.dataStorage);
+	public SNVList getSNVsOnChromosome(String chromosome) {
+		SNVList snps = new SNVList(this.attribute.getName(), this.dataStorage);
 		for(int i = 0; i < this.size(); i++) {
 			if(this.get(i).getChromosome().equals(chromosome)) {
 				snps.add(this.get(i));
@@ -212,7 +212,7 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 	 */
 	public int getMaxNameLength() {
 		if(namelength == 0) {
-			for(SNP s: this) {
+			for(SNV s: this) {
 				if(s.getID().length() > namelength)
 					namelength = s.getID().length();
 			}
@@ -226,7 +226,7 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 		bw.append(attribute.getInformation());
 		bw.append("\n");
 		
-		for(SNP s: this) {
+		for(SNV s: this) {
 			bw.append(s.serialize());
 			bw.append("\n");
 		}
@@ -238,7 +238,7 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 	
 	public void propagateClosing() {
 		ruleSet.dispose();
-		for(SNPListListener l : eventfirer.getListeners()) {
+		for(SNVListListener l : eventfirer.getListeners()) {
 			eventfirer.removeListener(l);
 		}
 		idMapping.clear();
@@ -256,14 +256,14 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
     public void clear() {
     	super.clear();
     	this.idMapping.clear();
-    	fireSNPListChanged(SNPListEvent.CONTENT_CHANGE);
+    	fireSNVListChanged(SNVListEvent.CONTENT_CHANGE);
     }
     
     public boolean equals(Object o) {
-    	if(!(o instanceof SNPList)) {
+    	if(!(o instanceof SNVList)) {
     		return false;
     	}
-    	return ((SNPList)o).getAttribute().getName().equals(this.getAttribute().getName());
+    	return ((SNVList)o).getAttribute().getName().equals(this.getAttribute().getName());
     }
     
 	public RuleSet getRuleSet() {
@@ -293,13 +293,13 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 		}
 		
 		//do this step only if there already is a global snplist
-		if(getDataStorage().getGlobalSNPList() != null) {
+		if(getDataStorage().getGlobalSNVList() != null) {
 			isUpdating = true;
 			boolean wasSilent = isSilent();
 			setSilent(true);
 			clear();
 			// refilter, doing only changes that are really necessary
-			for (SNP snp : getDataStorage().getGlobalSNPList()) {
+			for (SNV snp : getDataStorage().getGlobalSNVList()) {
 				if (ruleSet.passesFilter(snp)==true) {
 					if (!contains(snp))
 						add(snp);	
@@ -310,15 +310,15 @@ public class SNPList extends ArrayList<SNP> implements ChangeListener {
 			}
 			
 			setSilent(wasSilent);
-			fireSNPListChanged(SNPListEvent.CONTENT_CHANGE);
+			fireSNVListChanged(SNVListEvent.CONTENT_CHANGE);
 			isUpdating = false;
 		}
 	}
 	
 	public boolean contains(Object o) {
-		if(!(o instanceof SNP))
+		if(!(o instanceof SNV))
 			return false;
-		SNP s = (SNP)o;
+		SNV s = (SNV)o;
 		
 		if(idMapping.containsKey(s.getID())) {
 			return true;

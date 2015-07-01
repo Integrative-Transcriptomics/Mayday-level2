@@ -1,11 +1,11 @@
 package mayday.Reveal.filter.processors;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.viewmodel.RevealViewModel;
 
-public class SNPSelectionFilter extends AbstractDataProcessor<SNP, Boolean> {
+public class SNPSelectionFilter extends AbstractDataProcessor<SNV, Boolean> {
 
 	@Override
 	public void dispose() {
@@ -20,7 +20,7 @@ public class SNPSelectionFilter extends AbstractDataProcessor<SNP, Boolean> {
 
 	@Override
 	public boolean isAcceptableInput(Class<?>[] inputClass) {
-		return SNP.class.isAssignableFrom(inputClass[0]);
+		return SNV.class.isAssignableFrom(inputClass[0]);
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class SNPSelectionFilter extends AbstractDataProcessor<SNP, Boolean> {
 	}
 
 	@Override
-	protected Boolean convert(SNP value) {
+	protected Boolean convert(SNV value) {
 		if(snpList == null)
 			return false;
 		DataStorage ds = snpList.getDataStorage();

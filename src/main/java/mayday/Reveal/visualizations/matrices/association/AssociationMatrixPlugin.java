@@ -13,12 +13,12 @@ public class AssociationMatrixPlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public String getDescription() {
-		return "Gene Association Matrix based on PLINK Association Results";
+		return "eQTL Association Matrix based on PLINK Association Results";
 	}
 
 	@Override
 	public String getName() {
-		return "Association Matrix";
+		return "SL/TL Association Matrix";
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class AssociationMatrixPlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public String getMenuName() {
-		return "Association Matrix";
+		return "SL/TL Association Matrix";
 	}
 
 	@Override

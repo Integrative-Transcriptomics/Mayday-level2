@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import mayday.Reveal.RevealPlugin;
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 
 public abstract class MetaInformationPlugin extends RevealPlugin implements MetaInformation {
 	
@@ -15,7 +15,7 @@ public abstract class MetaInformationPlugin extends RevealPlugin implements Meta
 	}
 	
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		return; //nothing to do here
 	}
 	

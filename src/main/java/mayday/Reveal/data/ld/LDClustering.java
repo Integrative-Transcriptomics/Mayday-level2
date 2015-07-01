@@ -1,6 +1,6 @@
 package mayday.Reveal.data.ld;
 
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.clustering.qt.algorithm.QTPSettings;
 import mayday.clustering.qt.algorithm.clustering.QTPAdListCreatorThread;
 import mayday.clustering.qt.algorithm.clustering.QTPClustering;
@@ -10,10 +10,10 @@ import mayday.core.structures.linalg.vector.AbstractVector;
 public class LDClustering extends QTPClustering {
 
 	private LDResults ldResults;
-	private SNPList snps;
+	private SNVList snps;
 	private double threshold;
 	
-	public LDClustering(LDResults ldResults, SNPList snps, double threshold) {
+	public LDClustering(LDResults ldResults, SNVList snps, double threshold) {
 		super(new PermutableMatrix(){
 			@Override
 			protected String getDimName0(int dim, int index) {

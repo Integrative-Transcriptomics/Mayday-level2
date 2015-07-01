@@ -45,7 +45,7 @@ public class SLNSetting extends HierarchicalSetting {
 		
 		addSetting(includeSelfEdges = new BooleanSetting("Show self edges", null, true));
 		
-		Set<String> externalSNPListNames = sln.getData().getSNPListNames();
+		Set<String> externalSNPListNames = sln.getData().getSNVListNames();
 		String[] extNames = new String[externalSNPListNames.size()+1];
 		int i = 1;
 		extNames[0] = "None";

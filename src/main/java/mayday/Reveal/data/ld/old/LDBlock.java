@@ -2,10 +2,10 @@ package mayday.Reveal.data.ld.old;
 
 import java.util.HashSet;
 
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 
 @SuppressWarnings("serial")
-public class LDBlock extends HashSet<SNP> {
+public class LDBlock extends HashSet<SNV> {
 	private int index;
 	
 	public LDBlock(int index) {

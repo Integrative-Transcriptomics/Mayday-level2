@@ -17,7 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.DataProcessors;
 import mayday.Reveal.filter.Rule;
@@ -124,7 +124,7 @@ public class RuleGUI extends JPanel implements ChangeListener {
 			AbstractDataProcessor adp = lastStack.get(firstChanged-1);
 			inputClass = adp.getDataClass();
 		} else 
-			inputClass = new Class[]{SNP.class}; 
+			inputClass = new Class[]{SNV.class}; 
 			
 		// create new panels where we need them
 		for (int i=firstChanged; i!=rule.getProcessors().size(); ++i) {

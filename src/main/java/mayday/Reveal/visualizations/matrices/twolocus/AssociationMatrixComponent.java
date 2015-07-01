@@ -26,7 +26,7 @@ import javax.swing.ScrollPaneConstants;
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.GenePair;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.visualizations.matrices.twolocus.viewelements.Overview;
 import mayday.Reveal.visualizations.matrices.twolocus.viewelements.PlaceHolder;
 import mayday.Reveal.visualizations.matrices.twolocus.viewelements.SelectionTypeMenu;
@@ -60,7 +60,7 @@ public class AssociationMatrixComponent extends JPanel {
 	
 	private SelectionTypeMenu selectionTypeMenu;
 	
-	private Set<SNP> overallSelectedSNPS = new HashSet<SNP>();
+	private Set<SNV> overallSelectedSNPS = new HashSet<SNV>();
 	
 	/**
 	 * @param associationMatrix
@@ -189,7 +189,7 @@ public class AssociationMatrixComponent extends JPanel {
 		private int row, column;
 		private double cellWidth, cellHeight;
 		protected HashMap<GenePair, Boolean> selectedGenePairs = new HashMap<GenePair, Boolean>();
-		protected Set<SNP> selectedSNPs = new HashSet<SNP>();
+		protected Set<SNV> selectedSNPs = new HashSet<SNV>();
 		
 		public CellComponent(String geneName, int row, int column) {
 			this.gene = matrix.getData().getGenes().getGene(geneName);
@@ -349,7 +349,7 @@ public class AssociationMatrixComponent extends JPanel {
 							for(int id : cellIDs) {
 								GenePair gp2 = matrix.cellsToGenePairs.get(id);
 								if(gp2.equals(gpair)) {
-									Set<SNP> snpsToAdd = matrix.cellsToSNPs.get(id); 
+									Set<SNV> snpsToAdd = matrix.cellsToSNPs.get(id); 
 									selectedSNPs.addAll(snpsToAdd);
 									break;
 								}

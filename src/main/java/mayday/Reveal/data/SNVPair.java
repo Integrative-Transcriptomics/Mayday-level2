@@ -5,10 +5,10 @@ package mayday.Reveal.data;
  * @author jaeger
  *
  */
-public class SNPPair {
+public class SNVPair {
 	
-	public SNP snp1;
-	public SNP snp2;
+	public SNV snp1;
+	public SNV snp2;
 	
 	private Integer hash = null;
 	
@@ -16,7 +16,7 @@ public class SNPPair {
 	 * @param snp1
 	 * @param snp2
 	 */
-	public SNPPair(SNP snp1, SNP snp2) {
+	public SNVPair(SNV snp1, SNV snp2) {
 		this.snp1 = snp1;
 		this.snp2 = snp2;
 	}
@@ -24,15 +24,15 @@ public class SNPPair {
 	public boolean equals(Object o) {
 		if(o == this)
 			return true;
-		if(!(o instanceof SNPPair)) {
+		if(!(o instanceof SNVPair)) {
 			return false;
 		}
 		
-		if(((SNPPair)o).snp1.equals(this.snp1) && ((SNPPair)o).snp2.equals(this.snp2)) {
+		if(((SNVPair)o).snp1.equals(this.snp1) && ((SNVPair)o).snp2.equals(this.snp2)) {
 			return true;
 		}
 		
-		if(((SNPPair)o).snp1.equals(this.snp2) && ((SNPPair)o).snp2.equals(this.snp1)) {
+		if(((SNVPair)o).snp1.equals(this.snp2) && ((SNVPair)o).snp2.equals(this.snp1)) {
 			return true;
 		}
 		

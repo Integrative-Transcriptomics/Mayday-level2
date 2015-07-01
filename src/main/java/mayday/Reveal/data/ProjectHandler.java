@@ -36,7 +36,7 @@ public class ProjectHandler implements DataStorageListener {
 	private HashMap<String, Genome> availableGenomes;
 	
 	//Handling selections
-	private Set<SNPList> selectedSNPLists;
+	private Set<SNVList> selectedSNVLists;
 	private MetaInformation selectedMetaInformation;
 	
 	private ProjectEventHandler projectEventHandler;
@@ -51,7 +51,7 @@ public class ProjectHandler implements DataStorageListener {
 	public ProjectHandler() {
 		dataContainer = new ArrayList<DataStorage>();
 		viewModels = new HashMap<DataStorage, RevealViewModel>();
-		selectedSNPLists = new HashSet<SNPList>();
+		selectedSNVLists = new HashSet<SNVList>();
 		selectedMetaInformation = null;
 		availableGenomes = new HashMap<String, Genome>();
 	}
@@ -215,8 +215,8 @@ public class ProjectHandler implements DataStorageListener {
 		pls.add(global);
 		
 		RevealViewModel vm = new RevealViewModel(ncv, ds, pls, project, null, null);
-		vm.setTopPrioritySNPList(project.getGlobalSNPList());
-		project.getGlobalSNPList().setTopPriority(true);
+		vm.setTopPrioritySNPList(project.getGlobalSNVList());
+		project.getGlobalSNVList().setTopPriority(true);
 		ncv.setViewModel(vm);
 		
 		return vm;
@@ -230,7 +230,7 @@ public class ProjectHandler implements DataStorageListener {
 			break;
 		case DataStorageEvent.STATTEST_SELECTION_CHANGED:
 			break;
-		case DataStorageEvent.SNPLIST_SELECTION_CHANGED:
+		case DataStorageEvent.SNVLIST_SELECTION_CHANGED:
 			break;
 		case DataStorageEvent.META_INFORMATION_CHANGED:
 			fireProjectChanged((DataStorage) dse.getSource());
@@ -249,7 +249,7 @@ public class ProjectHandler implements DataStorageListener {
 			DataSetManager.singleInstance.removeObject(ds.getDataSet());
 		}
 		
-		this.selectedSNPLists.clear();
+		this.selectedSNVLists.clear();
 		this.dataContainer.clear();
 		this.viewModels.clear();
 	}
@@ -258,18 +258,18 @@ public class ProjectHandler implements DataStorageListener {
 		return this.dataContainer;
 	}
 	
-	public void setSelectedSNPLists(Collection<SNPList> snpLists) {
-		this.selectedSNPLists.clear();
-		this.selectedSNPLists.addAll(snpLists);
-		projectEventHandler.fireProjectChanged(this, ProjectEvent.SNP_SELECTION_CHANGED);
+	public void setSelectedSNVLists(Collection<SNVList> snpLists) {
+		this.selectedSNVLists.clear();
+		this.selectedSNVLists.addAll(snpLists);
+		projectEventHandler.fireProjectChanged(this, ProjectEvent.SNV_SELECTION_CHANGED);
 	}
 
-	public Set<SNPList> getSelectedSNPLists() {
-		return this.selectedSNPLists;
+	public Set<SNVList> getSelectedSNVLists() {
+		return this.selectedSNVLists;
 	}
 
-	public void clearSNPListSelection() {
-		this.selectedSNPLists.clear();
+	public void clearSNVListSelection() {
+		this.selectedSNVLists.clear();
 		projectEventHandler.fireProjectChanged(this, ProjectEvent.SNP_SELECTION_CLEARED);
 	}
 

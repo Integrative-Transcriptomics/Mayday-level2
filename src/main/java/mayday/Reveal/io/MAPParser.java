@@ -6,8 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.core.settings.Setting;
 import mayday.core.settings.generic.HierarchicalSetting;
 import mayday.core.settings.typed.BooleanSetting;
@@ -20,7 +20,7 @@ public class MAPParser extends AbstractDataParser {
 	
 	private BooleanSetting hasGeneticDistancesSetting;
 	
-	protected SNPList snps;
+	protected SNVList snps;
 	
 	protected HierarchicalSetting setting;
 	
@@ -51,7 +51,7 @@ public class MAPParser extends AbstractDataParser {
 	public void read(File mapFile) {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(mapFile));
-			snps = new SNPList("Global", ds);
+			snps = new SNVList("Global", ds);
 			String line = null;
 			int snpIndex = 0;
 			
@@ -87,7 +87,7 @@ public class MAPParser extends AbstractDataParser {
 					position = Integer.parseInt(splitted[2]);
 				}
 				
-				SNP s = new SNP(snpID, chromosome, geneticDistance, position, snpIndex++);
+				SNV s = new SNV(snpID, chromosome, geneticDistance, position, snpIndex++);
 				s.setGene(geneID);
 				snps.add(s);
 			}
@@ -101,7 +101,7 @@ public class MAPParser extends AbstractDataParser {
 	/**
 	 * @return snps contained in the map file
 	 */
-	public SNPList getSNPs() {
+	public SNVList getSNPs() {
 		return this.snps;
 	}
 

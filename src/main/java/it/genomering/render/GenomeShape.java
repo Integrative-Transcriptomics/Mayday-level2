@@ -16,7 +16,7 @@ import java.awt.Stroke;
 import java.util.List;
 import java.util.Set;
 
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.viewmodel.RevealViewModel;
 import mayday.core.Probe;
 import mayday.core.meta.MIGroup;
@@ -162,18 +162,18 @@ public class GenomeShape extends GRPath {
 	}
 	
 	protected void paintSNVs(RevealViewModel vm, Graphics2D g2d) {
-		List<SNP> snps = vm.getTopPrioritySNPList();
-		Set<SNP> selectedSNPs = vm.getSelectedSNPs();
+		List<SNV> snps = vm.getTopPrioritySNPList();
+		Set<SNV> selectedSNPs = vm.getSelectedSNPs();
 		
 		Stroke elementStroke = getGenomeStroke(rd);
 		
-		for(SNP snp : snps) {
+		for(SNV snp : snps) {
 			if(!selectedSNPs.contains(snp)) {
 				paintSNV(snp, vm, g2d, false, elementStroke);
 			}
 		}
 		
-		for(SNP snp : selectedSNPs) {
+		for(SNV snp : selectedSNPs) {
 			paintSNV(snp, vm, g2d, true, elementStroke);
 		}
 	}
@@ -201,7 +201,7 @@ public class GenomeShape extends GRPath {
 		elementPath.paint(g2d);
 	}
 	
-	protected void paintSNV(SNP snp, RevealViewModel vm, Graphics2D g2d, boolean selected, Stroke elementStroke) {
+	protected void paintSNV(SNV snp, RevealViewModel vm, Graphics2D g2d, boolean selected, Stroke elementStroke) {
 		//make sure that the genomes fit
 		if(snp.getChromosome().toLowerCase().equals(g.getName().toLowerCase())) {
 			Color c = selected ? setting.getSNVSelectionColor() : setting.getSNVColor();

@@ -1,11 +1,11 @@
 package mayday.Reveal.filter.processors;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.filter.AbstractDataProcessor;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 
-public class AggregationDifferenceFilter extends AbstractDataProcessor<SNP, Double> {
+public class AggregationDifferenceFilter extends AbstractDataProcessor<SNV, Double> {
 	
 	@Override
 	public void dispose() {
@@ -19,7 +19,7 @@ public class AggregationDifferenceFilter extends AbstractDataProcessor<SNP, Doub
 
 	@Override
 	public boolean isAcceptableInput(Class<?>[] inputClass) {
-		return SNP.class.isAssignableFrom(inputClass[0]);
+		return SNV.class.isAssignableFrom(inputClass[0]);
 	}
 
 	@Override
@@ -28,11 +28,11 @@ public class AggregationDifferenceFilter extends AbstractDataProcessor<SNP, Doub
 	}
 
 	@Override
-	protected Double convert(SNP value) {
+	protected Double convert(SNV value) {
 		int index = value.getIndex();
 		DataStorage data = snpList.getDataStorage();
-		double[] affected = SNPLists.getGenotypeDistribution(data, index, true);
-		double[] unaffected = SNPLists.getGenotypeDistribution(data, index, false);
+		double[] affected = SNVLists.getGenotypeDistribution(data, index, true);
+		double[] unaffected = SNVLists.getGenotypeDistribution(data, index, false);
 		double res = Math.abs(affected[maxIndex(affected)] - unaffected[maxIndex(unaffected)]);
 		return res;
 	}

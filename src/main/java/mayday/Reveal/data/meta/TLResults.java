@@ -11,8 +11,8 @@ import java.util.Set;
 
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GenePair;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVPair;
 
 public class TLResults extends MetaInformationPlugin {
 
@@ -107,7 +107,7 @@ public class TLResults extends MetaInformationPlugin {
 					}
 					
 					GenePair gp = new GenePair(g1, g2);
-					List<SNPPair> snpPairs = new ArrayList<SNPPair>();
+					List<SNVPair> snpPairs = new ArrayList<SNVPair>();
 					List<TwoLocusResult.Statistics> stats = new ArrayList<TwoLocusResult.Statistics>();
 					
 					while((line = br.readLine()) != null && 
@@ -116,15 +116,15 @@ public class TLResults extends MetaInformationPlugin {
 						if(line.trim().equals(""))
 							continue;
 						String[] tlrLine = line.split("\t");
-						SNP snp1 = dataStorage.getGlobalSNPList().get(tlrLine[0]);
-						SNP snp2 = dataStorage.getGlobalSNPList().get(tlrLine[1]);
+						SNV snp1 = dataStorage.getGlobalSNVList().get(tlrLine[0]);
+						SNV snp2 = dataStorage.getGlobalSNVList().get(tlrLine[1]);
 						
 						//if either snp is not in the list, skip this entry
 						if(snp1 == null || snp2 == null)
 							continue;
 						
 						//both snps are in the global snp list
-						SNPPair sp = new SNPPair(snp1, snp2);
+						SNVPair sp = new SNVPair(snp1, snp2);
 						snpPairs.add(sp);
 						
 						double beta = Double.parseDouble(tlrLine[2]);

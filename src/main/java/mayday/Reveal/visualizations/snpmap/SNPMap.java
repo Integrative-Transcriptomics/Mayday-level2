@@ -21,13 +21,13 @@ import javax.swing.JSplitPane;
 import mayday.Reveal.data.Haplotypes;
 import mayday.Reveal.data.HaplotypesList;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.data.SubjectList;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
 import mayday.Reveal.utilities.MultiArraySorter;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.utilities.SplitPaneSynchronizer;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
 import mayday.Reveal.visualizations.RevealVisualization;
@@ -51,7 +51,7 @@ import mayday.vis3.model.ViewModelEvent;
 public class SNPMap extends RevealVisualization {
 	
 	public SNPMapSetting setting;
-	public SNPList snps;
+	public SNVList snps;
 	public SubjectList persons;
 	public BidirectionalHashMap<Integer, Integer> personIndices;
 	
@@ -95,7 +95,7 @@ public class SNPMap extends RevealVisualization {
 		mainPanel.setLayout(new BorderLayout());
 		
 		setData(projectHandler.getSelectedProject());
-		snps = SNPLists.createUniqueSNPList(projectHandler.getSelectedSNPLists());
+		snps = SNVLists.createUniqueSNVList(projectHandler.getSelectedSNVLists());
 		persons = getData().getSubjects().cloneProperly();
 		personIndices = new BidirectionalHashMap<Integer, Integer>();
 		aggregator = new Aggregator();
@@ -358,7 +358,7 @@ public class SNPMap extends RevealVisualization {
 		
 		for(int i = 0; i < numSNPs; i++) {
 			DoubleVector values = new DoubleVector(subjects.size());
-			SNP snp = snps.get(i);
+			SNV snp = snps.get(i);
 			
 			int j = 0;
 			for(Subject s : subjects) {

@@ -8,17 +8,17 @@ public class SNPCharInformationTablePlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public String getType() {
-		return "vis.SNPCharInfoTable";
+		return "vis.SNVEffectTable";
 	}
 
 	@Override
 	public String getDescription() {
-		return "SNP Characterization Information Table";
+		return "SNV Effect Table";
 	}
 
 	@Override
 	public String getName() {
-		return "SNP Characterization Information Table";
+		return "SNV Effect Table";
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class SNPCharInformationTablePlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public String getMenuName() {
-		return "SNP Characterization Information Table";
+		return "SNP Effect Table";
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class SNPCharInformationTablePlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public String getMenu() {
-		return RevealMenuConstants.VIS_MENU;
+		return RevealMenuConstants.VIS_MENU_TABLE_SUBMENU;
 	}
 
 	@Override

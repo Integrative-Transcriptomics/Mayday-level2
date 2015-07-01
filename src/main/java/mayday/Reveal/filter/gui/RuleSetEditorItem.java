@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.core.gui.properties.items.AbstractPropertiesItem;
 
 @SuppressWarnings("serial")
@@ -15,10 +15,10 @@ public class RuleSetEditorItem extends AbstractPropertiesItem {
 		super("SNP Rule Set");
 	}
 	
-	private SNPList snpList;
+	private SNVList snpList;
 	private RuleEditorPanel rep;
 	
-	public RuleSetEditorItem(SNPList snpList) {
+	public RuleSetEditorItem(SNVList snpList) {
 		this();
 		setLayout(new BorderLayout());
 		this.snpList = snpList;

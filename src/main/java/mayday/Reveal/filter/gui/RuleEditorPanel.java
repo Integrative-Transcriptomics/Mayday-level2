@@ -16,26 +16,26 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.filter.RuleSet;
 import mayday.Reveal.gui.OptionPanelProvider;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.core.DelayedUpdateTask;
 
 @SuppressWarnings("serial")
 public class RuleEditorPanel extends JPanel {
 	
-	private SNPList snpList;
-	private SNPList clonedSNPList;
+	private SNVList snpList;
+	private SNVList clonedSNPList;
 	protected JLabel filterSizeLabel = new JLabel();
 	
-	public RuleEditorPanel(SNPList snpList) {
+	public RuleEditorPanel(SNVList snpList) {
 		super(new BorderLayout());
 		this.snpList = snpList;
 		
 		filterSizeLabel.setText(snpList.size() + " matching SNPs.");
 		
-		clonedSNPList = new SNPList("Temporary clone of \""+snpList.getAttribute().getName()+"\"", snpList.getDataStorage());
+		clonedSNPList = new SNVList("Temporary clone of \""+snpList.getAttribute().getName()+"\"", snpList.getDataStorage());
 		clonedSNPList.getRuleSet().fromStorageNode(this.snpList.getRuleSet().toStorageNode());
 		
 		startWork();
@@ -102,12 +102,12 @@ public class RuleEditorPanel extends JPanel {
 		addListenersTo(clonedSNPList);
 	}
 	
-	protected void addListenersTo(SNPList dsl) {
+	protected void addListenersTo(SNVList dsl) {
 		RuleSet rs = dsl.getRuleSet();
 		rs.addChangeListener(sizeListener);
 	}
 	
-	protected void removeListenersFrom(SNPList dsl) {
+	protected void removeListenersFrom(SNVList dsl) {
 		RuleSet rs = dsl.getRuleSet();	
 		rs.removeChangeListener(sizeListener);
 	}
@@ -124,7 +124,7 @@ public class RuleEditorPanel extends JPanel {
 		
 		@Override
 		protected void performUpdate() {
-			int size = SNPLists.countSNPs(clonedSNPList.getDataStorage(), clonedSNPList.getRuleSet());
+			int size = SNVLists.countSNVs(clonedSNPList.getDataStorage(), clonedSNPList.getRuleSet());
 			filterSizeLabel.setText(size+ " matching SNPs.");
 		}
 	

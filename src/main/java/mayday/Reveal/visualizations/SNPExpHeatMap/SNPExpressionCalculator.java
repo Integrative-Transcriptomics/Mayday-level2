@@ -8,8 +8,8 @@ import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.Haplotypes;
 import mayday.Reveal.data.HaplotypesList;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.core.structures.linalg.matrix.DoubleMatrix;
 import mayday.core.structures.linalg.vector.DoubleVector;
@@ -17,9 +17,9 @@ import mayday.core.structures.linalg.vector.DoubleVector;
 public class SNPExpressionCalculator {
 
 	private DataStorage ds;
-	private SNPList snps;
+	private SNVList snps;
 	
-	public SNPExpressionCalculator(DataStorage ds, SNPList snps) {
+	public SNPExpressionCalculator(DataStorage ds, SNVList snps) {
 		this.ds = ds;
 		this.snps = snps;
 	}
@@ -39,7 +39,7 @@ public class SNPExpressionCalculator {
 		DoubleMatrix matrixU = new DoubleMatrix(numSNPs, numGenes);
 		
 		for(int i = 0; i < numSNPs; i++) {
-			SNP s = snps.get(i);
+			SNV s = snps.get(i);
 			System.out.println((i+1) + " = " + s.getID());
 			for(int j = 0; j < numGenes; j++) {
 				Gene g = genes.getGene(j);
@@ -94,7 +94,7 @@ public class SNPExpressionCalculator {
 		return v.median();
 	}
 
-	private List<Double> getHomoExp(SNP s, Gene g, List<Subject> persons) {
+	private List<Double> getHomoExp(SNV s, Gene g, List<Subject> persons) {
 		double[] originalValues = g.getValues();
 		char ref = s.getReferenceNucleotide();
 		ArrayList<Double> newValues = new ArrayList<Double>();
@@ -115,7 +115,7 @@ public class SNPExpressionCalculator {
 		return newValues;
 	}
 
-	private List<Double> getHeteroExp(SNP s, Gene g, List<Subject> persons) {
+	private List<Double> getHeteroExp(SNV s, Gene g, List<Subject> persons) {
 		double[] originalValues = g.getValues();
 		char ref = s.getReferenceNucleotide();
 		ArrayList<Double> newValues = new ArrayList<Double>();
@@ -136,7 +136,7 @@ public class SNPExpressionCalculator {
 		return newValues;
 	}
 
-	private List<Double> getRefExp(SNP s, Gene g, List<Subject> persons) {
+	private List<Double> getRefExp(SNV s, Gene g, List<Subject> persons) {
 		double[] originalValues = g.getValues();
 		char ref = s.getReferenceNucleotide();
 		ArrayList<Double> newValues = new ArrayList<Double>();

@@ -22,7 +22,7 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
 import mayday.Reveal.data.Gene;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.viewmodel.RevealViewModel;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
 import mayday.core.structures.linalg.matrix.DoubleMatrix;
@@ -394,11 +394,11 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 				
 				if(xSel && ySel) {
 					RevealViewModel model = getViewModel();
-					Set<SNP> snps = matrix.getSNPsInCell(yIndex, xIndex);
+					Set<SNV> snps = matrix.getSNPsInCell(yIndex, xIndex);
 					
 					if(e.isControlDown()) {
-						Set<SNP> selectedSNPs = model.getSelectedSNPs();
-						Set<SNP> newSelection = new HashSet<SNP>(selectedSNPs);
+						Set<SNV> selectedSNPs = model.getSelectedSNPs();
+						Set<SNV> newSelection = new HashSet<SNV>(selectedSNPs);
 
 						if(snps != null) {
 							if(newSelection.containsAll(snps)) {
@@ -413,7 +413,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 						if(snps != null)
 							model.setSNPSelection(snps);
 						else {	
-							model.setSNPSelection(new HashSet<SNP>());
+							model.setSNPSelection(new HashSet<SNV>());
 						}
 					}
 				}

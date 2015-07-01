@@ -5,14 +5,14 @@ import java.util.List;
 
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GenePair;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNVPair;
 
 /**
  * @author jaeger
  *
  */
 @SuppressWarnings("serial")
-public class TwoLocusResult extends LocusResult<GenePair, List<SNPPair>>{
+public class TwoLocusResult extends LocusResult<GenePair, List<SNVPair>>{
 
 	private Gene g;
 	
@@ -78,10 +78,10 @@ public class TwoLocusResult extends LocusResult<GenePair, List<SNPPair>>{
 			serial.append(">>");
 			serial.append(gp.gene1 + "," + gp.gene2);
 			serial.append("\n");
-			List<SNPPair> snpPairs = get(gp);
+			List<SNVPair> snpPairs = get(gp);
 			List<Statistics> stats = statMapping.get(gp);
 			for(int i = 0; i < snpPairs.size(); i++) {
-				SNPPair sp = snpPairs.get(i);
+				SNVPair sp = snpPairs.get(i);
 				Statistics stat = stats.get(i);
 				serial.append(sp.snp1.getID());
 				serial.append("\t");

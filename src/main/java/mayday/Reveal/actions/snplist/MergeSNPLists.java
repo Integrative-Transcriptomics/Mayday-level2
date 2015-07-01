@@ -5,10 +5,10 @@ import java.util.Collection;
 import javax.swing.JOptionPane;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.utilities.SNVLists;
 
-public class MergeSNPLists extends SNPListPlugin {
+public class MergeSNPLists extends SNVListPlugin {
 
 	@Override
 	public String getName() {
@@ -31,15 +31,15 @@ public class MergeSNPLists extends SNPListPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
-		SNPList merged = SNPLists.createUniqueSNPList(snpLists);
+	public void run(Collection<SNVList> snpLists) {
+		SNVList merged = SNVLists.createUniqueSNVList(snpLists);
 		if(merged != null) {
 			DataStorage ds = merged.getDataStorage();
 			if(ds == null) {
 				JOptionPane.showMessageDialog(null, "No project has been selected!");
 				return;
 			}
-			ds.addSNPList(merged.getAttribute().getName(), merged);
+			ds.addSNVList(merged.getAttribute().getName(), merged);
 		}
 	}
 }

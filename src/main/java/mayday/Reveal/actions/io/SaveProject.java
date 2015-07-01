@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 
 import mayday.Reveal.RevealPlugin;
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.gui.RevealGUI;
 import mayday.Reveal.utilities.RevealMenuConstants;
 import mayday.core.DataSet;
@@ -133,7 +133,7 @@ public class SaveProject extends RevealPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		save();	
 	}
 

@@ -10,13 +10,13 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
 import mayday.Reveal.gui.OptionPanelProvider;
 import mayday.core.io.StorageNode;
 
-public class SNPIDListFilter extends AbstractDataProcessor<SNP, Boolean> implements OptionPanelProvider, StorageNodeStorable {
+public class SNPIDListFilter extends AbstractDataProcessor<SNV, Boolean> implements OptionPanelProvider, StorageNodeStorable {
 
 	private List<String> snpIDs = new LinkedList<String>();
 	private JTextField textField = new JTextField();
@@ -74,7 +74,7 @@ public class SNPIDListFilter extends AbstractDataProcessor<SNP, Boolean> impleme
 
 	@Override
 	public boolean isAcceptableInput(Class<?>[] inputClass) {
-		return SNP.class.isAssignableFrom(inputClass[0]);
+		return SNV.class.isAssignableFrom(inputClass[0]);
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class SNPIDListFilter extends AbstractDataProcessor<SNP, Boolean> impleme
 	}
 
 	@Override
-	protected Boolean convert(SNP value) {
+	protected Boolean convert(SNV value) {
 		return snpIDs.contains(value.getID());
 	}
 

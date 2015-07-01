@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.io.gff3.GFFElement;
 import mayday.Reveal.io.gff3.GFFTree;
@@ -34,7 +34,7 @@ public class SNPCharacterization implements MetaInformation {
 
 	private String personID;
 	private String personName;
-	private SNP snp;
+	private SNV snp;
 
 	private String originalAA;
 	private String modifiedAAA;
@@ -52,7 +52,7 @@ public class SNPCharacterization implements MetaInformation {
 	
 	private DataStorage ds;
 	
-	public SNPCharacterization(String personID, String personName, SNP s) {
+	public SNPCharacterization(String personID, String personName, SNV s) {
 		this.personID = personID;
 		this.snp = s;
 	}
@@ -95,7 +95,7 @@ public class SNPCharacterization implements MetaInformation {
 		
 		this.personID = split[0];
 		this.personName = split[1];
-		this.snp = ds.getGlobalSNPList().get(split[2]);
+		this.snp = ds.getGlobalSNVList().get(split[2]);
 		this.originalAA = split[3];
 		this.modifiedAAA = split[4];
 		this.modifiedAAB = split[5];
@@ -130,7 +130,7 @@ public class SNPCharacterization implements MetaInformation {
 
 	@Override
 	public Class<?> getResultClass() {
-		return SNP.class;
+		return SNV.class;
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class SNPCharacterization implements MetaInformation {
 		return this.personID;
 	}
 	
-	public SNP getSNP() {
+	public SNV getSNP() {
 		return this.snp;
 	}
 

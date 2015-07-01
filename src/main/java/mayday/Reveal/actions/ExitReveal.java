@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 import mayday.Reveal.RevealPlugin;
 import mayday.Reveal.actions.io.SaveProject;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.gui.RevealGUI;
 import mayday.Reveal.utilities.RevealMenuConstants;
 
@@ -66,7 +66,7 @@ public class ExitReveal extends RevealPlugin {
 
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		exit(projectHandler.getGUI());
 	}
 

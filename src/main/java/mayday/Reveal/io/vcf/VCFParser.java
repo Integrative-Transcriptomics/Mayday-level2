@@ -13,8 +13,8 @@ import java.util.Set;
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Haplotypes;
 import mayday.Reveal.data.HaplotypesList;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.data.SubjectList;
 import mayday.Reveal.data.meta.Genome;
@@ -23,11 +23,11 @@ import mayday.core.structures.maps.BidirectionalHashMap;
 
 public class VCFParser extends AbstractDataParser {
 
-	private SNPList snps;
+	private SNVList snps;
 	private DataStorage ds;
 	private SubjectList subjects;
 	
-	public void setSNPs(SNPList snps) {
+	public void setSNPs(SNVList snps) {
 		this.snps = snps;
 	}
 	
@@ -49,10 +49,10 @@ public class VCFParser extends AbstractDataParser {
 			boolean isOK = true;
 			
 			ArrayList<ArrayList<char[]>> haplotypes = new ArrayList<ArrayList<char[]>>();
-			snps = new SNPList("New SNPs", ds);
+			snps = new SNVList("New SNPs", ds);
 			
 			int snpID = 0;
-			SNPList global = ds.getGlobalSNPList();
+			SNVList global = ds.getGlobalSNVList();
 			
 			if(global != null)
 				snpID = global.size();
@@ -239,7 +239,7 @@ public class VCFParser extends AbstractDataParser {
 					}
 					
 					//create a new snp and add it to the snplist
-					SNP s = new SNP(ID, referenceNucleotide, snpID++);
+					SNV s = new SNV(ID, referenceNucleotide, snpID++);
 					s.setPosition(position);
 					s.setGeneticDistance(0);
 					s.setChromosome(chromosome);
@@ -276,7 +276,7 @@ public class VCFParser extends AbstractDataParser {
 			
 			System.out.println("Number of haplotypes OK ? " + numHaploOK);
 			
-			ds.setGlobalSNPList(snps);
+			ds.setGlobalSNVList(snps);
 			ds.setSubjects(subjects);
 			ds.setGenes(null);
 			
@@ -337,7 +337,7 @@ public class VCFParser extends AbstractDataParser {
 				Genome g = ds.getGenome();
 				
 				for(int i = 0; i < snps.size(); i++) {
-					SNP s = snps.get(i);
+					SNV s = snps.get(i);
 					
 					bw.newLine();
 					bw.write(g.getMappedSequenceName(s.getChromosome())); //CHROM

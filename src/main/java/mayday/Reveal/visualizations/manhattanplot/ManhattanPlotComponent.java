@@ -17,7 +17,7 @@ import java.util.Set;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.visualizations.SNPValueProvider;
 import mayday.core.settings.Setting;
 import mayday.vis3.SparseZBuffer;
@@ -43,7 +43,7 @@ public class ManhattanPlotComponent extends AbstractManhattanPlotComponent {
 				double[] clicked = getPoint(e.getX(), e.getY());
 				switch(e.getButton()) {
 				case MouseEvent.BUTTON1:
-					SNP s = (SNP)szb.getObject(clicked[0], clicked[1]);
+					SNV s = (SNV)szb.getObject(clicked[0], clicked[1]);
 					if(s != null) {
 						int CONTROLMASK = getToolkit().getMenuShortcutKeyMask();
 						if((e.getModifiers()&CONTROLMASK) == CONTROLMASK) {
@@ -107,7 +107,7 @@ public class ManhattanPlotComponent extends AbstractManhattanPlotComponent {
 	}
 
 	@Override
-	public DataSeries doSelect(Collection<SNP> snps) {
+	public DataSeries doSelect(Collection<SNV> snps) {
 		DataSeries ds = viewSNPs(snps, true);
 		return ds;
 	}
@@ -125,11 +125,11 @@ public class ManhattanPlotComponent extends AbstractManhattanPlotComponent {
 	}
 	
 	protected void selectByRectangle(Rectangle r, boolean control, boolean alt) {
-		Set<SNP> newSelection = new HashSet<SNP>();
+		Set<SNV> newSelection = new HashSet<SNV>();
 		double[] clicked1 = getPoint(r.x, r.y);
 		double[] clicked2 = getPoint(r.x+r.width, r.y+r.height);
 		
-		for(SNP s : plot.snps) {
+		for(SNV s : plot.snps) {
 			double xval = X.getValue(s);
 			double yval = Y.getValue(s);
 			boolean inX = (xval >= clicked1[0] && xval < clicked2[0]);
@@ -138,9 +138,9 @@ public class ManhattanPlotComponent extends AbstractManhattanPlotComponent {
 				newSelection.add(s);
 		}
 		
-		Set<SNP> previousSelection = plot.getViewModel().getSelectedSNPs();
+		Set<SNV> previousSelection = plot.getViewModel().getSelectedSNPs();
 		if(control && alt) {
-			previousSelection = new HashSet<SNP>(previousSelection);
+			previousSelection = new HashSet<SNV>(previousSelection);
 			previousSelection.retainAll(newSelection);
 			newSelection = previousSelection;
 		} else if(control) {
@@ -155,7 +155,7 @@ public class ManhattanPlotComponent extends AbstractManhattanPlotComponent {
 	}
 
 	@Override
-	public DataSeries viewSNPs(Collection<SNP> snps, final boolean isSelectionLayer) {
+	public DataSeries viewSNPs(Collection<SNV> snps, final boolean isSelectionLayer) {
 		DataSeries ds = new DataSeries();
 		
 		ds.setShape(new Shape() {
@@ -176,7 +176,7 @@ public class ManhattanPlotComponent extends AbstractManhattanPlotComponent {
 		});
 		
 		if(X != null && Y != null) {
-			for(SNP s: snps) {
+			for(SNV s: snps) {
 				double xx = X.getValue(s);
 				double yy = Y.getValue(s);
 				ds.addPoint(xx, yy, s);

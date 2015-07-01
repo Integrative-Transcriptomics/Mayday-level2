@@ -9,13 +9,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import mayday.Reveal.data.SNP;
+import mayday.Reveal.data.SNV;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
 import mayday.Reveal.gui.OptionPanelProvider;
 import mayday.core.io.StorageNode;
 
-public class SNPIDContainsFilter extends AbstractDataProcessor<SNP, Boolean> implements OptionPanelProvider, StorageNodeStorable {
+public class SNPIDContainsFilter extends AbstractDataProcessor<SNV, Boolean> implements OptionPanelProvider, StorageNodeStorable {
 
 	private String contained = "";
 	
@@ -78,7 +78,7 @@ public class SNPIDContainsFilter extends AbstractDataProcessor<SNP, Boolean> imp
 
 	@Override
 	public boolean isAcceptableInput(Class<?>[] inputClass) {
-		return SNP.class.isAssignableFrom(inputClass[0]);
+		return SNV.class.isAssignableFrom(inputClass[0]);
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class SNPIDContainsFilter extends AbstractDataProcessor<SNP, Boolean> imp
 	}
 
 	@Override
-	protected Boolean convert(SNP value) {
+	protected Boolean convert(SNV value) {
 		if(contained != null)
 			return value.getID().contains(contained);
 		else

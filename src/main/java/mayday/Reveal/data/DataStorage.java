@@ -32,7 +32,7 @@ public class DataStorage {
 
 	protected GeneList genes;
 	protected SubjectList persons;
-	protected List<SNPList> snpLists;
+	protected List<SNVList> snvLists;
 	protected HaplotypesList haplotypes;
 	
 	protected MetaInformationManager metaInformationManager;
@@ -46,7 +46,7 @@ public class DataStorage {
 	 */
 	public DataStorage(ProjectHandler projectHandler) {
 		this.projectHandler = projectHandler;
-		this.snpLists = new LinkedList<SNPList>();
+		this.snvLists = new LinkedList<SNVList>();
 		this.attribute = new DataStorageAttribute(this);
 		this.metaInformationManager = new MetaInformationManager(this);
 	}
@@ -67,33 +67,33 @@ public class DataStorage {
     /**
      * @return number of external snp lists
      */
-    public int numberOfSNPLists() {
-    	return this.snpLists.size();
+    public int numberOfSNVLists() {
+    	return this.snvLists.size();
     }
     
     /**
      * @param name
      * @param external
      */
-    public void addSNPList(String name, SNPList external) {
+    public void addSNVList(String name, SNVList external) {
     	if(external == null)
 			return;
     	if(name.equals("Global")) {
-    		if(getGlobalSNPList() == null)
-    			this.setGlobalSNPList(external);
+    		if(getGlobalSNVList() == null)
+    			this.setGlobalSNVList(external);
     		else
     			return;
     	} else {
-    		SNPList contained = getSNPList(name);
+    		SNVList contained = getSNVList(name);
         	if(contained != null) {
     			name = DateTimeProvider.extendByTime(name);
     		}
         	
-        	SNPList snps = getGlobalSNPList();
-        	SNPList filtered = new SNPList(name, this);
+        	SNVList snvs = getGlobalSNVList();
+        	SNVList filtered = new SNVList(name, this);
         	
-    		for(SNP s : external) {
-    			if(snps.contains(s)) {
+    		for(SNV s : external) {
+    			if(snvs.contains(s)) {
     				filtered.add(s);
     			}
     		}
@@ -102,36 +102,36 @@ public class DataStorage {
     		filtered.setRuleSet(external.getRuleSet());
     		
     		if(filtered.size() > 0) {
-    			this.snpLists.add(filtered);
+    			this.snvLists.add(filtered);
     		}
     	}
 		
 		fireDataStorageChanged(DataStorageEvent.DATA_CHANGED);
     }
     
-	public void removeSNPList(SNPList snpList) {
+	public void removeSNPList(SNVList snpList) {
 		if(snpList.getAttribute().getName().equals("Global")) {
 			JOptionPane.showMessageDialog(null, "The global SNPList cannot be removed!");
 			return;
 		}
 			
-		if(snpLists.contains(snpList)) {
-			snpLists.remove(snpList);
+		if(snvLists.contains(snpList)) {
+			snvLists.remove(snpList);
 			fireDataStorageChanged(DataStorageEvent.DATA_CHANGED);
 		}
 	}
 	
-	public void removeSNPLists(Collection<SNPList> snpLists) {
+	public void removeSNVLists(Collection<SNVList> snvLists) {
 		boolean globalDetected = false;
 		boolean changed = false;
 		
-		for(SNPList s : snpLists) {
+		for(SNVList s : snvLists) {
 			if(s.getAttribute().getName().equals("Global")) {
 				globalDetected = true;
 				continue;
 			}
-			if(this.snpLists.contains(s)) {
-				this.snpLists.remove(s);
+			if(this.snvLists.contains(s)) {
+				this.snvLists.remove(s);
 				changed = true;
 			}
 		}
@@ -145,8 +145,8 @@ public class DataStorage {
 		}
 	}
 	
-	public void removeSNPList(String name) {
-		SNPList toRemove = getSNPList(name);
+	public void removeSNVList(String name) {
+		SNVList toRemove = getSNVList(name);
 		if(toRemove != null) {
 			removeSNPList(toRemove);
 		}
@@ -156,10 +156,10 @@ public class DataStorage {
      * @param name
      * @return snplist with the specified name
      */
-    public SNPList getSNPList(String name) {
-    	for(SNPList snpList : snpLists) {
-    		if(snpList.getAttribute().getName().equals(name)) {
-    			return snpList;
+    public SNVList getSNVList(String name) {
+    	for(SNVList snvList : snvLists) {
+    		if(snvList.getAttribute().getName().equals(name)) {
+    			return snvList;
     		}
     	}
     	return null;
@@ -168,10 +168,10 @@ public class DataStorage {
     /**
      * @return names of all external snp lists
      */
-    public Set<String> getSNPListNames() {
+    public Set<String> getSNVListNames() {
     	Set<String> names = new HashSet<String>();
-    	for(SNPList snpList : snpLists) {
-    		names.add(snpList.getAttribute().getName());
+    	for(SNVList snvList : snvLists) {
+    		names.add(snvList.getAttribute().getName());
     	}
     	return names;
     }
@@ -217,11 +217,11 @@ public class DataStorage {
 	/**
 	 * @param snps
 	 */
-	public void setGlobalSNPList(SNPList snps) {
-		if(getGlobalSNPList() == null) {
+	public void setGlobalSNVList(SNVList snps) {
+		if(getGlobalSNVList() == null) {
 			snps.getAttribute().setName("Global");
 			snps.getAttribute().setInformation("Unmodifyable");
-			snpLists.add(0, snps);
+			snvLists.add(0, snps);
 			this.fireDataStorageChanged(DataStorageEvent.DATA_CHANGED);
 		}
 	}
@@ -252,8 +252,8 @@ public class DataStorage {
 	/**
 	 * @return snps
 	 */
-	public SNPList getGlobalSNPList() {
-		return getSNPList("Global");
+	public SNVList getGlobalSNVList() {
+		return getSNVList("Global");
 	}
 	
 	/**
@@ -346,7 +346,7 @@ public class DataStorage {
 		}
 		
 		bw.append("$SNPLISTS\n");
-		for(SNPList sl : snpLists) {
+		for(SNVList sl : snvLists) {
 			sl.serialize(bw);
 		}
 		
@@ -361,8 +361,8 @@ public class DataStorage {
 		this.metaInformationManager.serialize(bw);
 	}
 
-	public Collection<SNPList> getSNPLists() {
-		return this.snpLists;
+	public Collection<SNVList> getSNVLists() {
+		return this.snvLists;
 	}
 
 	public ProjectHandler getProjectHandler() {

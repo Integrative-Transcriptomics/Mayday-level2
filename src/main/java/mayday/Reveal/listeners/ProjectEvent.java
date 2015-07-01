@@ -27,7 +27,7 @@ public class ProjectEvent extends EventObject {
 	 */
 	public static final int PROJECT_SELECTION_CHANGED = 3;
 	
-	public static final int SNP_SELECTION_CHANGED = 4;
+	public static final int SNV_SELECTION_CHANGED = 4;
 	
 	public static final int SNP_SELECTION_CLEARED = 5;
 	

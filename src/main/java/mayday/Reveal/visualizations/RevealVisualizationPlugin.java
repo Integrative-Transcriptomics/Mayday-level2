@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import mayday.Reveal.RevealPlugin;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.core.pluma.Constants;
 import mayday.core.pluma.PluginInfo;
 import mayday.core.pluma.PluginManagerException;
@@ -66,7 +66,7 @@ public abstract class RevealVisualizationPlugin extends RevealPlugin {
 	
 	public abstract boolean usesViewSetting();
 	
-	public void run(Collection<SNPList> snps) {
+	public void run(Collection<SNVList> snps) {
 		return; //nothing to do here!
 	}
 	

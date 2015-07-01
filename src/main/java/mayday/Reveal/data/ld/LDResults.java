@@ -7,16 +7,16 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Set;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.data.SNVPair;
 import mayday.Reveal.data.meta.MetaInformationPlugin;
 
 public class LDResults extends MetaInformationPlugin {
 	
 	public static final String MYTYPE = "LDR";
 	
-	private HashMap<SNPPair, Double> results = new HashMap<SNPPair, Double>();
+	private HashMap<SNVPair, Double> results = new HashMap<SNVPair, Double>();
 	
 	public void serialize(BufferedWriter bw) throws IOException {
 		//Header for Meta Information Plugins
@@ -24,7 +24,7 @@ public class LDResults extends MetaInformationPlugin {
 		bw.append(getCompleteType());
 		bw.append("\n");
 		
-		for(SNPPair sp : keySet()) {
+		for(SNVPair sp : keySet()) {
 			bw.append(sp.snp1.getID());
 			bw.append("\t");
 			bw.append(sp.snp2.getID());
@@ -48,12 +48,12 @@ public class LDResults extends MetaInformationPlugin {
 				}
 				
 				String[] snpLine = line.split("\t");
-				SNPList global = dataStorage.getGlobalSNPList();
+				SNVList global = dataStorage.getGlobalSNVList();
 				if(global.contains(snpLine[0]) && global.contains(snpLine[1])) {
-					SNP s1 = global.get(snpLine[0]);
-					SNP s2 = global.get(snpLine[1]);
+					SNV s1 = global.get(snpLine[0]);
+					SNV s2 = global.get(snpLine[1]);
 					Double d = Double.parseDouble(snpLine[2]);
-					put(new SNPPair(s1,s2), d);
+					put(new SNVPair(s1,s2), d);
 				}
 			}
 			return true;
@@ -82,15 +82,15 @@ public class LDResults extends MetaInformationPlugin {
 		return "R2 Valuse for pairs of SNPs describing their potential to be in LD";
 	}
 	
-	public Double put(SNPPair key, Double value) {
+	public Double put(SNVPair key, Double value) {
 		return results.put(key, value);
 	}
 	
-	public Double get(Object key) {
+	public Double get(SNVPair key) {
 		return results.get(key);
 	}
 	
-	public Set<SNPPair> keySet() {
+	public Set<SNVPair> keySet() {
 		return results.keySet();
 	}
 	
@@ -101,5 +101,9 @@ public class LDResults extends MetaInformationPlugin {
 	@Override
 	public Class<?> getResultClass() {
 		return Double.class;
+	}
+
+	public boolean contains(SNVPair sp) {
+		return this.results.containsKey(sp);
 	}
 }

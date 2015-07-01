@@ -15,7 +15,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.GeneList;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.SubjectList;
 import mayday.Reveal.data.meta.SLResults;
 import mayday.Reveal.data.meta.TLResults;
@@ -61,8 +61,8 @@ public class RevealTreeCellRenderer extends DefaultTreeCellRenderer {
 		Object argUserObject = ((DefaultMutableTreeNode)arg1).getUserObject();		
 		
 		// Leaf nodes
-		if (argUserObject instanceof SNPList) {
-			SNPList sl = (SNPList)argUserObject;
+		if (argUserObject instanceof SNVList) {
+			SNVList sl = (SNVList)argUserObject;
 			nodeText = "<html>" + sl.toString();
 			
 			String info = sl.getAttribute().getInformation();
@@ -103,7 +103,7 @@ public class RevealTreeCellRenderer extends DefaultTreeCellRenderer {
 				nodeText = "<html>" + argUserObject.toString();
 		}
 		
-		System.out.println(argUserObject.getClass() + " : " + nodeText);
+		//System.out.println(argUserObject.getClass() + " : " + nodeText);
 
 		this.setText(nodeText);
 

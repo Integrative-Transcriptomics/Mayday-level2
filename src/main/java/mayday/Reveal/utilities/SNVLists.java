@@ -9,38 +9,38 @@ import java.util.Set;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.Haplotypes;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.filter.RuleSet;
 
-public class SNPLists {
+public class SNVLists {
 
-	public static SNPList createUniqueSNPList(Collection<SNPList> snpLists) {
-		if(snpLists.size() == 0)
-			return new SNPList("Merged SNPs", null);
+	public static SNVList createUniqueSNVList(Collection<SNVList> snvLists) {
+		if(snvLists.size() == 0)
+			return new SNVList("Merged SNVs", null);
 		
-		if(snpLists.size() == 1) {
-			SNPList src = snpLists.iterator().next();
-			SNPList trg = new SNPList(src.getAttribute().getName(), src.getDataStorage());
+		if(snvLists.size() == 1) {
+			SNVList src = snvLists.iterator().next();
+			SNVList trg = new SNVList(src.getAttribute().getName(), src.getDataStorage());
 			trg.getAttribute().setInformation(src.getAttribute().getInformation());
 			trg.addAll(src);
 			return trg;
 		} else {
-			return mergeSNPLists(snpLists, snpLists.iterator().next().getDataStorage());
+			return mergeSNPLists(snvLists, snvLists.iterator().next().getDataStorage());
 		}
 	}
 
-	private static SNPList mergeSNPLists(Collection<SNPList> snpLists,
+	private static SNVList mergeSNPLists(Collection<SNVList> snpLists,
 			DataStorage dataStorage) {
 		
-		Set<SNP> mergedSNPs = new HashSet<SNP>();
+		Set<SNV> mergedSNPs = new HashSet<SNV>();
 		
-		SNPList newList = new SNPList("Merged SNPs", dataStorage);
+		SNVList newList = new SNVList("Merged SNVs", dataStorage);
 		String info = "[";
 		
-		for(Iterator<SNPList> it = snpLists.iterator(); it.hasNext();) {
-			SNPList next = it.next();
+		for(Iterator<SNVList> it = snpLists.iterator(); it.hasNext();) {
+			SNVList next = it.next();
 			info += next.getAttribute().getName() + "; ";
 			mergedSNPs.addAll(next);
 		}
@@ -53,9 +53,9 @@ public class SNPLists {
 		return newList;
 	}
 	
-	public static int countSNPs(DataStorage dataStorage, RuleSet ruleSet) {
+	public static int countSNVs(DataStorage dataStorage, RuleSet ruleSet) {
 		int count=0;
-		for (SNP snp : dataStorage.getGlobalSNPList()) {
+		for (SNV snp : dataStorage.getGlobalSNVList()) {
 			Boolean pf = ruleSet.passesFilter(snp);
 			if (pf==null || pf==true) 
 				++count;
@@ -63,13 +63,13 @@ public class SNPLists {
 		return count;
 	}
 
-	public static String createUniqueSNPListName(Set<SNPList> selectedSNPLists) {
+	public static String createUniqueSNVListName(Set<SNVList> selectedSNPLists) {
 		if(selectedSNPLists.size() == 0) {
 			return "";
 		}
 		
 		StringBuffer name = new StringBuffer();
-		for(SNPList snpList : selectedSNPLists) {
+		for(SNVList snpList : selectedSNPLists) {
 			name.append(snpList.getAttribute().getName());
 			name.append(",");
 		}

@@ -3,7 +3,7 @@ package mayday.Reveal.filter;
 import java.util.Set;
 import java.util.TreeSet;
 
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.core.pluma.PluginInfo;
 import mayday.core.pluma.PluginManager;
 
@@ -65,7 +65,7 @@ public class DataProcessors {
 			return pli.getName();
 		}
 		
-		public AbstractDataProcessor newInstance(SNPList dynamicSNPList) {
+		public AbstractDataProcessor newInstance(SNVList dynamicSNPList) {
 			AbstractDataProcessor adp = ((AbstractDataProcessor)pli.newInstance());
 			adp.setSNPList(dynamicSNPList);
 			return adp;

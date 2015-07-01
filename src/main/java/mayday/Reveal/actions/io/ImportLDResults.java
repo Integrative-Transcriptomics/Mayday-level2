@@ -6,7 +6,7 @@ import java.util.Collection;
 import javax.swing.JOptionPane;
 
 import mayday.Reveal.RevealPlugin;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.io.LDParser;
 import mayday.Reveal.utilities.RevealMenuConstants;
 import mayday.core.settings.SettingDialog;
@@ -39,7 +39,7 @@ public class ImportLDResults extends RevealPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		if(projectHandler.getSelectedProject() == null) {
 			JOptionPane.showMessageDialog(null, "No project has been selected!");
 			return;

@@ -9,24 +9,24 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.events.SNPListEvent;
-import mayday.Reveal.events.SNPListListener;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.events.SNVListEvent;
+import mayday.Reveal.events.SNVListListener;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
 import mayday.Reveal.filter.gui.SNPListSelectionDialog;
 import mayday.Reveal.gui.OptionPanelProvider;
 import mayday.core.io.StorageNode;
 
-public class ContainedInSNPListFilter extends AbstractDataProcessor<SNP, Boolean> implements SNPListListener, OptionPanelProvider, StorageNodeStorable {
+public class ContainedInSNPListFilter extends AbstractDataProcessor<SNV, Boolean> implements SNVListListener, OptionPanelProvider, StorageNodeStorable {
 	
 	public static final String MYTYPE = "ContainedInSNPList";
 	
 	private JTextField selectedSNPList = new JTextField(30);
 	private boolean silent = false;
 	private AbstractAction selectAction;
-	private SNPList currentSnpList;
+	private SNVList currentSnpList;
 
 	@Override
 	public void dispose() {
@@ -40,7 +40,7 @@ public class ContainedInSNPListFilter extends AbstractDataProcessor<SNP, Boolean
 
 	@Override
 	public boolean isAcceptableInput(Class<?>[] inputClass) {
-		return SNP.class.isAssignableFrom(inputClass[0]);
+		return SNV.class.isAssignableFrom(inputClass[0]);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class ContainedInSNPListFilter extends AbstractDataProcessor<SNP, Boolean
 	}
 
 	@Override
-	protected Boolean convert(SNP value) {
+	protected Boolean convert(SNV value) {
 		return (currentSnpList==null || currentSnpList.contains(value)); 
 	}
 	
@@ -71,7 +71,7 @@ public class ContainedInSNPListFilter extends AbstractDataProcessor<SNP, Boolean
 				);
 				slsd.setModal(true);
 				slsd.setVisible(true);
-				List<SNPList> mgs = slsd.getSelection();
+				List<SNVList> mgs = slsd.getSelection();
 				if (mgs.size()>0) {
 					setCurrentSNPList(mgs.get(0));
 				} else {
@@ -90,13 +90,13 @@ public class ContainedInSNPListFilter extends AbstractDataProcessor<SNP, Boolean
 		silent=false;
 	}
 	
-	public void setCurrentSNPList(SNPList sl) {
+	public void setCurrentSNPList(SNVList sl) {
 		if (currentSnpList!=null)
-			currentSnpList.removeSNPListListener(this);		
+			currentSnpList.removeSNVListListener(this);		
 		currentSnpList=sl;
 		if (sl!=null) {
 			selectedSNPList.setText(sl.getAttribute().getName());
-			currentSnpList.addSNPListListener(this);
+			currentSnpList.addSNVListListener(this);
 		}else
 			selectedSNPList.setText("-- nothing selected --");
 		if (!silent)
@@ -104,10 +104,10 @@ public class ContainedInSNPListFilter extends AbstractDataProcessor<SNP, Boolean
 	}
 
 	@Override
-	public void snpListChanged(SNPListEvent event) {
-		if (event.getChange()==SNPListEvent.CONTENT_CHANGE)
+	public void snpListChanged(SNVListEvent event) {
+		if (event.getChange()==SNVListEvent.CONTENT_CHANGE)
 			fireChanged();
-		else if (event.getChange()==SNPListEvent.SNPLIST_CLOSED)
+		else if (event.getChange()==SNVListEvent.SNPLIST_CLOSED)
 			setCurrentSNPList(null);
 	}
 
@@ -121,7 +121,7 @@ public class ContainedInSNPListFilter extends AbstractDataProcessor<SNP, Boolean
 		String s = sn.Value;
 		currentSnpList = null;
 		if(!s.equals("null")) {
-			SNPList sl = getSNPList().getDataStorage().getSNPList(s);
+			SNVList sl = getSNPList().getDataStorage().getSNVList(s);
 			setCurrentSNPList(sl);
 		}
 	}

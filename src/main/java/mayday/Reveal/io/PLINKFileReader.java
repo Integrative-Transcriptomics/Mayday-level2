@@ -111,7 +111,7 @@ public class PLINKFileReader {
 	
 	protected void readMAP(File mapFile) {
 			mapParser.read(mapFile);
-			ds.setGlobalSNPList(mapParser.snps);
+			ds.setGlobalSNVList(mapParser.snps);
 	}
 	
 	protected void readPHENO(File phenoFile) {

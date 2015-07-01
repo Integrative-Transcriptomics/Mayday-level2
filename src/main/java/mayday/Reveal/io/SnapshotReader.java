@@ -16,8 +16,8 @@ import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.Haplotypes;
 import mayday.Reveal.data.HaplotypesList;
 import mayday.Reveal.data.ProjectHandler;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.data.SubjectList;
 import mayday.Reveal.data.meta.MetaInformationPlugin;
@@ -161,7 +161,7 @@ public class SnapshotReader extends AbstractDataParser {
 							while(line != null && line.startsWith(">")) {
 								line = line.substring(1);
 								String[] snpListLine = line.split("\t");
-								SNPList snpList = new SNPList(snpListLine[0], dataStorage);
+								SNVList snpList = new SNVList(snpListLine[0], dataStorage);
 								snpList.getAttribute().setInformation(snpListLine[1]);
 								
 								while((line = br.readLine()) != null && 
@@ -173,7 +173,7 @@ public class SnapshotReader extends AbstractDataParser {
 									if(snpList.getAttribute().getName().equals("Global")) {
 										//no snps have been created so far
 										String[] snpLine = line.split("\t");
-										SNP s = new SNP(snpLine[0], snpLine[2].charAt(0), Integer.parseInt(snpLine[5]));
+										SNV s = new SNV(snpLine[0], snpLine[2].charAt(0), Integer.parseInt(snpLine[5]));
 										s.setPosition(Integer.parseInt(snpLine[1]));
 										s.setChromosome(snpLine[3]);
 										s.setGene(snpLine[4]);
@@ -182,14 +182,14 @@ public class SnapshotReader extends AbstractDataParser {
 									} else {
 										//the snp has already been created
 										//it just has to be added to a second list
-										SNPList global = dataStorage.getGlobalSNPList();
-										SNP s = global.get(line.split("\t")[0]);
+										SNVList global = dataStorage.getGlobalSNVList();
+										SNV s = global.get(line.split("\t")[0]);
 										if(s != null)
 											snpList.add(s);
 									}
 								}
 								
-								dataStorage.addSNPList(snpList.getAttribute().getName(), snpList);
+								dataStorage.addSNVList(snpList.getAttribute().getName(), snpList);
 							}
 						}
 						

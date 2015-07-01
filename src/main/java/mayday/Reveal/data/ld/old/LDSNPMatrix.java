@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 
 public class LDSNPMatrix {
 
 	private List<LDSNPList> list;
-	private HashMap<SNP, Integer> snpToIndex;
+	private HashMap<SNV, Integer> snpToIndex;
 	
-	public LDSNPMatrix(SNPList snps) {
+	public LDSNPMatrix(SNVList snps) {
 		list = new ArrayList<LDSNPList>();
-		snpToIndex = new HashMap<SNP, Integer>();
+		snpToIndex = new HashMap<SNV, Integer>();
 		
 		for(int i = 0; i < snps.size(); i++) {
 			list.add(new LDSNPList());
@@ -22,7 +22,7 @@ public class LDSNPMatrix {
 		}
 	}
 	
-	public void addSNPPair(int i, SNP a, int j, SNP b, double r2) {
+	public void addSNPPair(int i, SNV a, int j, SNV b, double r2) {
 		LDSNPList la = list.get(i);
 		LDSNPList lb = list.get(j);
 		
@@ -30,7 +30,7 @@ public class LDSNPMatrix {
 		lb.add(new LDSNP(a, r2));
 	}
 	
-	public void mergeLists(SNP a, SNP b) {
+	public void mergeLists(SNV a, SNV b) {
 		int aI = snpToIndex.get(a);
 		int bI = snpToIndex.get(b);
 		

@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPPair;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVPair;
 import mayday.Reveal.data.ld.LDResults;
 import mayday.Reveal.data.meta.MetaInformationPlugin;
 
@@ -16,7 +16,7 @@ public class LDStructure extends MetaInformationPlugin {
 	
 	public static final String MYTYPE = "LDS";
 	
-	private HashMap<SNP, LDBlock> snpsToBlocks = new HashMap<SNP, LDBlock>();
+	private HashMap<SNV, LDBlock> snpsToBlocks = new HashMap<SNV, LDBlock>();
 	private HashMap<LDBlockPair, Boolean> hasEdge = new HashMap<LDBlockPair, Boolean>();
 	private double threshold = -1;
 	
@@ -33,9 +33,9 @@ public class LDStructure extends MetaInformationPlugin {
 	
 	public void calculateLDStructure(final double threshold, LDResults ldResults) {
 		this.threshold = threshold;
-		Set<SNPPair> snpPairs = ldResults.keySet();
+		Set<SNVPair> snpPairs = ldResults.keySet();
 		
-		for(SNPPair sp : snpPairs) {
+		for(SNVPair sp : snpPairs) {
 			if(ldResults.get(sp).compareTo(threshold) > 0) {
 				LDBlock containingSet1 = snpsToBlocks.get(sp.snp1);
 				LDBlock containingSet2 = snpsToBlocks.get(sp.snp2);
@@ -53,7 +53,7 @@ public class LDStructure extends MetaInformationPlugin {
 					snpsToBlocks.put(sp.snp2, containingSet1);
 				} else {
 					containingSet1.addAll(containingSet2);
-					for(SNP s : containingSet2) {
+					for(SNV s : containingSet2) {
 						snpsToBlocks.put(s, containingSet1);
 					}
 					containingSet2.clear();
@@ -61,11 +61,11 @@ public class LDStructure extends MetaInformationPlugin {
 			}
 		}
 		
-		HashSet<Set<SNP>> set = new HashSet<Set<SNP>>();
+		HashSet<Set<SNV>> set = new HashSet<Set<SNV>>();
 		set.addAll(snpsToBlocks.values());
 	}
 	
-	public boolean hasLDEdge(SNPPair sp) {
+	public boolean hasLDEdge(SNVPair sp) {
 		LDBlock containingSet1 = snpsToBlocks.get(sp.snp1);
 		LDBlock containingSet2 = snpsToBlocks.get(sp.snp2);
 		
@@ -109,7 +109,7 @@ public class LDStructure extends MetaInformationPlugin {
 		return snpsToBlocks.size();
 	}
 
-	public LDBlock getBlock(SNP s) {
+	public LDBlock getBlock(SNV s) {
 		return this.snpsToBlocks.get(s);
 	}
 

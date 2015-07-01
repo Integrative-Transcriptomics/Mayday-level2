@@ -2,8 +2,8 @@ package mayday.Reveal.visualizations.PValueHistogram;
 
 import javax.swing.JLabel;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 
 /**
  * @author jaeger
@@ -15,7 +15,7 @@ public class PVHistUtilities {
 	 * @param snpList
 	 * @return -log2(minimum-p-value)
 	 */
-	public static double getMaxLogPValue(SNPList snpList) {
+	public static double getMaxLogPValue(SNVList snpList) {
 //		double[] pValues = snpList.getSNPpValues(); 
 //		double min = Double.MAX_VALUE;
 //		for(double d : pValues) {
@@ -31,10 +31,10 @@ public class PVHistUtilities {
 	 * @param snpList
 	 * @return length of the longest label in pixels
 	 */
-	public static int getMaxLabelLength(SNPList snpList) {
+	public static int getMaxLabelLength(SNVList snpList) {
 		String max = "";
 		for(int i = 0; i < snpList.size(); i++) {
-			SNP snp = snpList.get(i);
+			SNV snp = snpList.get(i);
 			if(max.length() < snp.getID().length()) {
 				max = snp.getID();
 			}

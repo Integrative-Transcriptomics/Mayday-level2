@@ -3,11 +3,11 @@ package mayday.Reveal.actions.snplist;
 import java.util.Collection;
 
 import mayday.Reveal.data.DataStorage;
-import mayday.Reveal.data.SNPList;
-import mayday.Reveal.utilities.SNPLists;
+import mayday.Reveal.data.SNVList;
+import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.viewmodel.RevealViewModel;
 
-public class SetToTopPriority extends SNPListPlugin {
+public class SetToTopPriority extends SNVListPlugin {
 
 	@Override
 	public String getName() {
@@ -30,20 +30,20 @@ public class SetToTopPriority extends SNPListPlugin {
 	}
 
 	@Override
-	public void run(Collection<SNPList> snpLists) {
+	public void run(Collection<SNVList> snpLists) {
 		if(snpLists != null && snpLists.size() >= 1) {
 			DataStorage ds = projectHandler.getSelectedProject();
 			RevealViewModel vm = projectHandler.getViewModel(ds);
 			
-			for(SNPList sl : ds.getSNPLists()) {
+			for(SNVList sl : ds.getSNVLists()) {
 				sl.setTopPriority(false);
 			}
 			
-			for(SNPList sl : snpLists) {
+			for(SNVList sl : snpLists) {
 				sl.setTopPriority(true);
 			}
 			
-			vm.setTopPrioritySNPList(SNPLists.createUniqueSNPList(snpLists));
+			vm.setTopPrioritySNPList(SNVLists.createUniqueSNVList(snpLists));
 		}
 	}
 }

@@ -7,8 +7,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
-import mayday.Reveal.data.SNP;
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNV;
+import mayday.Reveal.data.SNVList;
 import mayday.Reveal.filter.gui.RuleGUI;
 import mayday.Reveal.gui.OptionPanelProvider;
 import mayday.core.io.StorageNode;
@@ -24,9 +24,9 @@ public class Rule implements SNPFilter, ChangeListener, StorageNodeStorable, Opt
 	private boolean isInactive = false;
 	private boolean invertedMode = false;
 	private EventListenerList eventListenerList = new EventListenerList();
-	private SNPList snpList;
+	private SNVList snpList;
 	
-	public Rule(SNPList snpList) {
+	public Rule(SNVList snpList) {
 		this.snpList = snpList;
 	}
 	
@@ -71,7 +71,7 @@ public class Rule implements SNPFilter, ChangeListener, StorageNodeStorable, Opt
 	}
 
 	@Override
-	public Boolean passesFilter(SNP snp) {
+	public Boolean passesFilter(SNV snp) {
 		if (isInactive || !isFinishedChain())
 			return null;
 		
@@ -126,7 +126,7 @@ public class Rule implements SNPFilter, ChangeListener, StorageNodeStorable, Opt
 	@SuppressWarnings("rawtypes")
 	public void addProcessor(AbstractDataProcessor nextInChain) {
 		if (sources.size()==0) {
-			if (nextInChain.isAcceptableInput( new Class[]{SNP.class} )) {
+			if (nextInChain.isAcceptableInput( new Class[]{SNV.class} )) {
 				sources.push(nextInChain);
 				nextInChain.addChangeListener(this);
 				fireChanged();				
@@ -193,11 +193,11 @@ public class Rule implements SNPFilter, ChangeListener, StorageNodeStorable, Opt
 		return invertedMode;
 	}
 	
-	public void setSNPList(SNPList snpList) {
+	public void setSNPList(SNVList snpList) {
 		this.snpList = snpList;
 	}
 	
-	public SNPList getSNPList() {
+	public SNVList getSNPList() {
 		return this.snpList;
 	}
 	

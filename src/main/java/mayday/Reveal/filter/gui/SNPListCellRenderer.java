@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import mayday.Reveal.data.SNPList;
+import mayday.Reveal.data.SNVList;
 
 @SuppressWarnings("serial")
 public class SNPListCellRenderer extends JLabel implements ListCellRenderer {
@@ -19,17 +19,17 @@ public class SNPListCellRenderer extends JLabel implements ListCellRenderer {
 			boolean isSelected,      // is the cell selected
 			boolean cellHasFocus )    // the list and the cell have the focus
 	{
-		if (!(value instanceof SNPList)) {
+		if (!(value instanceof SNVList)) {
 			setText( value.toString() );
 
 			return ( this ); 
 		}
 
 		String  s = "<html><nobr>"; 
-		s += ((SNPList)value).getAttribute().getName();
+		s += ((SNVList)value).getAttribute().getName();
 
 		s += "<small><font color=#888888>";
-		s += "&nbsp;&nbsp;S=" + ((SNPList)value).size();
+		s += "&nbsp;&nbsp;S=" + ((SNVList)value).size();
 //		s += "&nbsp;&nbsp;M=" + ((SNPList)value).getDataSet().getMIManager().getGroupsForObject(value).size();
 		s += "</nobr></small>";
 		s += "</html>"; 
@@ -47,7 +47,7 @@ public class SNPListCellRenderer extends JLabel implements ListCellRenderer {
 		setFont( list.getFont() );
 		setOpaque( true );
 
-		setToolTipText( ((SNPList)value).getAttribute().getInformation());
+		setToolTipText( ((SNVList)value).getAttribute().getInformation());
 
 		return ( this );
 	}	
