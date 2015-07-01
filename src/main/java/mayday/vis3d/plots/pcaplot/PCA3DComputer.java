@@ -24,7 +24,6 @@ public class PCA3DComputer {
 	 */
 	public PCA3DComputer(PCAPlot3DPanel pcaPanel) {
 		callBack = pcaPanel;
-		this.startCalculation();
 	}
 	/**
 	 * perform a principal component analysis

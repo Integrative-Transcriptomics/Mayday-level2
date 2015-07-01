@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GLContext;
 import javax.swing.JMenu;
 
 import mayday.core.Probe;
@@ -313,7 +312,6 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	private void updateDrawTypes(GL gl) {
-		
 		if(PCAData == null) {
 			setBackground(Color.WHITE);
 			return;
@@ -463,8 +461,10 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 	public void setupPanel(PlotContainer plotContainer) {
 		plotContainer.setPreferredTitle("3D Principal Component Plot", this);
 		this.coordSystem = new StandardCoordinateSystem3D(this, null);
-		new PCA3DComputer(this);
 
+		PCA3DComputer pcaComputer = new PCA3DComputer(this);
+		pcaComputer.startCalculation();
+		
 		JMenu m = plotContainer.getMenu(PlotContainer.FILE_MENU, this);
 		m.add(exportPCA);
 
@@ -506,8 +506,7 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 
 			// initialize the eigen-values histogram
 			this.evPlot = new PCAEigenValuesPlot(this);
-			GL gl = GLContext.getCurrent().getGL();
-			this.updateDrawTypes(gl);
+			this.updatePlot();
 		}
 	}
 
