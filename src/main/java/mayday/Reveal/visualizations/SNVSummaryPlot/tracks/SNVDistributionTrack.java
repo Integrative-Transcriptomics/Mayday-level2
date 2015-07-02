@@ -6,15 +6,10 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Arrays;
 
-import mayday.Reveal.data.Haplotypes;
-import mayday.Reveal.data.HaplotypesList;
 import mayday.Reveal.data.SNVList;
-import mayday.Reveal.data.Subject;
-import mayday.Reveal.data.SubjectList;
 import mayday.Reveal.utilities.ATCGColors;
+import mayday.Reveal.visualizations.SNVSummaryPlot.SummaryPlotFunctions;
 
 public class SNVDistributionTrack extends SNVSummaryTrackComponent {
 	
@@ -33,17 +28,22 @@ public class SNVDistributionTrack extends SNVSummaryTrackComponent {
 		
 		SNVList snpList = track.getSelectedSNPs();
 		
+		//distributions of affected and unaffected subjects
 		affected = new double[snpList.size()][];
 		unaffected = new double[snpList.size()][];
 		
+		//sum of the max sum of distribution values for affected/unaffected
+		//used to determine total height of each bar in the distribution plot
 		maxSum = new double[snpList.size()];
 		
 		for(int i = 0; i < snpList.size(); i++) {
-			affected[i] = getFrequencyForPairs(snpList.get(i).getIndex(), true);
-			unaffected[i] = getFrequencyForPairs(snpList.get(i).getIndex(), false);
+			affected[i] = SummaryPlotFunctions.getFrequencyForPairs(snpList.get(i).getIndex(), true, track.getDataStorage());
+			unaffected[i] = SummaryPlotFunctions.getFrequencyForPairs(snpList.get(i).getIndex(), false, track.getDataStorage());
 			maxSum[i] = getMaxSum(affected[i], unaffected[i]);
-			if(Double.isNaN(maxSum[i]))
+			
+			if(Double.isNaN(maxSum[i])) {
 				maxSum[i] = 1;
+			}
 		}
 	}
 
@@ -126,40 +126,5 @@ public class SNVDistributionTrack extends SNVSummaryTrackComponent {
 		return sum;
 	}
 	
-	private double[] getFrequencyForPairs(Integer snpIndex, boolean affected) {
-		int[] count = new int[10];
-		Arrays.fill(count, 0);
-		
-		HaplotypesList haplotypesList = track.getDataStorage().getHaplotypes();
-		SubjectList personList = track.getDataStorage().getSubjects();
-		
-		if(affected) {
-			ArrayList<Subject> affectedPersons = personList.getAffectedSubjects();
-			for(Subject p : affectedPersons) {
-				Haplotypes h = haplotypesList.get(p.getIndex());
-				char[] snpPairs = new char[]{h.getSNPA(snpIndex), h.getSNPB(snpIndex)};
-				Arrays.sort(snpPairs);
-				count[ATCGColors.getPairIndex(snpPairs[0], snpPairs[1])]++;
-			}
-			double[] result = new double[10];
-			for(int j = 0; j < result.length; j++) {
-				result[j] = count[j] / (double)affectedPersons.size();
-			}
-			return result;
-		} else {
-			ArrayList<Subject> unaffectedPersons = personList.getUnaffectedSubjects();
-			for(Subject p : unaffectedPersons) {
-				Haplotypes h = haplotypesList.get(p.getIndex());
-				
-				char[] snpPairs = new char[]{h.getSNPA(snpIndex), h.getSNPB(snpIndex)};
-				Arrays.sort(snpPairs);
-				count[ATCGColors.getPairIndex(snpPairs[0], snpPairs[1])]++;
-			}
-			double[] result = new double[10];
-			for(int j = 0; j < result.length; j++) {
-				result[j] = count[j] / (double)unaffectedPersons.size();
-			}
-			return result;
-		}
-	}
+	
 }

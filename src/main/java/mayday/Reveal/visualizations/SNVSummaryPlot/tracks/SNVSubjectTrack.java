@@ -10,6 +10,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 import mayday.Reveal.utilities.ATCGColors;
+import mayday.Reveal.utilities.RevealUtilities;
 
 public class SNVSubjectTrack extends SNVSummaryTrackComponent {
 
@@ -35,7 +36,7 @@ public class SNVSubjectTrack extends SNVSummaryTrackComponent {
 			char A = track.getDataStorage().getHaplotypes().get(subjectIndex).getSNPA(i);
 			char B = track.getDataStorage().getHaplotypes().get(subjectIndex).getSNPB(i);
 			
-			int pairIndex = ATCGColors.getPairIndex(A, B);
+			int pairIndex = RevealUtilities.getPairIndex(A, B);
 			Color[] colorPair = ATCGColors.getColorPairs(pairIndex);
 			
 			String reference = A+""+B;

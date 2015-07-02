@@ -89,7 +89,7 @@ public class SNVLists {
 				Haplotypes h = data.getHaplotypes().get(p.getIndex());
 				char[] snpPairs = new char[]{h.getSNPA(snpIndex), h.getSNPB(snpIndex)};
 				Arrays.sort(snpPairs);
-				count[ATCGColors.getPairIndex(snpPairs[0], snpPairs[1])]++;
+				count[RevealUtilities.getPairIndex(snpPairs[0], snpPairs[1])]++;
 			}
 			double[] result = new double[10];
 			for(int j = 0; j < result.length; j++) {
@@ -103,7 +103,7 @@ public class SNVLists {
 				
 				char[] snpPairs = new char[]{h.getSNPA(snpIndex), h.getSNPB(snpIndex)};
 				Arrays.sort(snpPairs);
-				count[ATCGColors.getPairIndex(snpPairs[0], snpPairs[1])]++;
+				count[RevealUtilities.getPairIndex(snpPairs[0], snpPairs[1])]++;
 			}
 			double[] result = new double[10];
 			for(int j = 0; j < result.length; j++) {

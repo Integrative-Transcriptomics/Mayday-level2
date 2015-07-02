@@ -7,15 +7,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.Arrays;
 
-import mayday.Reveal.data.Haplotypes;
-import mayday.Reveal.data.HaplotypesList;
 import mayday.Reveal.data.SNVList;
-import mayday.Reveal.data.Subject;
-import mayday.Reveal.data.SubjectList;
-import mayday.Reveal.utilities.ATCGColors;
+import mayday.Reveal.visualizations.SNVSummaryPlot.SummaryPlotFunctions;
 
 public class SNVAggregationTrack extends SNVSummaryTrackComponent {
 
@@ -29,8 +24,6 @@ public class SNVAggregationTrack extends SNVSummaryTrackComponent {
 	
 	private double[] aggHeightA;
 	private double[] aggHeightB;
-	
-	protected int reference;
 	
 	double[] totalHeight, hAf, hBf;
 
@@ -50,16 +43,17 @@ public class SNVAggregationTrack extends SNVSummaryTrackComponent {
 		hBf = new double[snpList.size()];
 		
 		for(int i = 0; i < snpList.size(); i++) {
+						
+			affected[i] = SummaryPlotFunctions.getFrequencyForPairs(snpList.get(i).getIndex(), true, track.getDataStorage());
+			unaffected[i] = SummaryPlotFunctions.getFrequencyForPairs(snpList.get(i).getIndex(), false, track.getDataStorage());
+			
 			char ref = snpList.get(i).getReferenceNucleotide();
-			
-			affected[i] = getFrequencyForPairs(snpList.get(i).getIndex(), true);
-			unaffected[i] = getFrequencyForPairs(snpList.get(i).getIndex(), false);
-			
-			this.reference = this.getCharIndex(ref);
+			int reference = this.getCharIndex(ref);
 			
 			if(reference != -1) {
-				this.aggHeightA[i] = getAggregatedHeight(affected[i]);
-				this.aggHeightB[i] = getAggregatedHeight(unaffected[i]);
+				this.aggHeightA[i] = getAggregatedHeight(affected[i], reference);
+				System.out.println(Arrays.toString(aggHeightA));
+				this.aggHeightB[i] = getAggregatedHeight(unaffected[i], reference);
 				
 				this.totalHeight[i] = aggHeightA[i] + aggHeightB[i];
 				this.hAf[i] = aggHeightA[i] / totalHeight[i];
@@ -77,6 +71,7 @@ public class SNVAggregationTrack extends SNVSummaryTrackComponent {
 		
 		for(int i = startIndex; i < stopIndex; i++) {
 			int x = cellWidth * i;
+			
 			if(track.getSetting().isAggregationStacked()) {
 				this.paintStacked(g2, x, i);
 			} else {
@@ -93,8 +88,12 @@ public class SNVAggregationTrack extends SNVSummaryTrackComponent {
 		
 		g2.translate(x, 0);
 		
-		Color colorA = getAggregatedColor(affected[index]);
-		Color colorB = getAggregatedColor(unaffected[index]);
+		SNVList snpList = track.getSelectedSNPs();
+		char ref = snpList.get(index).getReferenceNucleotide();
+		int reference = this.getCharIndex(ref);
+		
+		Color colorA = getAggregatedColor(affected[index], reference);
+		Color colorB = getAggregatedColor(unaffected[index], reference);
 		
 		//affected
 		double hagA = aggHeightA[index] * getHeight();
@@ -131,8 +130,12 @@ public class SNVAggregationTrack extends SNVSummaryTrackComponent {
 		int cellWidth = track.getSetting().getCellWidth();
 		AffineTransform af = g2.getTransform();
 		
-		Color colorA = getAggregatedColor(affected[index]);
-		Color colorB = getAggregatedColor(unaffected[index]);
+		SNVList snpList = track.getSelectedSNPs();
+		char ref = snpList.get(index).getReferenceNucleotide();
+		int reference = this.getCharIndex(ref);
+		
+		Color colorA = getAggregatedColor(affected[index], reference);
+		Color colorB = getAggregatedColor(unaffected[index], reference);
 		
 		float w2 = (float)cellWidth/2.f;
 		float h2 = (float)getHeight()/2.f;
@@ -186,44 +189,7 @@ public class SNVAggregationTrack extends SNVSummaryTrackComponent {
 		g2.setTransform(af);
 	}
 	
-	private double[] getFrequencyForPairs(Integer snpIndex, boolean affected) {
-		int[] count = new int[10];
-		Arrays.fill(count, 0);
-		
-		HaplotypesList haplotypesList = track.getDataStorage().getHaplotypes();
-		SubjectList personList = track.getDataStorage().getSubjects();
-		
-		if(affected) {
-			ArrayList<Subject> affectedPersons = personList.getAffectedSubjects();
-			for(Subject p : affectedPersons) {
-				Haplotypes h = haplotypesList.get(p.getIndex());
-				char[] snpPairs = new char[]{h.getSNPA(snpIndex), h.getSNPB(snpIndex)};
-				Arrays.sort(snpPairs);
-				count[ATCGColors.getPairIndex(snpPairs[0], snpPairs[1])]++;
-			}
-			double[] result = new double[10];
-			for(int j = 0; j < result.length; j++) {
-				result[j] = count[j] / (double)affectedPersons.size();
-			}
-			return result;
-		} else {
-			ArrayList<Subject> unaffectedPersons = personList.getUnaffectedSubjects();
-			for(Subject p : unaffectedPersons) {
-				Haplotypes h = haplotypesList.get(p.getIndex());
-				
-				char[] snpPairs = new char[]{h.getSNPA(snpIndex), h.getSNPB(snpIndex)};
-				Arrays.sort(snpPairs);
-				count[ATCGColors.getPairIndex(snpPairs[0], snpPairs[1])]++;
-			}
-			double[] result = new double[10];
-			for(int j = 0; j < result.length; j++) {
-				result[j] = count[j] / (double)unaffectedPersons.size();
-			}
-			return result;
-		}
-	}
-	
-	protected double getAggregatedHeight(double[] values) {
+	protected double getAggregatedHeight(double[] values, int reference) {
 		double[] aggregated = this.aggregate(values, reference);
 		int index = this.getMaxIndex(aggregated);
 		if(index > -1) {
@@ -233,7 +199,7 @@ public class SNVAggregationTrack extends SNVSummaryTrackComponent {
 		}
 	}
 	
-	protected Color getAggregatedColor(double[] values) {
+	protected Color getAggregatedColor(double[] values, int reference) {
 		double[] aggregated = this.aggregate(values, reference);
 		
 		int index = this.getMaxIndex(aggregated);
@@ -260,16 +226,17 @@ public class SNVAggregationTrack extends SNVSummaryTrackComponent {
 				maxIndex = i;
 			}
 		}
-//		if(maxIndex == -1)
-//			System.out.println(Arrays.toString(values));
 		return maxIndex;
 	}
 	
+	/*
+	 * double array of length 3 : ref / het / hom
+	 */
 	private double[] aggregate(double[] values, int reference) {
-		int nochange = 0;
-		if(reference == 1) nochange = 4;
-		if(reference == 2) nochange = 7;
-		if(reference == 3) nochange = 9;
+		int nochange = 0; //nochange = AA
+		if(reference == 1) nochange = 4; //nochange = TT
+		if(reference == 2) nochange = 7; //nochange = CC
+		if(reference == 3) nochange = 9; //nochange = GG
 		double[] aggregated = new double[3];
 		aggregated[0] = values[nochange];
 		
