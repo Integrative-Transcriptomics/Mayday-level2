@@ -7,7 +7,9 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Set;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.awt.TextRenderer;
 
 import mayday.core.Probe;
 import mayday.core.settings.Setting;
@@ -19,8 +21,6 @@ import mayday.vis3d.cs.CoordinateSystem3D;
 import mayday.vis3d.cs.StandardCoordinateSystem3D;
 import mayday.vis3d.utilities.Camera3D;
 
-import com.sun.opengl.util.FPSAnimator;
-import com.sun.opengl.util.j2d.TextRenderer;
 /**
  * 
  * @author G\u00FCnter J\u00E4ger
@@ -54,7 +54,7 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 	private double fontScale = 0;
 
 	@Override
-	public void drawNotSelectable(GL gl) {
+	public void drawNotSelectable(GL2 gl) {
 		//check if scene should be animated
 		if(settings.animateScene()) {
 			if(!this.animator.isAnimating()) {
@@ -79,14 +79,14 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void drawSelectable(GL gl, int glRender) {
+	public void drawSelectable(GL2 gl, int glRender) {
 		//check if there is to do something
 		if(settings.getDrawLabels() || settings.getDrawWireframe()) {
 			double width2 = coordSystem.getSetting().getVisibleArea().getWidth() / 2.0;
 			gl.glPushMatrix();
 			gl.glTranslated(0, 0, width2);
 			if(settings.getDrawWireframe()) {
-				if(glRender == GL.GL_SELECT) {
+				if(glRender == GL2.GL_SELECT) {
 					this.drawData(gl, glRender);
 				} else {
 					gl.glCallList(data);
@@ -100,7 +100,7 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 		}
 	}
 	
-	private void drawLabeling(GL gl, int glRender) {
+	private void drawLabeling(GL2 gl, int glRender) {
 		float scale = (float)settings.getFontScale();
 		double angleIncrement = 360.0 / probes.size();
 		//double backRot = -angleIncrement;
@@ -115,7 +115,7 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 				
 				gl.glPushMatrix();
 					gl.glTranslated(0, settings.getRadius(), 0);
-					if(glRender == GL.GL_SELECT) {
+					if(glRender == GL2.GL_SELECT) {
 						gl.glLoadName(pb.hashCode());
 					}
 					gl.glPushMatrix();
@@ -143,7 +143,7 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 		gl.glPopMatrix();
 	}
 	
-	private void drawSurface(GL gl) {
+	private void drawSurface(GL2 gl) {
 		boolean useTimepoints = settings.getTimepoints().useTimepoints();
 		int numProbes = viewModel.getProbes().size();
 		int numExps = viewModel.getDataSet().getMasterTable().getNumberOfExperiments();
@@ -166,7 +166,7 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 		
 		gl.glPushMatrix();
 		for(int i = 0; i < numProbes - 1; i++) {
-			gl.glBegin(GL.GL_QUADS);
+			gl.glBegin(GL2.GL_QUADS);
 			for(int j = 0; j < numExps - 1; j++) {
 				double[] color = terrainColors.get(i * numExps + j);
 				
@@ -229,7 +229,7 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 		
 		//add planes from last profile to the first
 		int i = numProbes - 1;
-		gl.glBegin(GL.GL_QUADS);
+		gl.glBegin(GL2.GL_QUADS);
 		for(int j = 0; j < numExps - 1; j++) {
 			double[] color = terrainColors.get(i * numExps + j);
 			
@@ -307,7 +307,7 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 				c.getBlue() / 255.0};
 	}
 
-	private void drawData(GL gl, int glRender) {
+	private void drawData(GL2 gl, int glRender) {
 		boolean useTimepoints = settings.getTimepoints().useTimepoints();
 		double angleIncrement = 360.0 / this.viewModel.getProbes().size();
 		
@@ -318,7 +318,7 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 			
 			//check for selected probes and change color and line width if necessary
 			if(viewModel.isSelected(pb)) {
-				if(glRender != GL.GL_SELECT) {
+				if(glRender != GL2.GL_SELECT) {
 					gl.glColor3fv(convertColor(settings.getSelectionColor()), 0);
 					gl.glLineWidth(2.0f);
 				}
@@ -331,13 +331,13 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 				gl.glLineWidth(1.1f);
 			}
 			
-			if(glRender == GL.GL_SELECT) {
+			if(glRender == GL2.GL_SELECT) {
 				gl.glLoadName(pb.hashCode());
 			}
 			
 			gl.glPushMatrix();
 			gl.glTranslated(0, settings.getRadius(), 0);
-			gl.glBegin(GL.GL_LINE_STRIP);
+			gl.glBegin(GL2.GL_LINE_STRIP);
 				for(int k = 0; k < values.length; k++) {
 					double zpos = k;
 					if(useTimepoints) {
@@ -354,7 +354,7 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void initializeDisplay(GL gl) {
+	public void initializeDisplay(GL2 gl) {
 		renderer.setSmoothing(true);
 		renderer.setColor(Color.BLACK);
 		
@@ -393,12 +393,12 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void update(GL gl) {
+	public void update(GL2 gl) {
 		this.updateDrawTypes(gl);
 		this.setBackgroundColor(settings.getBackgroundColor());
 	}
 	
-	private void updateDrawTypes(GL gl) {
+	private void updateDrawTypes(GL2 gl) {
 		this.calculateMinMax();
 		experimentTimepoints = settings.getTimepoints().getExperimentTimpoints();
 		
@@ -412,11 +412,11 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 		
 		gl.glDeleteLists(data, 2);
 		
-		gl.glNewList(data, GL.GL_COMPILE);
-			this.drawData(gl, GL.GL_RENDER);
+		gl.glNewList(data, GL2.GL_COMPILE);
+			this.drawData(gl, GL2.GL_RENDER);
 		gl.glEndList();
 		
-		gl.glNewList(surface, GL.GL_COMPILE);
+		gl.glNewList(surface, GL2.GL_COMPILE);
 			this.drawSurface(gl);
 		gl.glEndList();
 		

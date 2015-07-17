@@ -3,7 +3,7 @@ package mayday.expressionmapping.view.plot;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 import mayday.core.Probe;
 import mayday.expressionmapping.model.geometry.Point;
@@ -41,10 +41,10 @@ public class ExpressionSimplex2DJOGL extends ExpressionSimplexBaseJOGL {
 	}
 
 	@Override
-	protected void createHull(GL gl) {
+	protected void createHull(GL2 gl) {
 		gl.glColor3fv(convertColor(Color.BLUE), 0);
 		gl.glLineWidth(2.0f);
-		gl.glBegin(GL.GL_LINES);
+		gl.glBegin(GL2.GL_LINES);
 		gl.glVertex3d(A.x, A.y, A.z);
 		gl.glVertex3d(D.x, D.y, D.z);
 		gl.glVertex3d(B.x, B.y, B.z);
@@ -53,7 +53,7 @@ public class ExpressionSimplex2DJOGL extends ExpressionSimplexBaseJOGL {
 	}
 
 	@Override
-	protected void createLabels(GL gl) {
+	protected void createLabels(GL2 gl) {
 		String[] labels = this.points.getGroupLabels();
 		if(labels.length == 2) {
 			String labelGroup1 = labels[0];
@@ -88,13 +88,13 @@ public class ExpressionSimplex2DJOGL extends ExpressionSimplexBaseJOGL {
 	}
 
 	@Override
-	protected void createPoints(GL gl, int glRender) {
+	protected void createPoints(GL2 gl, int glRender) {
 		int numberOfPoints = this.points.size();
 		Probe[] probes = this.viewModel.getProbes().toArray(new Probe[0]);
 		
 		gl.glPointSize(this.pointSize);
 		
-		gl.glEnable(GL.GL_BLEND);
+		gl.glEnable(GL2.GL_BLEND);
 		
 		double[] pointCoords;
 		
@@ -117,20 +117,20 @@ public class ExpressionSimplex2DJOGL extends ExpressionSimplexBaseJOGL {
 			//why do we need blending here?!
 			gl.glColor4f(color[0], color[1], color[2], 0.8f);
 			
-			if(glRender == GL.GL_SELECT) {
+			if(glRender == GL2.GL_SELECT) {
 				//load the hashCode of the probe to be able to select the points
 				gl.glLoadName(probes[currentPoint.getID()].hashCode());
 			}
-			gl.glBegin(GL.GL_POINTS);
+			gl.glBegin(GL2.GL_POINTS);
 			gl.glVertex3d(-1.5 * pointCoords[0] + 1.5 * pointCoords[1], this.yCoords[i % yCoords.length], 0.0);
 			gl.glEnd();
 		}
 		
-		gl.glDisable(GL.GL_BLEND);
+		gl.glDisable(GL2.GL_BLEND);
 	}
 
 	@Override
-	public void drawNotSelectable(GL gl) {
+	public void drawNotSelectable(GL2 gl) {
 		gl.glPushMatrix();
 		this.createHull(gl);
 		this.createLabels(gl);
@@ -138,15 +138,15 @@ public class ExpressionSimplex2DJOGL extends ExpressionSimplexBaseJOGL {
 	}
 
 	@Override
-	public void drawSelectable(GL gl, int glRender) {
+	public void drawSelectable(GL2 gl, int glRender) {
 		gl.glPushMatrix();
 		this.createPoints(gl, glRender);
 		gl.glPopMatrix();
 	}
 
 	@Override
-	public void initializeDisplay(GL gl) {
-		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+	public void initializeDisplay(GL2 gl) {
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 		
 		gl.glClearColor(this.backgroundColor[0], this.backgroundColor[1], this.backgroundColor[2], 0.0f);
 		gl.glLineWidth(2.0f);

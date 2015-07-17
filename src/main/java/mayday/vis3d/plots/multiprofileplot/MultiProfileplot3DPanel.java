@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 import mayday.core.Probe;
 import mayday.core.ProbeList;
@@ -45,7 +45,7 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 	private double spreadY = 0;
 
 	@Override
-	public void drawNotSelectable(GL gl) {
+	public void drawNotSelectable(GL2 gl) {
 		gl.glPushMatrix();
 			this.coordSystem.draw(gl, glu);
 			
@@ -80,11 +80,11 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		gl.glPopMatrix();
 	}
 	
-	private void drawZLabels(GL gl, int glRender) {		
+	private void drawZLabels(GL2 gl, int glRender) {		
 		double zit = this.coordSystem.getIteration()[2];
 		double k = -this.coordSystem.getSetting().getVisibleArea().getDepth();
 		
-		if(glRender == GL.GL_SELECT) {
+		if(glRender == GL2.GL_SELECT) {
 			if(settings.getDrawProfiles()) {
 				for(int i = 0; i  < zLabels.size(); i++, k += zit) {
 					gl.glLoadName(zLabels.get(i).hashCode());
@@ -102,7 +102,7 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		this.coordSystem.getRenderer().setColor(Color.BLACK);
 	}
 	
-	private void drawZLabel(GL gl, String label, double x, double y,double z) {
+	private void drawZLabel(GL2 gl, String label, double x, double y,double z) {
 		Rectangle2D bounds = this.coordSystem.getRenderer().getBounds(label);
 		double h2 = bounds.getHeight() * this.coordSystem.getScale() / 2.0;
 		
@@ -121,16 +121,16 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void drawSelectable(GL gl, int glRender) {
+	public void drawSelectable(GL2 gl, int glRender) {
 		double[] dimension = coordSystem.getDimension3D();
 		
 		if(settings.getDrawProfiles()) {
 			gl.glPushMatrix();
 			gl.glTranslated(-dimension[0], -(dimension[1] + adjust(this.minValue)), -dimension[2]);
-				if(glRender == GL.GL_SELECT) {
-					this.drawData(gl, GL.GL_SELECT);
+				if(glRender == GL2.GL_SELECT) {
+					this.drawData(gl, GL2.GL_SELECT);
 				} else {
-					gl.glDisable(GL.GL_LIGHTING);
+					gl.glDisable(GL2.GL_LIGHTING);
 					gl.glCallList(allData);
 				}
 			gl.glPopMatrix();
@@ -143,7 +143,7 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void initializeDisplay(GL gl) {
+	public void initializeDisplay(GL2 gl) {
 		Lighting.initLighting(gl);
 		//initialize probe list identifiers
 		int start = gl.glGenLists(this.profileIdentifier.length);
@@ -193,12 +193,12 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void update(GL gl) {
+	public void update(GL2 gl) {
 		this.updateDrawTypes(gl);
 		this.setBackgroundColor(settings.getBackgroundColor());
 	}
 
-	private void updateDrawTypes(GL gl) {
+	private void updateDrawTypes(GL2 gl) {
 		this.calculateMinMax();
 
 		if(settings.getTimepoints().useTimepoints()) {
@@ -212,8 +212,8 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		
 		gl.glDeleteLists(this.profileIdentifier[0], this.profileIdentifier.length);
 		for(int i = 0; i < this.profileIdentifier.length; i++) {
-			gl.glNewList(this.profileIdentifier[i], GL.GL_COMPILE);
-				this.drawProbeList(gl, this.probeLists.get(i), GL.GL_RENDER);
+			gl.glNewList(this.profileIdentifier[i], GL2.GL_COMPILE);
+				this.drawProbeList(gl, this.probeLists.get(i), GL2.GL_RENDER);
 			gl.glEndList();
 		}
 		
@@ -234,21 +234,21 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		
 		gl.glDeleteLists(allData, 3);
 		
-		gl.glNewList(allData, GL.GL_COMPILE);
-			this.drawData(gl, GL.GL_RENDER);
+		gl.glNewList(allData, GL2.GL_COMPILE);
+			this.drawData(gl, GL2.GL_RENDER);
 		gl.glEndList();
 		
-		gl.glNewList(centroids, GL.GL_COMPILE);
+		gl.glNewList(centroids, GL2.GL_COMPILE);
 			this.drawCentroids(gl);
 		gl.glEndList();
 		
-		gl.glNewList(centroidPlanes, GL.GL_COMPILE);
+		gl.glNewList(centroidPlanes, GL2.GL_COMPILE);
 			this.drawCentroidPlanes(gl);
 		gl.glEndList();
 	}
 	
-	private void drawData(GL gl, int glRender) {
-		if(glRender == GL.GL_SELECT) {
+	private void drawData(GL2 gl, int glRender) {
+		if(glRender == GL2.GL_SELECT) {
 			for(int i = this.probeLists.size()-1; i >= 0; i--) {
 				gl.glPushMatrix();
 				gl.glTranslated(0, 0, this.coordSystem.getIteration()[2] * (this.probeLists.size()-1-i));
@@ -265,7 +265,7 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		}
 	}
 	
-	private void drawCentroids(GL gl) {
+	private void drawCentroids(GL2 gl) {
 		boolean useTimepoints = settings.getTimepoints().useTimepoints();
 		double xit = coordSystem.getSetting().getIteration()[0];
 		//some settings for centroids
@@ -277,7 +277,7 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 			gl.glTranslated(0, 0, this.coordSystem.getIteration()[2] * (this.probeLists.size()-1-i));
 			double[] centroid = adjust(viewModel.getProbeValues(this.probeLists.get(i).getMean()));
 			
-			gl.glBegin(GL.GL_LINE_STRIP);
+			gl.glBegin(GL2.GL_LINE_STRIP);
 				for(int j = 0; j < centroid.length; j++) {
 					double xpos = j * xit;
 					if(useTimepoints) {
@@ -291,7 +291,7 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		}
 	}
 	
-	private void drawCentroidPlanes(GL gl) {
+	private void drawCentroidPlanes(GL2 gl) {
 		boolean useTimepoints = settings.getTimepoints().useTimepoints();
 		double xit = coordSystem.getSetting().getIteration()[0];
 		List<double[]> centroids = new ArrayList<double[]>();
@@ -299,11 +299,11 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 			centroids.add(adjust(viewModel.getProbeValues(this.probeLists.get(i).getMean())));
 		}
 		
-		gl.glEnable(GL.GL_BLEND);
-		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 		
 		gl.glPushMatrix();
-		gl.glBegin(GL.GL_QUADS);
+		gl.glBegin(GL2.GL_QUADS);
 			for(int i = 0; i < centroids.size() - 1; i++) {
 				double[] centroid1 = centroids.get(i);
 				double[] centroid2 = centroids.get(i+1);
@@ -335,10 +335,10 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		gl.glEnd();
 		gl.glPopMatrix();
 		
-		gl.glDisable(GL.GL_BLEND);
+		gl.glDisable(GL2.GL_BLEND);
 	}
 
-	private void drawProbeList(GL gl, ProbeList probeList, int glRender) {
+	private void drawProbeList(GL2 gl, ProbeList probeList, int glRender) {
 		double tmp = 0;
 		double xit = coordSystem.getSetting().getIteration()[0];
 		boolean useTimepoints = settings.getTimepoints().useTimepoints();
@@ -348,24 +348,24 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 			double[] values = adjust(this.viewModel.getProbeValues(pb));
 			
 			if(viewModel.isSelected(pb)) {
-				if(glRender != GL.GL_SELECT) {
+				if(glRender != GL2.GL_SELECT) {
 					gl.glColor3fv(convertColor(settings.getSelectionColor()), 0);
 					gl.glLineWidth(2.0f);
 				}
 				tmp = 0.01;
 			} else {
-				if(glRender != GL.GL_SELECT) {
+				if(glRender != GL2.GL_SELECT) {
 					gl.glColor3fv(convertColor(coloring.getColor(pb)), 0);
 					gl.glLineWidth(1.1f);
 				}
 				tmp = 0;
 			}
 			
-			if(glRender == GL.GL_SELECT) {
+			if(glRender == GL2.GL_SELECT) {
 				gl.glLoadName(pb.hashCode());
 			}
 			
-			gl.glBegin(GL.GL_LINE_STRIP);
+			gl.glBegin(GL2.GL_LINE_STRIP);
 				for(int j = 0; j < values.length; j++) {
 					double xpos = j * xit;
 					if(useTimepoints) {

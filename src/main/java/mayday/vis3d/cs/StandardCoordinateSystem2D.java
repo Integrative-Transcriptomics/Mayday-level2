@@ -3,8 +3,8 @@ package mayday.vis3d.cs;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.glu.GLU;
 
 import mayday.vis3.plots.PlotTimepointSetting;
 import mayday.vis3d.AbstractPlot2DPanel;
@@ -27,7 +27,7 @@ public class StandardCoordinateSystem2D extends CoordinateSystem2D {
 	}
 
 	@Override
-	public void draw(GL gl, GLU glu) {
+	public void draw(GL2 gl, GLU glu) {
 		this.drawAxes(gl);
 		if(settings.getGridSetting().getGridVisible()) {
 			this.drawGrid(gl);
@@ -35,7 +35,7 @@ public class StandardCoordinateSystem2D extends CoordinateSystem2D {
 	}
 
 	@Override
-	public void drawLabeling(GL gl, PlotTimepointSetting timepoints) {
+	public void drawLabeling(GL2 gl, PlotTimepointSetting timepoints) {
 		double[] iteration = settings.getIteration();
 		float scale = (float)this.settings.getFontScale();
 		
@@ -141,16 +141,16 @@ public class StandardCoordinateSystem2D extends CoordinateSystem2D {
 		}
 	}
 	
-	private void drawAxes(GL gl) {
+	private void drawAxes(GL2 gl) {
 		gl.glColor3d(0, 0, 0);
 		gl.glLineWidth(2.0f);
-		gl.glBegin(GL.GL_LINE_STRIP);
+		gl.glBegin(GL2.GL_LINE_STRIP);
 			gl.glVertex3d(settings.getChartSetting().getWidth(), 0, 0.05);
 			gl.glVertex3d(0, 0, 0.05);
 			gl.glVertex3d(0, settings.getChartSetting().getHeight(), 0.05);
 		gl.glEnd();
 		
-		gl.glBegin(GL.GL_TRIANGLES);
+		gl.glBegin(GL2.GL_TRIANGLES);
 			gl.glVertex3d(-5, settings.getChartSetting().getHeight(), 0.05);
 			gl.glVertex3d(5, settings.getChartSetting().getHeight(), 0.05);
 			gl.glVertex3d(0, settings.getChartSetting().getHeight() + 10, 0.05);

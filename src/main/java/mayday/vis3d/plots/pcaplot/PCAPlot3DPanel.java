@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.media.opengl.GL;
 import javax.swing.JMenu;
+
+import com.jogamp.opengl.GL2;
 
 import mayday.core.Probe;
 import mayday.core.ProbeList;
@@ -72,7 +73,7 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void drawNotSelectable(GL gl) {
+	public void drawNotSelectable(GL2 gl) {
 		CoordinateSystem3DSetting coordSetting = this.settings
 				.getCoordianteSystemSetting();
 		gl.glPushMatrix();
@@ -103,7 +104,7 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 		gl.glPopMatrix();
 	}
 
-	private void drawConvexHull(GL gl) {
+	private void drawConvexHull(GL2 gl) {
 		if (PCAData != null) {
 			Matrix X = PCAData.getMatrix(0, PCAData.getRowDimension() - 1,
 					settings.getPC1(), settings.getPC1());
@@ -123,8 +124,8 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 			List<ProbeList> probeLists = this.viewModel.getProbeLists(true);
 			Set<Probe> allProbes = viewModel.getProbes();
 			
-			gl.glEnable(GL.GL_BLEND);
-			gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+			gl.glEnable(GL2.GL_BLEND);
+			gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
 			for (int i = 0; i < probeLists.size(); i++) {
 				ProbeList pl = probeLists.get(i);
@@ -159,7 +160,7 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 				gl.glPushMatrix();
 					float[] color = convertColor(c);
 					gl.glColor4f(color[0], color[1], color[2], 0.5f);
-					gl.glBegin(GL.GL_TRIANGLES);
+					gl.glBegin(GL2.GL_TRIANGLES);
 					for(j = 0; j < faces.length; j++) {
 						for(k = 0; k < faces[j].length; k++) {
 							Point3D p = pointsNeeded[faces[j][k]];
@@ -172,7 +173,7 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 				//draw contour lines
 				gl.glPushMatrix();
 				gl.glColor3fv(convertColor(Color.BLACK), 0);
-				gl.glBegin(GL.GL_LINE_LOOP);
+				gl.glBegin(GL2.GL_LINE_LOOP);
 				for(j = 0; j < faces.length; j++) {
 					for(k = 0; k < faces[j].length; k++) {
 						Point3D p = pointsNeeded[faces[j][k]];
@@ -182,14 +183,14 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 				gl.glEnd();
 				gl.glPopMatrix();
 			}
-			gl.glDisable(GL.GL_BLEND);
+			gl.glDisable(GL2.GL_BLEND);
 		}
 	}
 
 	@Override
-	public void drawSelectable(GL gl, int glRender) {
+	public void drawSelectable(GL2 gl, int glRender) {
 		if (!settings.hideSpheres() || settings.getDrawProjections()) {
-			if (glRender == GL.GL_SELECT) {
+			if (glRender == GL2.GL_SELECT) {
 				this.drawData(gl, glRender);
 			} else {
 				gl.glCallList(dataList);
@@ -197,7 +198,7 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 		}
 	}
 
-	private void drawData(GL gl, int glRender) {
+	private void drawData(GL2 gl, int glRender) {
 		if (PCAData != null) {
 			Matrix X = PCAData.getMatrix(0, PCAData.getRowDimension() - 1,
 					settings.getPC1(), settings.getPC1());
@@ -215,14 +216,14 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 			double depth = this.coordSystem.getSetting().getVisibleArea().getDepth();
 
 			float[] color = { 0, 0, 0 };
-			if (glRender != GL.GL_SELECT) {
-				gl.glEnable(GL.GL_LIGHTING);
+			if (glRender != GL2.GL_SELECT) {
+				gl.glEnable(GL2.GL_LIGHTING);
 			}
 
 			gl.glPushMatrix();
 			int i = 0;
 			for (Probe pb : viewModel.getProbes()) {
-				if (glRender != GL.GL_SELECT) {
+				if (glRender != GL2.GL_SELECT) {
 					// convert color to float array
 					color = convertColor(coloring.getColor(pb));
 					// switch color to selection color, if probe is selected
@@ -230,7 +231,7 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 						color = convertColor(settings.getSelectionColor());
 					}
 					// define color for enlighten objects
-					gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, color,
+					gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, color,
 							0);
 				}
 
@@ -247,7 +248,7 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 				}
 				// draw spheres
 				if (!settings.hideSpheres()) {
-					if (glRender == GL.GL_SELECT) {
+					if (glRender == GL2.GL_SELECT) {
 						/*
 						 * don't draw spheres in selection mode as this would be
 						 * too time consuming. use crosses instead!
@@ -265,9 +266,9 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 					}
 				}
 
-				if (glRender != GL.GL_SELECT) {
+				if (glRender != GL2.GL_SELECT) {
 					if (settings.getDrawProjections()) {
-						gl.glDisable(GL.GL_LIGHTING);
+						gl.glDisable(GL2.GL_LIGHTING);
 						gl.glColor3fv(color, 0);
 						gl.glPushMatrix();
 						gl.glTranslated(-width, y, z);
@@ -285,21 +286,21 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 						gl.glTranslated(x, y, -depth);
 						gl.glCallList(sphereProjection);
 						gl.glPopMatrix();
-						gl.glEnable(GL.GL_LIGHTING);
+						gl.glEnable(GL2.GL_LIGHTING);
 					}
 				}
 				i++;
 			}
 			gl.glPopMatrix();
 
-			if (glRender != GL.GL_SELECT) {
-				gl.glDisable(GL.GL_LIGHTING);
+			if (glRender != GL2.GL_SELECT) {
+				gl.glDisable(GL2.GL_LIGHTING);
 			}
 		}
 	}
 
 	@Override
-	public void initializeDisplay(GL gl) {
+	public void initializeDisplay(GL2 gl) {
 		Lighting.initLighting(gl);
 		this.dataList = gl.glGenLists(1);
 		this.sphere = gl.glGenLists(1);
@@ -311,7 +312,7 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 		this.coordSystem.initAxesLabeling(gl);
 	}
 
-	private void updateDrawTypes(GL gl) {
+	private void updateDrawTypes(GL2 gl) {
 		if(PCAData == null) {
 			setBackground(Color.WHITE);
 			return;
@@ -352,12 +353,12 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 		this.coordSystem.getLabeling().setYAxisLabel("PC " + (settings.getPC2()+1));
 		this.coordSystem.getLabeling().setZAxisLabel("PC " + (settings.getPC3()+1));
 
-		gl.glNewList(sphere, GL.GL_COMPILE);
+		gl.glNewList(sphere, GL2.GL_COMPILE);
 		glut.glutSolidSphere(r, 15, 7);
 		gl.glEndList();
 
-		gl.glNewList(sphereProjection, GL.GL_COMPILE);
-		gl.glBegin(GL.GL_LINES);
+		gl.glNewList(sphereProjection, GL2.GL_COMPILE);
+		gl.glBegin(GL2.GL_LINES);
 		gl.glVertex2f(r, r);
 		gl.glVertex2f(-r, -r);
 		gl.glVertex2f(-r, r);
@@ -365,8 +366,8 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 		gl.glEnd();
 		gl.glEndList();
 
-		gl.glNewList(cross, GL.GL_COMPILE);
-		gl.glBegin(GL.GL_QUADS);
+		gl.glNewList(cross, GL2.GL_COMPILE);
+		gl.glBegin(GL2.GL_QUADS);
 		gl.glVertex3d(-r, +r, 0);
 		gl.glVertex3d(+r, +r, 0);
 		gl.glVertex3d(+r, -r, 0);
@@ -384,21 +385,21 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 		gl.glEnd();
 		gl.glEndList();
 
-		gl.glNewList(dataList, GL.GL_COMPILE);
-		this.drawData(gl, GL.GL_RENDER);
+		gl.glNewList(dataList, GL2.GL_COMPILE);
+		this.drawData(gl, GL2.GL_RENDER);
 		gl.glEndList();
 
 		// initialize the call list for drawing a centroid
-		gl.glNewList(centroid, GL.GL_COMPILE);
+		gl.glNewList(centroid, GL2.GL_COMPILE);
 		glut.glutWireSphere(1.0, 10, 5);
 		gl.glEndList();
 		// initialize the call list for drawing all centroids
-		gl.glNewList(centroidsList, GL.GL_COMPILE);
+		gl.glNewList(centroidsList, GL2.GL_COMPILE);
 		this.drawCentroids(gl);
 		gl.glEndList();
 	}
 
-	private void drawCentroids(GL gl) {
+	private void drawCentroids(GL2 gl) {
 		if (PCAData != null) {
 			Matrix X = PCAData.getMatrix(0, PCAData.getRowDimension() - 1,
 					settings.getPC1(), settings.getPC1());
@@ -480,7 +481,7 @@ public class PCAPlot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void update(GL gl) {
+	public void update(GL2 gl) {
 		this.updateDrawTypes(gl);
 		this.setBackgroundColor(settings.getBackgroundColor());
 	}

@@ -2,7 +2,7 @@ package mayday.vis3d.plots.pcaplot;
 
 import java.awt.Color;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 import mayday.core.structures.linalg.vector.DoubleVector;
 
@@ -25,7 +25,7 @@ public class PCAEigenValuesPlot {
 	/**
 	 * @param gl
 	 */
-	public void draw(GL gl) {
+	public void draw(GL2 gl) {
 		DoubleVector ev = new DoubleVector(panel.EigenValues);
 		double spread = panel.getSpread(ev.max(), ev.min());
 		
@@ -39,7 +39,7 @@ public class PCAEigenValuesPlot {
 			gl.glTranslated(-width, -height, -depth);
 			//draw rectangles representing eigenvalue heights
 			gl.glColor3fv(panel.convertColor(Color.CYAN), 0);
-			gl.glBegin(GL.GL_QUADS);
+			gl.glBegin(GL2.GL_QUADS);
 			for(int i = 0; i < ev.size(); i++) {
 				double v = panel.adjust(ev.get(i), height * 2, spread);
 				gl.glVertex2d(i*boxWidth, 0);
@@ -52,7 +52,7 @@ public class PCAEigenValuesPlot {
 			//draw contour lines
 			gl.glColor3fv(panel.convertColor(Color.BLACK), 0);
 			for(int i = 0; i < ev.size(); i++) {
-				gl.glBegin(GL.GL_LINE_LOOP);
+				gl.glBegin(GL2.GL_LINE_LOOP);
 				double v = panel.adjust(ev.get(i), height * 2, spread);
 				gl.glVertex3d(i*boxWidth, 0, 0.01);
 				gl.glVertex3d((i+1)*boxWidth, 0, 0.01);

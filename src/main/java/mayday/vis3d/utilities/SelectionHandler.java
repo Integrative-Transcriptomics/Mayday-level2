@@ -4,10 +4,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * @author G\u00FCnter J\u00E4ger
@@ -21,7 +21,7 @@ public abstract class SelectionHandler implements MouseListener, MouseMotionList
 	 * @param height
 	 * @param camera
 	 */
-	public abstract void drawSelectionRectangle(GL gl, GLU glu, int width, int height, Camera camera);
+	public abstract void drawSelectionRectangle(GL2 gl, GLU glu, int width, int height, Camera camera);
 	/**
 	 * @param gl
 	 * @param glu
@@ -29,7 +29,7 @@ public abstract class SelectionHandler implements MouseListener, MouseMotionList
 	 * @param height
 	 * @param camera
 	 */
-	public abstract void pickObjects(GL gl, GLU glu, int width, int height, Camera camera);
+	public abstract void pickObjects(GL2 gl, GLU glu, int width, int height, Camera camera);
 	/**
 	 * 
 	 */

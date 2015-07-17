@@ -4,8 +4,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLContext;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLContext;
 
 import mayday.vis3d.utilities.Camera2D;
 
@@ -30,8 +30,8 @@ public class HighlightAxis implements MouseListener, MouseMotionListener {
 	public HighlightAxis(ProfilePlotPanel panel) {
 		this.panel = panel;
 		this.initialize();
-		panel.getCanvas().addMouseListener(this);
-		panel.getCanvas().addMouseMotionListener(this);
+		//TODO panel.getCanvas().addMouseListener(this);
+		//TODO panel.getCanvas().addMouseMotionListener(this);
 	}
 	
 	private void initialize() {
@@ -67,7 +67,7 @@ public class HighlightAxis implements MouseListener, MouseMotionListener {
 		}
 	}
 	
-	private double getProjectedMousePositionX(MouseEvent e, GL gl) {
+	private double getProjectedMousePositionX(MouseEvent e, GL2 gl) {
 		int x = e.getX();
 		
 		int viewport[] = new int[4];
@@ -75,9 +75,9 @@ public class HighlightAxis implements MouseListener, MouseMotionListener {
 	    double projmatrix[] = new double[16];
 	    double wcoord[] = new double[4];
 
-		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-        gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
-        gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
+		gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
+        gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+        gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
 
         double scale = ((Camera2D)panel.camera).getScale();
         
@@ -121,17 +121,17 @@ public class HighlightAxis implements MouseListener, MouseMotionListener {
 	 * @param gl
 	 * @param glRender
 	 */
-	public void draw(GL gl, int glRender) {
+	public void draw(GL2 gl, int glRender) {
 		double xPos = this.getLabelAxisPosition();
 		
-		if(glRender == GL.GL_SELECT) {
+		if(glRender == GL2.GL_SELECT) {
 			gl.glLoadName(this.labelAxis.intValue());
 		}
 		
 		gl.glPushMatrix();
 			gl.glColor3fv(panel.convertColor(panel.settings.getSelectionColor().getColorValue()), 0);
 			gl.glLineWidth(3.0f);
-			gl.glBegin(GL.GL_LINES);
+			gl.glBegin(GL2.GL_LINES);
 				gl.glVertex3d(xPos, 0, 0.05);
 				gl.glVertex3d(xPos, panel.coordSystem.getSetting().getChartSetting().getHeight() + 10, 0.05);
 			gl.glEnd();
@@ -158,7 +158,7 @@ public class HighlightAxis implements MouseListener, MouseMotionListener {
 	public void setSelected(boolean selected) {
 		this.axisSelected = selected;
 		if(axisSelected) {
-			panel.getCanvas().repaint();
+			//TODO panel.getCanvas().repaint();
 		}
 	}
 
@@ -182,7 +182,7 @@ public class HighlightAxis implements MouseListener, MouseMotionListener {
 		if(axisSelected) {
 			int current = panel.getCanvas().getContext().makeCurrent();
 			if(current == GLContext.CONTEXT_CURRENT) {
-				GL gl = panel.getCanvas().getContext().getGL();
+				GL2 gl = panel.getCanvas().getContext().getGL().getGL2();
 				this.mousePosition = getProjectedMousePositionX(e, gl);
 				panel.getCanvas().getContext().release();
 			} else {
@@ -206,7 +206,7 @@ public class HighlightAxis implements MouseListener, MouseMotionListener {
 			if(aD != anchorDim) {
 				this.anchorDim = aD;
 			}
-			panel.getCanvas().repaint();
+			//TODO panel.getCanvas().repaint();
 		}
 	}
 

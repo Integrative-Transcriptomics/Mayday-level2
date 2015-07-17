@@ -14,15 +14,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLContext;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.awt.TextRenderer;
 
 import mayday.core.Probe;
 import mayday.vis3d.primitives.DraggableProbe;
 import mayday.vis3d.utilities.Camera2D;
-
-import com.sun.opengl.util.Animator;
-import com.sun.opengl.util.j2d.TextRenderer;
 
 /**
  * @author jaeger
@@ -64,9 +63,9 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 	 */
 	public LabelHistogram(ProfilePlotPanel panel) {
 		this.panel = panel;
-		this.panel.getCanvas().addMouseListener(this);
-		this.panel.getCanvas().addMouseMotionListener(this);
-		this.panel.getCanvas().addKeyListener(this);
+		//TODO this.panel.getCanvas().addMouseListener(this);
+		//TODO this.panel.getCanvas().addMouseMotionListener(this);
+		//TODO this.panel.getCanvas().addKeyListener(this);
 	}
 	
 	/**
@@ -85,7 +84,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 	/**
 	 * @param gl
 	 */
-	public void initialize(GL gl) {
+	public void initialize(GL2 gl) {
 		//store probes and corresponding hash codes for selection processing
 		Object[] probes = this.panel.viewModel.getProbes().toArray();
 		probeTable = new HashMap<Probe, DraggableProbe>();
@@ -112,7 +111,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 		return move + panel.coordSystem.getSetting().getChartSetting().getWidth() * 0.2 + spaceForLines;
 	}
 	
-	private double[] getProjectedMousePositionXY(MouseEvent e, GL gl) {
+	private double[] getProjectedMousePositionXY(MouseEvent e, GL2 gl) {
 		int x = e.getX();
 		int y = e.getY();
 		
@@ -121,9 +120,9 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 	    double projmatrix[] = new double[16];
 	    double wcoord[] = new double[4];
 
-		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-        gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
-        gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
+		gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
+        gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+        gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
 
         double scale = ((Camera2D)panel.camera).getScale();
         
@@ -163,7 +162,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 	 * @param gl
 	 * @param glRender
 	 */
-	public void draw(GL gl, int glRender) {
+	public void draw(GL2 gl, int glRender) {
 		spaceForLines = (float)panel.coordSystem.getSetting().getChartSetting().getWidth() * 0.1f;
 		
 		if(selected) {
@@ -186,7 +185,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 		return maxSize;
 	}
 	
-	private void drawHistogram(GL gl, int glRender) {
+	private void drawHistogram(GL2 gl, int glRender) {
 		double scale = panel.coordSystem.getSetting().getFontScale();
 		int numBoxes = this.labels.size();
 		double boxHeight = (double)panel.coordSystem.getSetting().getChartSetting().getHeight() / (double)numBoxes;
@@ -222,11 +221,11 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 						gl.glColor3fv(panel.convertColor(Color.CYAN), 0);
 					}
 					
-					if(glRender == GL.GL_SELECT) {
+					if(glRender == GL2.GL_SELECT) {
 						gl.glLoadName(id.hashCode());
 					}
 			
-					gl.glBegin(GL.GL_QUADS);
+					gl.glBegin(GL2.GL_QUADS);
 						gl.glVertex3d(0, 0, 0);
 						gl.glVertex3d(0, boxHeight, 0);
 						gl.glVertex3d(boxWidth, boxHeight, 0);
@@ -234,7 +233,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 					gl.glEnd();
 					
 					gl.glColor3d(0, 0, 0);
-					gl.glBegin(GL.GL_LINE_LOOP);
+					gl.glBegin(GL2.GL_LINE_LOOP);
 						gl.glVertex3d(0, 0, 0.01);
 						gl.glVertex3d(0, boxHeight, 0.01);
 						gl.glVertex3d(boxWidth, boxHeight, 0.01);
@@ -248,7 +247,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 							double index1 = (double)index * factor;
 							double index2 = (double)(index + 1) * factor;
 							
-							gl.glBegin(GL.GL_QUADS);
+							gl.glBegin(GL2.GL_QUADS);
 								gl.glVertex3d(index1, 0, 0.01);
 								gl.glVertex3d(index1, boxHeight, 0.01);
 								gl.glVertex3d(index2, boxHeight, 0.01);
@@ -266,7 +265,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 		}
 	}
 	
-	private void drawLabels(GL gl, int glRender) {
+	private void drawLabels(GL2 gl, int glRender) {
 		double scale = panel.settings.getLabelingSetting().getLabelsScale(); 
 		ArrayList<DraggableProbe> dlabels = this.labels.get(this.selectedBox);
 		if(dlabels != null) {
@@ -294,7 +293,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 						dlabels.get(i).setY(i*h + ydist);
 					}
 					
-					if(glRender == GL.GL_SELECT) {
+					if(glRender == GL2.GL_SELECT) {
 						gl.glLoadName(dlabels.get(i).getProbe().hashCode());
 					}
 					
@@ -313,7 +312,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 							}
 						}
 						if(drawLine) {
-							gl.glBegin(GL.GL_LINES);
+							gl.glBegin(GL2.GL_LINES);
 								double w2 = (this.renderer.getBounds(dlabels.get(i)).getHeight() * scale) / 2.0;
 								gl.glVertex3d(dlabels.get(i).getX(), dlabels.get(i).getY()+w2, tmpDepth);
 								double x = panel.coordSystem.getSetting().getChartSetting().getWidth();
@@ -330,7 +329,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 		}
 	}
 	
-	private void drawFreePlacedLabels(GL gl, int glRender) {
+	private void drawFreePlacedLabels(GL2 gl, int glRender) {
 		double scale = panel.settings.getLabelingSetting().getLabelsScale();
 		for(DraggableProbe pb : this.freePlacedLabels) {
 			if(pb.freePlaced()) {
@@ -346,7 +345,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 				
 				String curLabel = pb.getProbeName();
 				
-				if(glRender == GL.GL_SELECT) {
+				if(glRender == GL2.GL_SELECT) {
 					gl.glLoadName(pb.getProbe().hashCode());
 				}
 				
@@ -365,7 +364,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 						}
 					}
 					if(drawLine) {
-						gl.glBegin(GL.GL_LINES);
+						gl.glBegin(GL2.GL_LINES);
 							double w2 = (this.renderer.getBounds(pb).getHeight() * scale) / 2.0;
 							gl.glVertex3d(pb.getX(), pb.getY()+w2, tmpDepth);
 							double x = panel.coordSystem.getSetting().getChartSetting().getWidth();
@@ -501,7 +500,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 					
 					int current = panel.getCanvas().getContext().makeCurrent();
 					if(current == GLContext.CONTEXT_CURRENT) {
-						GL gl = panel.getCanvas().getContext().getGL();
+						GL2 gl = panel.getCanvas().getContext().getGL().getGL2();
 						double[] mXY = this.getProjectedMousePositionXY(e, gl);
 						mX = mXY[0];
 						mY = mXY[1];
@@ -514,7 +513,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 						
 						panel.getCanvas().getContext().release();
 					}
-					panel.getCanvas().repaint();
+					//TODO panel.getCanvas().repaint();
 				}
 			}
 		}
@@ -609,7 +608,7 @@ public class LabelHistogram implements MouseListener, MouseMotionListener, KeyLi
 
 	public void setProbeForDragging(Probe pb) {
 		this.selectedProbeForDragging = this.probeTable.get(pb);
-		panel.getCanvas().repaint();
+		//TODO panel.getCanvas().repaint();
 	}
 	
 	public void setFreePlaced(DraggableProbe pb) {

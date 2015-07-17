@@ -3,9 +3,9 @@ package mayday.vis3d.cs;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUquadric;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUquadric;
 
 import mayday.vis3d.AbstractPlot3DPanel;
 import mayday.vis3d.cs.settings.CoordinateSystem3DSetting;
@@ -38,7 +38,7 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 	}
 
 	@Override
-	public void draw(GL gl, GLU glu) {
+	public void draw(GL2 gl, GLU glu) {
 		this.drawAxes(gl, glu);
 	}
 
@@ -51,13 +51,13 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 	 * @param gl
 	 * @param glu
 	 */
-	public void drawAxes(GL gl, GLU glu) {
+	public void drawAxes(GL2 gl, GLU glu) {
 		double width = settings.getVisibleArea().getWidth();
 		double height = settings.getVisibleArea().getHeight();
 		double depth = settings.getVisibleArea().getDepth();
 		
 		gl.glLineWidth(2.0f);
-		gl.glBegin(GL.GL_LINES);
+		gl.glBegin(GL2.GL_LINES);
 			//x-axis
 			gl.glColor3d(0, 0, 0);
 			gl.glVertex3d(-width, -height, depth);
@@ -72,7 +72,7 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 			gl.glVertex3d(width, -height, -depth);
 		gl.glEnd();
 		
-		gl.glEnable(GL.GL_LIGHTING);
+		gl.glEnable(GL2.GL_LIGHTING);
 		
 		GLUquadric arrow = glu.gluNewQuadric();
 		glu.gluQuadricDrawStyle(arrow, GLU.GLU_FILL);
@@ -80,7 +80,7 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 		
 		// define arrow color
 		float[] color = new float[]{0, 0, 0};
-		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, color, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, color, 0);
 		// arrow on x-axis
 		gl.glPushMatrix();
 		gl.glTranslated(width, -height, depth);
@@ -89,7 +89,7 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 		gl.glPopMatrix();
 
 		color = new float[]{0, 0, 0};
-		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, color, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, color, 0);
 		// arrow on y-axis
 		gl.glPushMatrix();
 		gl.glTranslated(-width, height, depth);
@@ -98,7 +98,7 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 		gl.glPopMatrix();
 		
 		color = new float[]{0, 0, 0};
-		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, color, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, color, 0);
 		// arrow on z-axis
 		gl.glPushMatrix();
 		gl.glTranslated(width, -height, -depth);
@@ -106,11 +106,11 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 		glu.gluCylinder(arrow, 0.125f, 0.0f, 0.5f, 10, 5);
 		gl.glPopMatrix();
 		
-		gl.glDisable(GL.GL_LIGHTING);
+		gl.glDisable(GL2.GL_LIGHTING);
 	}
 
 	@Override
-	public void drawLabeling(GL gl, double[] rotation, double[] timepoints) {
+	public void drawLabeling(GL2 gl, double[] rotation, double[] timepoints) {
 		double width = settings.getVisibleArea().getWidth();
 		double height = settings.getVisibleArea().getHeight();
 		double depth = settings.getVisibleArea().getDepth();
@@ -220,7 +220,7 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 		return ID;
 	}
 	
-	private void drawXLabel(GL gl, String label, double x, double y,double z, double xrot, double yrot, double zrot, boolean horizontal) {
+	private void drawXLabel(GL2 gl, String label, double x, double y,double z, double xrot, double yrot, double zrot, boolean horizontal) {
 		if(label == null) {
 			label = "0.0";
 		}
@@ -253,7 +253,7 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 		gl.glPopMatrix();
 	}
 	
-	private void drawYLabel(GL gl, String label, double x, double y,double z, double xrot, double yrot, double zrot) {
+	private void drawYLabel(GL2 gl, String label, double x, double y,double z, double xrot, double yrot, double zrot) {
 		if(label == null) {
 			label = "0.0";
 		}
@@ -278,7 +278,7 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 		gl.glPopMatrix();
 	}
 	
-	private void drawZLabel(GL gl, String label, double x, double y,double z, double xrot, double yrot, double zrot) {
+	private void drawZLabel(GL2 gl, String label, double x, double y,double z, double xrot, double yrot, double zrot) {
 		if(label == null) {
 			label = "0.0";
 		}

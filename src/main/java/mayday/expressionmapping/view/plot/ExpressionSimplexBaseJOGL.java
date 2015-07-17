@@ -8,8 +8,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.media.opengl.GL;
 import javax.swing.JComponent;
+
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.awt.TextRenderer;
 
 import mayday.core.Probe;
 import mayday.expressionmapping.gnu_trove_adapter.TIntArrayList;
@@ -18,8 +20,6 @@ import mayday.expressionmapping.model.geometry.container.PointList;
 import mayday.vis3.gui.PlotContainer;
 import mayday.vis3d.AbstractPlot3DPanel;
 import mayday.vis3d.utilities.Camera3D;
-
-import com.sun.opengl.util.j2d.TextRenderer;
 
 /**
  * @author G\u00FCnter J\u00E4ger
@@ -51,9 +51,9 @@ public abstract class ExpressionSimplexBaseJOGL extends AbstractPlot3DPanel impl
 		this.points = points;
 	}
 	
-	protected abstract void createHull(GL gl);
-	protected abstract void createPoints(GL gl, int glRender);
-	protected abstract void createLabels(GL gl);
+	protected abstract void createHull(GL2 gl);
+	protected abstract void createPoints(GL2 gl, int glRender);
+	protected abstract void createLabels(GL2 gl);
 	
 	
 	public void setupPanel(PlotContainer plotContainer) {
@@ -148,7 +148,7 @@ public abstract class ExpressionSimplexBaseJOGL extends AbstractPlot3DPanel impl
 //	}
 
 	@Override
-	public void update(GL gl) {
+	public void update(GL2 gl) {
 		this.updatePlot();
 	}
 	

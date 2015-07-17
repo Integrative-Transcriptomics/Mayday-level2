@@ -7,18 +7,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GLDrawableFactory;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLPbuffer;
-import javax.media.opengl.glu.GLU;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -38,8 +29,15 @@ import mayday.vis3d.utilities.Camera3D;
 import mayday.vis3d.utilities.SelectionHandler;
 import mayday.vis3d.utilities.SelectionHandler3D;
 
-import com.sun.opengl.util.GLUT;
-import com.sun.opengl.util.Screenshot;
+import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.util.gl2.GLUT;
 
 /**
  * @author G\u00FCnter J\u00E4ger
@@ -85,8 +83,10 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 	
 	private boolean update = true;
 	
+	private GLProfile glp;
+	
 	public void removeNotify() {
-		System.out.println("A3D: removeNotify");
+		//System.out.println("A3D: removeNotify");
 		super.removeNotify();
 	}
 	
@@ -105,6 +105,8 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		this.glu = new GLU();
 		this.glut = new GLUT();
 		
+		this.glp = GLProfile.getDefault();
+		
 		this.setPreferredSize(new Dimension(0, 0));
 		this.setMinimumSize(new Dimension(0, 0));
 	}
@@ -116,47 +118,54 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 
 	@Override
 	public void paint(Graphics g) {
-		if (!isShowing()) {			
-			Graphics2D g2d = (Graphics2D)g;
+		super.paint(g);
+		//this is used to draw the plot for export
+		if (!isShowing()) {
+			Graphics2D g2 = (Graphics2D)g;
+			canvas.getContext().makeCurrent();
+			GL2 gl = canvas.getGL().getGL2();
 			
-			double sx = g2d.getTransform().getScaleX();
-			double sy = g2d.getTransform().getScaleY();
+			int width = canvas.getWidth();
+			int height = canvas.getHeight();
 			
-			double width = getWidth() * sx;
-			double height = getHeight() * sy;
+			this.drawScene(gl, width, height);
 			
-			if(!GLDrawableFactory.getFactory().canCreateGLPbuffer())
-				throw new RuntimeException("No GLPBuffer");
+			ByteBuffer pixelsRGB = Buffers.newDirectByteBuffer(width * height * 3);
 
-			GLDrawableFactory fac = GLDrawableFactory.getFactory();
-			GLCapabilities glCaps = getGLCaps();
-			// Without line below, there is an error on Windows.
-			glCaps.setDoubleBuffered(false);
-			
-			//makes a new buffer
-			GLPbuffer pbuffer = fac.createGLPbuffer(glCaps, null, (int)width, (int)height, null);
-			
-			//required for drawing to the buffer
-			GLContext context =  pbuffer.createContext(null); 
-			
-			context.makeCurrent();
-			GL gl = context.getGL();
-			
-			this.basicInitializations(gl);
-			this.drawScene(gl, (int)width, (int)height);
-						
-			BufferedImage image = Screenshot.readToBufferedImage((int)width, (int)height);
-			context.release();
-			
-			AffineTransform te = g2d.getTransform();
-			g2d.scale(1/sx,1/sy);
-			
-			g.drawImage(image, 0, 0 , null);
-			
-			g2d.setTransform(te);
-			
-			context.destroy();
-			pbuffer.destroy();
+		    gl.glReadBuffer(GL2.GL_BACK);
+		    gl.glPixelStorei(GL2.GL_PACK_ALIGNMENT, 1);
+
+		    gl.glReadPixels(0, 0, width, height, GL2.GL_RGB, GL2.GL_UNSIGNED_BYTE, pixelsRGB); 
+
+		    int[] pixelInts = new int[width * height];
+
+		    // Convert RGB bytes to ARGB ints with no transparency. Flip image vertically by reading the
+		    // rows of pixels in the byte buffer in reverse - (0,0) is at bottom left in OpenGL.
+
+		    int p = width * height * 3;	// Points to first byte (red) in each row.
+		    int q;						// Index into ByteBuffer
+		    int i = 0;					// Index into target int[]
+		    int w3 = width * 3;			// Number of bytes in each row
+
+		    for (int row = 0; row < height; row++) {
+		    	p -= w3;
+		        q = p;
+		        for (int col = 0; col < width; col++) {
+		        	int iR = pixelsRGB.get(q++);
+		            int iG = pixelsRGB.get(q++);
+		            int iB = pixelsRGB.get(q++);
+
+		            pixelInts[i++] = 0xFF000000
+		            		| ((iR & 0x000000FF) << 16)
+		                    | ((iG & 0x000000FF) << 8)
+		                    | (iB & 0x000000FF);
+		        }
+		    }
+
+		    BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		    bufferedImage.setRGB(0, 0, width, height, pixelInts, 0, width);
+
+		    g2.drawImage(bufferedImage, 0, 0, null);
 		}
 	}
 
@@ -249,7 +258,7 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 	 * allows for additional display initialization steps
 	 * @param gl
 	 */
-	public abstract void initializeDisplay(GL gl);
+	public abstract void initializeDisplay(GL2 gl);
 	/**
 	 * draw all selectable objects
 	 * 
@@ -259,18 +268,18 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 	 * @param gl
 	 * @param glRender
 	 */
-	public abstract void drawSelectable(GL gl, int glRender);
+	public abstract void drawSelectable(GL2 gl, int glRender);
 	/**
 	 * draw everything that will not be selected ever
 	 * @param gl
 	 */
-	public abstract void drawNotSelectable(GL gl);
+	public abstract void drawNotSelectable(GL2 gl);
 	/**
 	 * perform an update operation 
 	 * this method should at least call the canvas repaint function
 	 * @param gl 
 	 */
-	public abstract void update(GL gl);
+	public abstract void update(GL2 gl);
 	
 	/**
 	 * 
@@ -290,27 +299,22 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		this.canvas.addMouseListener(new Plot3DMouseListener());
 		this.camera.registerTo(this.canvas);
 		this.selectionHandler.registerTo(this.canvas);
-		
-//		this.gljpanel.addGLEventListener(this);
-//		this.gljpanel.addMouseListener(new Plot3DMouseListener());
-//		this.camera.registerTo(this.gljpanel);
-//		this.selectionHandler.registerTo(this.gljpanel);
 	}
 	
 	private GLCapabilities getGLCaps() {
-		GLCapabilities glCap = new GLCapabilities();
+		GLCapabilities glCap = new GLCapabilities(glp);
 		glCap.setSampleBuffers(true);
 		glCap.setHardwareAccelerated(true);
 		glCap.setNumSamples(4);
 		return glCap;
 	}
 	
-	protected void basicInitializations(GL gl) {
+	protected void basicInitializations(GL2 gl) {
 		// enable=1/disable=0 vsync
 		gl.setSwapInterval(0);
 		gl.glClearDepth(10.0f); // set up depth buffer
-		gl.glEnable(GL.GL_DEPTH_TEST); // enable depth test
-		gl.glDepthFunc(GL.GL_LESS); // set depth func. this should be default val, anyway
+		gl.glEnable(GL2.GL_DEPTH_TEST); // enable depth test
+		gl.glDepthFunc(GL2.GL_LESS); // set depth func. this should be default val, anyway
 		
 		//set point size and line width;
 		gl.glPointSize(1.1f);
@@ -319,14 +323,14 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		initializeDisplay(gl);
 	}
 	
-	protected void drawScene(GL gl, double width, double height) {
+	protected void drawScene(GL2 gl, double width, double height) {
 		gl.glClearColor(bgColor[0], bgColor[1], bgColor[2], 0.0f);
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		camera.setCamera(gl, glu, width, height);
 		
 		gl.glPushMatrix();
 		camera.adjustCamera(gl);
-		drawSelectable(gl, GL.GL_RENDER);
+		drawSelectable(gl, GL2.GL_RENDER);
 		drawNotSelectable(gl);
 		gl.glPopMatrix();
 	}
@@ -373,7 +377,7 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 	
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		GL gl = drawable.getGL();
+		GL2 gl = drawable.getGL().getGL2();
 		
 		if(update) {
 			update(gl);
@@ -390,15 +394,13 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		gl.glFlush();
 	}
 
-	@Override
-	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
-			boolean deviceChanged) {
+	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
 		updatePlot();
 	}
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		GL gl = drawable.getGL();
+		GL2 gl = drawable.getGL().getGL2();
 		//enable depth test
 		basicInitializations(gl);
 		//initialize the selection handler
@@ -429,5 +431,10 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 			}
 			updatePlot();
 		}
+	}
+	
+	@Override
+	public void dispose(GLAutoDrawable drawable) {
+		//TODO
 	}
 }

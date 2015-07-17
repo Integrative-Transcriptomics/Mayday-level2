@@ -3,8 +3,6 @@ package mayday.vis3d.plots.scatterplot;
 import java.awt.Color;
 import java.util.List;
 
-import javax.media.opengl.GL;
-
 import mayday.core.Probe;
 import mayday.core.ProbeList;
 import mayday.core.settings.Setting;
@@ -20,6 +18,8 @@ import mayday.vis3d.primitives.Lighting;
 import mayday.vis3d.primitives.Point3D;
 import mayday.vis3d.utilities.Camera3D;
 import mayday.vis3d.utilities.convexhull.ConvexHull;
+
+import com.jogamp.opengl.GL2;
 
 /**
  * @author G\u00FCnter J\u00E4ger
@@ -50,7 +50,7 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 	private int centroidsList;
 
 	@Override
-	public void drawNotSelectable(GL gl) {
+	public void drawNotSelectable(GL2 gl) {
 		CoordinateSystem3DSetting coordSetting = this.settings.getCSSetting();
 		
 		gl.glPushMatrix();
@@ -76,15 +76,15 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 		gl.glPopMatrix();
 	}
 	
-	private void drawConvexHull(GL gl) {
+	private void drawConvexHull(GL2 gl) {
 		double spreadX = getSpread(X.getMaximum(), X.getMinimum());
 		double spreadY = getSpread(Y.getMaximum(), Y.getMinimum());
 		double spreadZ = getSpread(Z.getMaximum(), Z.getMinimum());
 		
 		List<ProbeList> probeLists = viewModel.getProbeLists(true);
 		
-		gl.glEnable(GL.GL_BLEND);
-		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 		
 		double width = this.coordSystem.getSetting().getVisibleArea().getWidth();
 		double height = this.coordSystem.getSetting().getVisibleArea().getHeight();
@@ -125,7 +125,7 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 			gl.glPushMatrix();
 				float[] color = convertColor(c);
 				gl.glColor4f(color[0], color[1], color[2], 0.5f);
-				gl.glBegin(GL.GL_TRIANGLES);
+				gl.glBegin(GL2.GL_TRIANGLES);
 				for(j = 0; j < faces.length; j++) {
 					for(int k = 0; k < faces[j].length; k++) {
 						Point3D p = pointsNeeded[faces[j][k]];
@@ -138,7 +138,7 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 			//draw contour lines
 			gl.glPushMatrix();
 			gl.glColor3fv(convertColor(Color.BLACK), 0);
-			gl.glBegin(GL.GL_LINE_LOOP);
+			gl.glBegin(GL2.GL_LINE_LOOP);
 			for(j = 0; j < faces.length; j++) {
 				for(int k = 0; k < faces[j].length; k++) {
 					Point3D p = pointsNeeded[faces[j][k]];
@@ -148,10 +148,10 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 			gl.glEnd();
 			gl.glPopMatrix();
 		}
-		gl.glDisable(GL.GL_BLEND);
+		gl.glDisable(GL2.GL_BLEND);
 	}
 
-	private void drawCentroids(GL gl) {
+	private void drawCentroids(GL2 gl) {
 		double spreadX = getSpread(X.getMaximum(), X.getMinimum());
 		double spreadY = getSpread(Y.getMaximum(), Y.getMinimum());
 		double spreadZ = getSpread(Z.getMaximum(), Z.getMinimum());
@@ -191,9 +191,9 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void drawSelectable(GL gl, int glRender) {
+	public void drawSelectable(GL2 gl, int glRender) {
 		if(!settings.hideSpheres() || settings.getDrawProjections()) {
-			if(glRender == GL.GL_SELECT) {
+			if(glRender == GL2.GL_SELECT) {
 				this.drawData(gl, glRender);
 			} else {
 				gl.glCallList(dataList);
@@ -203,14 +203,14 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 	/*
 	 * draw all data on canvas
 	 */
-	private void drawData(GL gl, int glRender) {
+	private void drawData(GL2 gl, int glRender) {
 		double spreadX = getSpread(X.getMaximum(), X.getMinimum());
 		double spreadY = getSpread(Y.getMaximum(), Y.getMinimum());
 		double spreadZ = getSpread(Z.getMaximum(), Z.getMinimum());
 		float[] color = {0, 0, 0};
 		
-		if(glRender != GL.GL_SELECT) {
-			gl.glEnable(GL.GL_LIGHTING);
+		if(glRender != GL2.GL_SELECT) {
+			gl.glEnable(GL2.GL_LIGHTING);
 		}
 		
 		double width = this.coordSystem.getSetting().getVisibleArea().getWidth();
@@ -219,7 +219,7 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 		
 		gl.glPushMatrix();
 		for (Probe pb : viewModel.getProbes()) {
-			if(glRender != GL.GL_SELECT) {
+			if(glRender != GL2.GL_SELECT) {
 				// convert color to float array
 				color = convertColor(coloring.getColor(pb));
 				// switch color to selection color, if probe is selected
@@ -227,7 +227,7 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 					color = convertColor(settings.getSelectionColor());
 				}
 				// define color
-				gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, color, 0);
+				gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, color, 0);
 			}
 			
 			double x = adjust(X.getValue(pb), width, spreadX);
@@ -235,7 +235,7 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 			double z = adjust(Z.getValue(pb), depth, spreadZ);
 			
 			if(!settings.hideSpheres()) {
-				if (glRender == GL.GL_SELECT) {
+				if (glRender == GL2.GL_SELECT) {
 					gl.glLoadName(pb.hashCode());
 					gl.glPushMatrix();
 					gl.glTranslated(x, y, z);
@@ -250,9 +250,9 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 			}
 			
 			//projections are not selectable
-			if(glRender != GL.GL_SELECT) {
+			if(glRender != GL2.GL_SELECT) {
 				if(settings.getDrawProjections()) {
-					gl.glDisable(GL.GL_LIGHTING);
+					gl.glDisable(GL2.GL_LIGHTING);
 					gl.glColor3fv(color, 0);
 					// project spheres as filled circles
 					gl.glPushMatrix();
@@ -271,14 +271,14 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 					gl.glTranslated(x, y, -depth);
 					gl.glCallList(sphereProjection);
 					gl.glPopMatrix();
-					gl.glEnable(GL.GL_LIGHTING);
+					gl.glEnable(GL2.GL_LIGHTING);
 				}
 			}
 		}
 		gl.glPopMatrix();
 		
-		if(glRender != GL.GL_SELECT) {
-			gl.glDisable(GL.GL_LIGHTING);
+		if(glRender != GL2.GL_SELECT) {
+			gl.glDisable(GL2.GL_LIGHTING);
 		}
 	}
 	/*
@@ -297,7 +297,7 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void initializeDisplay(GL gl) {
+	public void initializeDisplay(GL2 gl) {
 		Lighting.initLighting(gl);
 		//create identifier for the call lists
 		this.dataList = gl.glGenLists(1);
@@ -314,7 +314,7 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 	}
 	
 	//update the call lists for object drawing
-	private void updateDrawTypes(GL gl) {
+	private void updateDrawTypes(GL2 gl) {
 		float r = (float)settings.getSphereRadius();
 		//switch the coordinate system if necessary
 		CoordinateSystem3DSetting coordSettings = this.settings.getCSSetting();
@@ -349,12 +349,12 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 		
 		
 		//initialize spheres representing selectable objects
-		gl.glNewList(sphere, GL.GL_COMPILE);
+		gl.glNewList(sphere, GL2.GL_COMPILE);
 			glut.glutSolidSphere(r, 15, 7);
 		gl.glEndList();
 		//initialize projections as simple crosses
-		gl.glNewList(sphereProjection, GL.GL_COMPILE);
-			gl.glBegin(GL.GL_LINES);
+		gl.glNewList(sphereProjection, GL2.GL_COMPILE);
+			gl.glBegin(GL2.GL_LINES);
 			gl.glVertex2f(r, r);
 			gl.glVertex2f(-r, -r);
 			gl.glVertex2f(-r, r);
@@ -362,8 +362,8 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 			gl.glEnd();
 		gl.glEndList();
 		//initialize approximation of 3d crosses for selection mode
-		gl.glNewList(cross, GL.GL_COMPILE);
-		gl.glBegin(GL.GL_QUADS);
+		gl.glNewList(cross, GL2.GL_COMPILE);
+		gl.glBegin(GL2.GL_QUADS);
 			gl.glVertex3d(-r, +r, 0);
 			gl.glVertex3d(+r, +r, 0);
 			gl.glVertex3d(+r, -r, 0);
@@ -382,15 +382,15 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 		gl.glEndList();
 		
 		//initialize the call list representing all data to be drawn
-		gl.glNewList(dataList, GL.GL_COMPILE);
-			this.drawData(gl, GL.GL_RENDER);
+		gl.glNewList(dataList, GL2.GL_COMPILE);
+			this.drawData(gl, GL2.GL_RENDER);
 		gl.glEndList();
 		//initialize the call list representing a centroid
-		gl.glNewList(centroid, GL.GL_COMPILE);
+		gl.glNewList(centroid, GL2.GL_COMPILE);
 			glut.glutWireSphere(1.0, 10, 5);
 		gl.glEndList();
 		//initialize the call list representing all centroids
-		gl.glNewList(centroidsList, GL.GL_COMPILE);
+		gl.glNewList(centroidsList, GL2.GL_COMPILE);
 			this.drawCentroids(gl);
 		gl.glEndList();
 	}
@@ -428,7 +428,7 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void update(GL gl) {
+	public void update(GL2 gl) {
 		//update the call lists
 		this.updateDrawTypes(gl);
 		//change background color

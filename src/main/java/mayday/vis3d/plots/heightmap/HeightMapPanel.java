@@ -5,7 +5,8 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Set;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.awt.TextRenderer;
 
 import mayday.core.Probe;
 import mayday.core.settings.Setting;
@@ -15,8 +16,6 @@ import mayday.vis3d.AbstractPlot3DPanel;
 import mayday.vis3d.cs.CoordinateSystem3D;
 import mayday.vis3d.cs.PlaneCoordinateSystem3D;
 import mayday.vis3d.utilities.Camera3D;
-
-import com.sun.opengl.util.j2d.TextRenderer;
 
 /**
  * @author G\u00FCnter J\u00E4ger
@@ -49,7 +48,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 	private CoordinateSystem3D coordSystem;
 	
 	@Override
-	public void drawNotSelectable(GL gl) {
+	public void drawNotSelectable(GL2 gl) {
 		double width2 = coordSystem.getSetting().getVisibleArea().getWidth() / 2.0;
 		double y = (this.maxValue + this.minValue)/2.0;
 		double depth2 = coordSystem.getSetting().getVisibleArea().getDepth() / 2.0;
@@ -62,7 +61,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void drawSelectable(GL gl, int glRender) {
+	public void drawSelectable(GL2 gl, int glRender) {
 		double width2 = coordSystem.getSetting().getVisibleArea().getWidth() / 2.0;
 		double y = (this.maxValue + this.minValue)/2.0;
 		double depth2 = coordSystem.getSetting().getVisibleArea().getDepth() / 2.0;
@@ -71,7 +70,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 		gl.glPushMatrix();
 		gl.glTranslated(-depth2, -adjust(y), width2);
 		if(settings.showProfiles()) {
-			if(glRender == GL.GL_SELECT) {
+			if(glRender == GL2.GL_SELECT) {
 				this.drawData(gl, glRender);
 			} else {
 				gl.glCallList(profiles);
@@ -96,7 +95,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 		return (value / this.spreadY) * 2 * height;
 	}
 	
-	private void drawLabeling(GL gl, int glRender) {
+	private void drawLabeling(GL2 gl, int glRender) {
 		gl.glPushMatrix();
 			for(int i = 0; i < this.probes.size(); i++) {
 				Probe pb = probes.get(i);
@@ -107,7 +106,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 				
 				gl.glPushMatrix();
 					gl.glTranslated(i * settings.getProfileDistance(), 0, 0);
-					if(glRender == GL.GL_SELECT) {
+					if(glRender == GL2.GL_SELECT) {
 						gl.glLoadName(pb.hashCode());
 					}
 					gl.glPushMatrix();
@@ -130,7 +129,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 		gl.glPopMatrix();
 	}
 	
-	private void drawData(GL gl, int glRender) {
+	private void drawData(GL2 gl, int glRender) {
 		boolean useTimepoints = settings.getTimepoints().useTimepoints();
 		
 		gl.glPushMatrix();
@@ -140,7 +139,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 			
 			//check for selected probes and change color and line width if necessary
 			if(viewModel.isSelected(pb)) {
-				if(glRender != GL.GL_SELECT) {
+				if(glRender != GL2.GL_SELECT) {
 					gl.glColor3fv(convertColor(settings.getSelectionColor()), 0);
 					gl.glLineWidth(2.0f);
 				}
@@ -149,13 +148,13 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 				gl.glLineWidth(1.1f);
 			}
 			
-			if(glRender == GL.GL_SELECT) {
+			if(glRender == GL2.GL_SELECT) {
 				gl.glLoadName(pb.hashCode());
 			}
 			
 			gl.glPushMatrix();
 			gl.glTranslated(i * settings.getProfileDistance(), 0, 0);
-			gl.glBegin(GL.GL_LINE_STRIP);
+			gl.glBegin(GL2.GL_LINE_STRIP);
 				for(int k = 0; k < values.length; k++) {
 					double zpos = k;
 					if(useTimepoints) {
@@ -170,9 +169,9 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 		gl.glPopMatrix();
 	}
 	
-	private void drawSurface(GL gl) {
-		gl.glEnable(GL.GL_BLEND);
-		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+	private void drawSurface(GL2 gl) {
+		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 		
 		boolean useTimepoints = settings.getTimepoints().useTimepoints();
 		
@@ -194,7 +193,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 		
 		gl.glPushMatrix();
 		for(int i = 0; i < numProbes - 1; i++) {
-			gl.glBegin(GL.GL_QUADS);
+			gl.glBegin(GL2.GL_QUADS);
 			for(int j = 0; j < numExps - 1; j++) {
 				double[] color = terrainColors.get(i * numExps + j);
 
@@ -252,7 +251,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 		}
 		
 		gl.glPopMatrix();
-		gl.glDisable(GL.GL_BLEND);
+		gl.glDisable(GL2.GL_BLEND);
 	}
 	
 	private double[] getVertexColor4d(double height, double[] color) {
@@ -268,10 +267,10 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void initializeDisplay(GL gl) {
-		gl.glShadeModel(GL.GL_SMOOTH);
-		gl.glDisable(GL.GL_CULL_FACE);
-		gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+	public void initializeDisplay(GL2 gl) {
+		gl.glShadeModel(GL2.GL_SMOOTH);
+		gl.glDisable(GL2.GL_CULL_FACE);
+		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 		
 		renderer.setSmoothing(true);
 		renderer.setColor(Color.BLACK);
@@ -283,7 +282,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 		this.updateDrawTypes(gl);
 	}
 	
-	private void updateDrawTypes(GL gl) {
+	private void updateDrawTypes(GL2 gl) {
 		this.calculateMinMax();
 		experimentTimepoints = settings.getTimepoints().getExperimentTimpoints();
 		
@@ -298,11 +297,11 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 		gl.glDeleteLists(profiles, 1);
 		gl.glDeleteLists(surface, 1);
 		
-		gl.glNewList(profiles, GL.GL_COMPILE);
-			this.drawData(gl, GL.GL_RENDER);
+		gl.glNewList(profiles, GL2.GL_COMPILE);
+			this.drawData(gl, GL2.GL_RENDER);
 		gl.glEndList();
 		
-		gl.glNewList(surface, GL.GL_COMPILE);
+		gl.glNewList(surface, GL2.GL_COMPILE);
 			this.drawSurface(gl);
 		gl.glEndList();
 		
@@ -358,7 +357,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 	public void processSelectedObjects(Object[] objects, boolean controlDown, boolean altDown) {}
 
 	@Override
-	public void update(GL gl) {
+	public void update(GL2 gl) {
 		this.updateDrawTypes(gl);
 		this.setBackgroundColor(settings.getBackgroundColor());
 	}

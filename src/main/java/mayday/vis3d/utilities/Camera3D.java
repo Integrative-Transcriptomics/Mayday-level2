@@ -9,10 +9,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 
 import mayday.vis3d.primitives.Point3D;
 import mayday.vis3d.primitives.Rotation3D;
@@ -84,19 +84,19 @@ public class Camera3D extends Camera implements MouseListener, MouseMotionListen
 	 * @param width
 	 * @param height
 	 */
-	public void setCamera(GL gl, GLU glu, double width, double height) {
+	public void setCamera(GL2 gl, GLU glu, double width, double height) {
 		gl.glViewport(0, 0, (int)width, (int)height);
-		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(60, width/height, 1.0, 1000.0);
 		glu.gluLookAt(position.x, position.y, position.z, 
 				viewingDirection.x, viewingDirection.y, viewingDirection.z, 
 				0,1, 0);
-		gl.glMatrixMode(GL.GL_MODELVIEW);
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 	}
 	
-	public void adjustCamera(GL gl) {
+	public void adjustCamera(GL2 gl) {
 		gl.glRotated(rotation.getXRotation(), 1.0f, 0.0f, 0.0f);
 		gl.glRotated(rotation.getYRotation(), 0.0f, 1.0f, 0.0f);
 		gl.glRotated(rotation.getZRotation(), 0.0f, 0.0f, 1.0f);

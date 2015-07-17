@@ -71,25 +71,17 @@ public class NativeLibraryExtractor extends AbstractPlugin implements GenericPlu
 				os="solaris";
 				if(arch.contains("64")) {
 					arch="amd64";
-				} else if(arch.contains("86")){
-					arch="i586";
-				} else if(arch.contains("sparcv9")) {
-					arch="sparcv9";
 				} else {
-					arch="sparc";
+					arch="i586";
 				}
 			}
 			
 			else if(os.contains("mac")) {
 				os="macosx";
-				if(arch.contains("ppc")) {
-					arch="ppc";
-				} else {
-					arch="universal";
-				}
+				arch="universal";
 			}			
 			
-			String dirS = "mayday/native/jogl/"+os+"-"+arch;
+			String dirS = "mayday/jogl-native/"+os+"-"+arch;
 			
 			System.out.println("Using native libraries from: "+os+"-"+arch);
 

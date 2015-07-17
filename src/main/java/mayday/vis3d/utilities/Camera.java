@@ -1,9 +1,9 @@
 package mayday.vis3d.utilities;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * @author G\u00FCnter J\u00E4ger
@@ -27,10 +27,10 @@ public abstract class Camera {
 	 * @param width
 	 * @param height
 	 */
-	public abstract void setCamera(GL gl, GLU glu, double width, double height);
+	public abstract void setCamera(GL2 gl, GLU glu, double width, double height);
 	
 	/**
 	 * @param gl
 	 */
-	public abstract void adjustCamera(GL gl);
+	public abstract void adjustCamera(GL2 gl);
 }

@@ -10,15 +10,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLJPanel;
-import javax.media.opengl.glu.GLU;
-
 import mayday.core.Probe;
 import mayday.vis3d.AbstractPlot3DPanel;
 
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * @author G\u00FCnter J\u00E4ger
@@ -61,21 +60,21 @@ public class SelectionHandler3D extends SelectionHandler {
 	 * @param height
 	 * @param camera
 	 */
-	public void pickObjects(GL gl, GLU glu, int width, int height, Camera camera) {
+	public void pickObjects(GL2 gl, GLU glu, int width, int height, Camera camera) {
 		if(this.pickable) {
 			// Tell OpenGL where to store the hits
 			int[] selectBuf = new int[BUF_SIZE];
-			IntBuffer selectBuffer = BufferUtil.newIntBuffer(BUF_SIZE);
+			IntBuffer selectBuffer = Buffers.newDirectIntBuffer(BUF_SIZE);
 			gl.glSelectBuffer(BUF_SIZE, selectBuffer);
 			// enter selection mode
-			gl.glRenderMode(GL.GL_SELECT);
+			gl.glRenderMode(GL2.GL_SELECT);
 			/*
 			 * redefine the viewing volume so that only a small area around the
 			 * place where the mouse was clicked is rendered. To do so, set matrix
 			 * mode to GL_PROJECTION and push the current matrix to save the normal
 			 * rendering mode settings.
 			 */
-			gl.glMatrixMode(GL.GL_PROJECTION);
+			gl.glMatrixMode(GL2.GL_PROJECTION);
 			gl.glPushMatrix();
 			gl.glLoadIdentity();
 			/*
@@ -83,7 +82,7 @@ public class SelectionHandler3D extends SelectionHandler {
 			 * cursor. To do so, get the current viewport.
 			 */
 			int[] viewport = new int[4];
-			gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+			gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
 			/*
 			 * initialize the picking matrix (5x5 pixels around the cursor) and set
 			 * the projection as for the normal rendering mode.
@@ -94,7 +93,7 @@ public class SelectionHandler3D extends SelectionHandler {
 			glu.gluPerspective(60, (double)width/(double)height, 1.0, 1000.0);
 
 			// get back to the modelview matrix and initialize the name stack
-			gl.glMatrixMode(GL.GL_MODELVIEW);
+			gl.glMatrixMode(GL2.GL_MODELVIEW);
 			gl.glLoadIdentity();
 			gl.glInitNames();
 			gl.glPushName(0);
@@ -112,21 +111,21 @@ public class SelectionHandler3D extends SelectionHandler {
 			gl.glPushMatrix();
 			camera.adjustCamera(gl);
 			// render scene in selection mode
-			this.panel.drawSelectable(gl, GL.GL_SELECT);
+			this.panel.drawSelectable(gl, GL2.GL_SELECT);
 			gl.glPopMatrix();
 			
 			gl.glPopName();
 
 			// restore the original matrix
-			gl.glMatrixMode(GL.GL_PROJECTION);
+			gl.glMatrixMode(GL2.GL_PROJECTION);
 			gl.glPopMatrix();
-			gl.glMatrixMode(GL.GL_MODELVIEW);
+			gl.glMatrixMode(GL2.GL_MODELVIEW);
 			gl.glFlush();
 			/*
 			 * return to normal rendering mode and get the number of hit records
 			 * that were created while rendering in the selection mode.
 			 */
-			int hits = gl.glRenderMode(GL.GL_RENDER);
+			int hits = gl.glRenderMode(GL2.GL_RENDER);
 			selectBuffer.get(selectBuf);
 			
 			if(this.rectanglePicking) {
@@ -335,16 +334,16 @@ public class SelectionHandler3D extends SelectionHandler {
 	 * @param height
 	 * @param camera
 	 */
-	public void drawSelectionRectangle(GL gl, GLU glu, int width, int height, Camera camera) {
+	public void drawSelectionRectangle(GL2 gl, GLU glu, int width, int height, Camera camera) {
 		if(largeEnough()) {
 			double x = pickRect.getX();
 			double y = pickRect.getY();
 			double w = pickRect.getWidth();
 			double h = pickRect.getHeight();
 			
-			gl.glPushAttrib(GL.GL_LIGHTING_BIT);
+			gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
 			//gl.glDisable(GL.GL_LIGHTING);
-			gl.glMatrixMode(GL.GL_PROJECTION);
+			gl.glMatrixMode(GL2.GL_PROJECTION);
 			gl.glLoadIdentity();
 			glu.gluOrtho2D(0, width, height, 0);
 			
@@ -353,7 +352,7 @@ public class SelectionHandler3D extends SelectionHandler {
 			gl.glLineWidth(2.1f);
 			
 			//draw selection rectangle
-			gl.glBegin(GL.GL_LINE_LOOP);
+			gl.glBegin(GL2.GL_LINE_LOOP);
 				gl.glVertex2d(x, y);
 				gl.glVertex2d(x+w, y);
 				gl.glVertex2d(x+w, y+h);
@@ -464,7 +463,7 @@ public class SelectionHandler3D extends SelectionHandler {
 			
 			this.setRectangle(x, y, width, height);
 			this.rectanglePicking = true;
-			panel.getCanvas().repaint();
+			//panel.getCanvas()..repaint();
 		}
 	}
 

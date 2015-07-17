@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.util.Set;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 import mayday.core.Probe;
 import mayday.core.settings.Setting;
@@ -48,7 +48,7 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 	private static final long serialVersionUID = -5565445579611874316L;
 
 	@Override
-	public void drawNotSelectable(GL gl) {
+	public void drawNotSelectable(GL2 gl) {
 		gl.glPushMatrix();
 		this.coordSystem.draw(gl, glu);
 
@@ -77,7 +77,7 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void drawSelectable(GL gl, int glRender) {
+	public void drawSelectable(GL2 gl, int glRender) {
 		double[] dimension = coordSystem.getDimension3D();
 
 		gl.glPushMatrix();
@@ -91,9 +91,9 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		gl.glPopMatrix();
 	}
 
-	private void drawData(GL gl, int glRender) {
-		gl.glEnable(GL.GL_BLEND);
-		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+	private void drawData(GL2 gl, int glRender) {
+		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 		
 		MultiProbe[] allProbes = viewModel.getProbes().toArray(new MultiProbe[0]);
 		double zit = this.coordSystem.getIteration()[2];
@@ -106,14 +106,14 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 			gl.glPopMatrix();
 		}
 		
-		gl.glDisable(GL.GL_BLEND);
+		gl.glDisable(GL2.GL_BLEND);
 	}
 	
 	protected double[] convertColor4d(Color c, double alpha) {
 		return new double[]{c.getRed()/255.0, c.getGreen()/255.0, c.getBlue()/255.0, alpha};
 	}
 
-	private void drawMultiProbes(GL gl, MultiProbe[] allProbes, int startIndex, int glRender) {
+	private void drawMultiProbes(GL2 gl, MultiProbe[] allProbes, int startIndex, int glRender) {
 		double xit = coordSystem.getSetting().getIteration()[0];
 		boolean useTimepoints = settings.getTimepointSetting().useTimepoints();
 
@@ -122,23 +122,23 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 			
 			double[] values = adjust(viewModel.getProbeValues(pb));
 			if(viewModel.isSelected(pb)) {
-				if(glRender != GL.GL_SELECT) {
+				if(glRender != GL2.GL_SELECT) {
 					gl.glColor4dv(convertColor4d(Store.getSettings().getSelectionColors()[pb.position], 1), 0);
 					gl.glLineWidth(3.0f);
 				}
 			} else {
-				if(glRender != GL.GL_SELECT) {
+				if(glRender != GL2.GL_SELECT) {
 					double minTrans = 0.6 * settings.getProfileTransparency();
 					gl.glColor4dv(convertColor4d(Store.getSettings().getSelectionColors()[pb.position], minTrans), 0);
 					gl.glLineWidth(1.1f);
 				}
 			}
 
-			if(glRender == GL.GL_SELECT) {
+			if(glRender == GL2.GL_SELECT) {
 				gl.glLoadName(pb.hashCode());
 			}
 
-			gl.glBegin(GL.GL_LINE_STRIP);
+			gl.glBegin(GL2.GL_LINE_STRIP);
 			for(int j = 0; j < values.length; j++) {
 				double xpos = j * xit;
 				if(useTimepoints) {
@@ -151,17 +151,17 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		}
 	}
 
-	private void drawProfilePlanes(GL gl) {
+	private void drawProfilePlanes(GL2 gl) {
 		MultiProbe[] allProbes = viewModel.getProbes().toArray(new MultiProbe[0]);
 		boolean useTimepoints = settings.getTimepointSetting().useTimepoints();
 		double xit = coordSystem.getIteration()[0];
 		double zit = coordSystem.getIteration()[2];
 
-		gl.glEnable(GL.GL_BLEND);
-		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
 		gl.glPushMatrix();
-		gl.glBegin(GL.GL_QUADS);
+		gl.glBegin(GL2.GL_QUADS);
 		int k = -1;
 		int maxIt = allProbes.length - this.numOfMultiProbes;
 
@@ -207,10 +207,10 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		gl.glEnd();
 		gl.glPopMatrix();
 
-		gl.glDisable(GL.GL_BLEND);
+		gl.glDisable(GL2.GL_BLEND);
 	}
 
-	private void drawZLabels(GL gl, int glRender) {
+	private void drawZLabels(GL2 gl, int glRender) {
 		double zit = this.coordSystem.getIteration()[2];
 		double k = -this.coordSystem.getSetting().getVisibleArea().getDepth();
 		this.coordSystem.getRenderer().setColor(settings.getLabelsColor());
@@ -220,7 +220,7 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 			//take display names from the top-most data set
 			//the top-most data set has index 0
 			if(allProbes[i].position == 0) {
-				if(glRender == GL.GL_SELECT) {
+				if(glRender == GL2.GL_SELECT) {
 					gl.glLoadName(allProbes[i].hashCode());
 				}
 				if(viewModel.isSelected(allProbes[i])) {
@@ -237,7 +237,7 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		this.coordSystem.getRenderer().setColor(Color.BLACK);
 	}
 
-	private void drawZLabel(GL gl, String label, double x, double y,double z) {
+	private void drawZLabel(GL2 gl, String label, double x, double y,double z) {
 		Rectangle2D bounds = this.coordSystem.getRenderer().getBounds(label);
 		double h2 = bounds.getHeight() * this.coordSystem.getScale() / 2.0;
 
@@ -265,7 +265,7 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void initializeDisplay(GL gl) {
+	public void initializeDisplay(GL2 gl) {
 		Lighting.initLighting(gl);
 
 		this.coordSystem.initAxesLabeling(gl);
@@ -290,7 +290,7 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		}
 	}
 
-	private void updateDrawTypes(GL gl) {
+	private void updateDrawTypes(GL2 gl) {
 		this.calculateMinMax();
 		coordSystem.initAxesLabeling(gl);
 		
@@ -359,7 +359,7 @@ public class MultiProbeMultiProfileplot3DPanel extends AbstractPlot3DPanel {
 	}
 
 	@Override
-	public void update(GL gl) {
+	public void update(GL2 gl) {
 		this.updateDrawTypes(gl);
 		this.setBackgroundColor(settings.getBackgroundColor());
 	}

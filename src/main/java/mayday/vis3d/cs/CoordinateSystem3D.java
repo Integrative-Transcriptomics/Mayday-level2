@@ -3,10 +3,9 @@ package mayday.vis3d.cs;
 import java.awt.Color;
 import java.awt.Font;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
-
-import com.sun.opengl.util.j2d.TextRenderer;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.util.awt.TextRenderer;
 
 import mayday.vis3d.AbstractPlot3DPanel;
 import mayday.vis3d.cs.settings.CoordinateSystem3DSetting;
@@ -46,7 +45,7 @@ public abstract class CoordinateSystem3D {
 	/**
 	 * @param gl
 	 */
-	public void initAxesLabeling(GL gl) {
+	public void initAxesLabeling(GL2 gl) {
 		this.labeling = new Labeling3D(settings);
 		this.setRenderer(new TextRenderer(new Font("Sans.Serif", Font.BOLD, 24),
 					true, true));
@@ -58,26 +57,26 @@ public abstract class CoordinateSystem3D {
 	 * @param gl
 	 * @param glu
 	 */
-	public abstract void draw(GL gl, GLU glu);
+	public abstract void draw(GL2 gl, GLU glu);
 	/**
 	 * @param gl
 	 * @param rotation
 	 * @param timepoints 
 	 */
-	public abstract void drawLabeling(GL gl, double[] rotation, double[] timepoints);
+	public abstract void drawLabeling(GL2 gl, double[] rotation, double[] timepoints);
 	/**
 	 * draw labels without time points
 	 * @param gl
 	 * @param rotation
 	 */
-	public void drawLabeling(GL gl, double[] rotation) {
+	public void drawLabeling(GL2 gl, double[] rotation) {
 		this.drawLabeling(gl, rotation, null);
 	}
 	
 	/**
 	 * @param gl
 	 */
-	public void drawGrid(GL gl) {
+	public void drawGrid(GL2 gl) {
 		
 		double width = settings.getVisibleArea().getWidth();
 		double height = settings.getVisibleArea().getHeight();
@@ -85,7 +84,7 @@ public abstract class CoordinateSystem3D {
 		
 		gl.glLineWidth(1.1f);
 		gl.glColor3d(Color.GRAY.getRed()/255.0, Color.GRAY.getGreen()/255.0, Color.GRAY.getBlue()/255.0);
-		gl.glBegin(GL.GL_LINE_LOOP);
+		gl.glBegin(GL2.GL_LINE_LOOP);
 			gl.glVertex3d(-width, height, depth);
 			gl.glVertex3d(-width, -height, depth);
 			gl.glVertex3d(width, -height, depth);
@@ -94,7 +93,7 @@ public abstract class CoordinateSystem3D {
 			gl.glVertex3d(-width, height, -depth);
 		gl.glEnd();
 		
-		gl.glBegin(GL.GL_LINES);
+		gl.glBegin(GL2.GL_LINES);
 			gl.glVertex3d(-width, -height, depth);
 			gl.glVertex3d(-width, -height, -depth);
 			gl.glVertex3d(-width, -height, -depth);
@@ -103,12 +102,12 @@ public abstract class CoordinateSystem3D {
 			gl.glVertex3d(width, -height, -depth);
 		gl.glEnd();
 		
-		gl.glEnable(GL.GL_LINE_STIPPLE);
+		gl.glEnable(GL2.GL_LINE_STIPPLE);
 		gl.glLineStipple(2, (short) 0x0f0f);
 
 		double[] iteration = settings.getIteration();
 		
-		gl.glBegin(GL.GL_LINES);
+		gl.glBegin(GL2.GL_LINES);
 		for (double i = iteration[2]; i < depth * 2; i += iteration[2]) {
 			gl.glVertex3d(-width, -height, depth-i);
 			gl.glVertex3d(-width, height, depth-i);
@@ -134,7 +133,7 @@ public abstract class CoordinateSystem3D {
 			gl.glVertex3d(-width, height-i, -depth);
 		}
 		gl.glEnd();
-		gl.glDisable(GL.GL_LINE_STIPPLE);
+		gl.glDisable(GL2.GL_LINE_STIPPLE);
 	}
 	/**
 	 * @return the chosen iterations

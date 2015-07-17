@@ -3,7 +3,7 @@ package mayday.vis3d.plots.profileplot;
 import java.awt.Dimension;
 import java.util.Set;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 import mayday.core.Probe;
 import mayday.core.settings.Setting;
@@ -42,7 +42,7 @@ public class ProfilePlotPanel extends AbstractPlot2DPanel {
 	}
 
 	@Override
-	public void drawNotSelectable(GL gl) {
+	public void drawNotSelectable(GL2 gl) {
 		gl.glPushMatrix();
 			gl.glTranslated(translateX, translateY, 0);
 			this.coordSystem.draw(gl, glu);
@@ -51,7 +51,7 @@ public class ProfilePlotPanel extends AbstractPlot2DPanel {
 	}
 
 	@Override
-	public void drawSelectable(GL gl, int glRender) {
+	public void drawSelectable(GL2 gl, int glRender) {
 		gl.glPushMatrix();
 			gl.glTranslated(translateX, translateY, 0);
 			this.drawProfiles(gl, glRender);
@@ -65,7 +65,7 @@ public class ProfilePlotPanel extends AbstractPlot2DPanel {
 	}
 	
 	
-	private void drawProfiles(GL gl, int glRender) {
+	private void drawProfiles(GL2 gl, int glRender) {
 		Set<Probe> allProbes = viewModel.getProbes();
 		boolean useTimepoints = settings.getTimepoints().useTimepoints();
 		double[] experimentTimepoints = settings.getTimepoints().getExperimentTimpoints();
@@ -87,11 +87,11 @@ public class ProfilePlotPanel extends AbstractPlot2DPanel {
 				tmp = 0.0;
 			}
 			
-			if(glRender == GL.GL_SELECT) {
+			if(glRender == GL2.GL_SELECT) {
 				gl.glLoadName(pb.hashCode());
 			}
 			
-			gl.glBegin(GL.GL_LINE_STRIP);
+			gl.glBegin(GL2.GL_LINE_STRIP);
 				for(int i = 0; i < profile.length; i++) {
 					double xpos = iterationX;
 					if(useTimepoints) {
@@ -111,7 +111,7 @@ public class ProfilePlotPanel extends AbstractPlot2DPanel {
 	}
 
 	@Override
-	public void initializeDisplay(GL gl) {
+	public void initializeDisplay(GL2 gl) {
 		this.coordSystem.initLabeling(gl);
 		this.labelHistogram.initialize(gl);
 		this.update(gl);
@@ -145,7 +145,7 @@ public class ProfilePlotPanel extends AbstractPlot2DPanel {
 	}
 
 	@Override
-	public void update(GL gl) {
+	public void update(GL2 gl) {
 		this.setBackgroundColor(settings.getBackgroundColor());
 		//center the plot after resize event
 		this.recalculateXY();

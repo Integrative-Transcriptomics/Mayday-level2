@@ -73,7 +73,7 @@ public class ProfilePlotSelectionHandler extends SelectionHandler3D {
 			this.MB3 = true;
 			setRectangle(e.getX() - 2.5, e.getY() - 2.5, 5, 5);
 			setPickable(true);
-			panel.getCanvas().repaint();
+			//TODO panel.getCanvas().repaint();
 			break;
 		}
 	}

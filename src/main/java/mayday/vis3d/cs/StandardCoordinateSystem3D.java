@@ -3,9 +3,9 @@ package mayday.vis3d.cs;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUquadric;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUquadric;
 
 import mayday.vis3d.AbstractPlot3DPanel;
 import mayday.vis3d.cs.settings.CoordinateSystem3DSetting;
@@ -38,7 +38,7 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 	}
 
 	@Override
-	public void draw(GL gl, GLU glu) {
+	public void draw(GL2 gl, GLU glu) {
 		this.drawAxes(gl, glu);
 	}
 
@@ -51,13 +51,13 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 	 * @param gl
 	 * @param glu
 	 */
-	public void drawAxes(GL gl, GLU glu) {
+	public void drawAxes(GL2 gl, GLU glu) {
 		double width = settings.getVisibleArea().getWidth();
 		double height = settings.getVisibleArea().getHeight();
 		double depth = settings.getVisibleArea().getDepth();
 		
 		gl.glLineWidth(3.0f);
-		gl.glBegin(GL.GL_LINES);
+		gl.glBegin(GL2.GL_LINES);
 			//x-axis
 			gl.glColor3d(1, 0, 0);
 			gl.glVertex3d(-width, 0, 0);
@@ -72,7 +72,7 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 			gl.glVertex3d(0, 0, -depth);
 		gl.glEnd();
 		
-		gl.glEnable(GL.GL_LIGHTING);
+		gl.glEnable(GL2.GL_LIGHTING);
 		
 		GLUquadric arrow = glu.gluNewQuadric();
 		glu.gluQuadricDrawStyle(arrow, GLU.GLU_FILL);
@@ -80,7 +80,7 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 		
 		// define color
 		float[] color = new float[]{1, 0, 0};
-		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, color, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, color, 0);
 		// x-axis
 		gl.glPushMatrix();
 		gl.glTranslated(width, 0, 0);
@@ -89,7 +89,7 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 		gl.glPopMatrix();
 		
 		color = new float[]{0, 1, 0};
-		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, color, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, color, 0);
 		// y-axis
 		gl.glPushMatrix();
 		gl.glTranslated(0, height, 0);
@@ -98,19 +98,19 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 		gl.glPopMatrix();
 		
 		color = new float[]{0, 0, 1};
-		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, color, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, color, 0);
 		// z-axis
 		gl.glPushMatrix();
 		gl.glTranslated(0, 0, depth);
 		glu.gluCylinder(arrow, 0.125f, 0.0f, 0.5f, 10, 5);
 		gl.glPopMatrix();
 		
-		gl.glDisable(GL.GL_LIGHTING);
+		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glLineWidth(1.1f);
 	}
 
 	@Override
-	public void drawLabeling(GL gl, double[] rotation, double[] timepoints) {
+	public void drawLabeling(GL2 gl, double[] rotation, double[] timepoints) {
 		double[] iteration = settings.getIteration();
 		if(this.labeling != null) {
 			String[] xlabels = labeling.getXLabels();

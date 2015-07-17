@@ -8,9 +8,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLJPanel;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
 
 import mayday.vis3d.primitives.Point3D;
 
@@ -62,7 +62,7 @@ public class Camera2D extends Camera3D implements MouseListener, MouseMotionList
 		panel.addMouseWheelListener(this);
 	}
 	
-	public void adjustCamera(GL gl) {
+	public void adjustCamera(GL2 gl) {
 		gl.glScaled(scale, scale, 1);
 		double scaleI = 1.0 / scale;
 		gl.glTranslated(getPosition2D().getX() * scaleI, 
