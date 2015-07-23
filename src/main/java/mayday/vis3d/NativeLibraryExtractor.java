@@ -100,6 +100,7 @@ public class NativeLibraryExtractor extends AbstractPlugin implements GenericPlu
 						dirS = new File(f.getFullPath()).getParent();
 					}
 				}
+				System.setProperty("jogamp.gluegen.UseTempJarCache", "false");
 				PluginManager.getInstance().addNativeLibraryPath(dirS);
 			}
 			
