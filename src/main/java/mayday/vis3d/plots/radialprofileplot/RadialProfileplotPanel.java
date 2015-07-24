@@ -388,8 +388,6 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 		//terrible hack to add a new WindowListener to stop the animator if the plot closes
 		PlotWindow c = (PlotWindow)this.getParent().getParent().getParent().getParent().getParent();
 		c.addWindowListener(new RadialPlotCloser());
-		
-		this.updateOptimalView();
 	}
 
 	@Override
