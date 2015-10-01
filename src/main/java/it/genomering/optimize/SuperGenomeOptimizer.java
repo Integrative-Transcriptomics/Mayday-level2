@@ -76,6 +76,13 @@ public class SuperGenomeOptimizer {
 				double converged = -1;
 				int roundCount = 0;
 				while(converged != oldValue) {
+					
+					if(hasBeenCancelled()) {
+						s.setBlocks(original);
+						s.setSilent(false);
+						return;
+					}
+					
 					System.out.println("Iteration: round " + (1+roundCount));
 					converged = oldValue;
 					//try to optimize according to the current configuration
@@ -119,12 +126,11 @@ public class SuperGenomeOptimizer {
 				
 				System.out.println("Converged after " + (roundCount) + " round(s)!");
 				
-				s.setSilent(false);
-				
 				if (tmpBlocks==null)
 					tmpBlocks=original;
 				
 				s.setBlocks(tmpBlocks);	
+				s.setSilent(false);
 			}
 			
 		};

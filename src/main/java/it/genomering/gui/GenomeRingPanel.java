@@ -354,8 +354,10 @@ public class GenomeRingPanel extends JPanel implements SuperGenomeListener, Geno
 
 		Graphics2D g2d = transformGraphics(g);
 		
-		for (GRPath s : viewElements) {
-			s.paint(g2d);
+		synchronized(viewElements) {
+			for (GRPath s : viewElements) {
+				s.paint(g2d);
+			}
 		}
 		
 		if(setting.getShowRingLegend()) {
@@ -369,7 +371,7 @@ public class GenomeRingPanel extends JPanel implements SuperGenomeListener, Geno
 		if (setting.getShowBlockLabels()) {
 			// write block names
 			Font f = g2d.getFont();
-			g2d.setFont(f.deriveFont(50f));
+			g2d.setFont(f.deriveFont(35f));
 			AffineTransform at = g2d.getTransform();
 			for (Block b : superGenome.getBlocks()) {
 

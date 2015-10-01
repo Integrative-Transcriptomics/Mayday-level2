@@ -22,6 +22,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.collections15.Predicate;
+import org.apache.commons.collections15.Transformer;
+
+import edu.uci.ics.jung.algorithms.scoring.VertexScorer;
+import edu.uci.ics.jung.algorithms.scoring.util.VertexScoreTransformer;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.SparseMultigraph;
+import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.graph.util.Pair;
+import edu.uci.ics.jung.visualization.RenderContext;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
+import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
+import edu.uci.ics.jung.visualization.picking.PickedInfo;
+import edu.uci.ics.jung.visualization.picking.PickedState;
 import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.GenePair;
@@ -46,23 +62,6 @@ import mayday.core.structures.linalg.vector.DoubleVector;
 import mayday.core.tasks.AbstractTask;
 import mayday.vis3.gui.PlotContainer;
 import mayday.vis3.model.ViewModelEvent;
-
-import org.apache.commons.collections15.Predicate;
-import org.apache.commons.collections15.Transformer;
-
-import edu.uci.ics.jung.algorithms.scoring.VertexScorer;
-import edu.uci.ics.jung.algorithms.scoring.util.VertexScoreTransformer;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.SparseMultigraph;
-import edu.uci.ics.jung.graph.util.Context;
-import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.graph.util.Pair;
-import edu.uci.ics.jung.visualization.RenderContext;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
-import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
-import edu.uci.ics.jung.visualization.picking.PickedInfo;
-import edu.uci.ics.jung.visualization.picking.PickedState;
 
 /**
  * @author jaeger
@@ -117,7 +116,8 @@ public class TLN extends AssociationGraph<String, Integer> {
 
 		//initialize color map
 		Color[]  colors = GeneColors.colorBrewer(genes.size());
-		colors = GeneColors.rainbow(genes.size(), 0.8);
+		if(genes.size() > 11)
+			colors = GeneColors.rainbow(genes.size(), 0.8);
 		for(int i = 0; i < colors.length; i++) {
 			geneColors.put(genes.getGene(i).getName(), colors[i]);
 		}
@@ -163,8 +163,10 @@ public class TLN extends AssociationGraph<String, Integer> {
 		//add edges
 		Set<Integer> edges = edgesToGenePairs.keySet();
 		for(Integer edge : edges) {
-			GenePair gp = edgesToGenePairs.get(edge);
-			g.addEdge(edge, gp.gene1.getName(), gp.gene2.getName(), EdgeType.UNDIRECTED);
+			//if(edgeWeights.get(edge) >= 200) {
+				GenePair gp = edgesToGenePairs.get(edge);
+				g.addEdge(edge, gp.gene1.getName(), gp.gene2.getName(), EdgeType.UNDIRECTED);
+			//}
 		}
 		
 		return g;
@@ -289,7 +291,7 @@ public class TLN extends AssociationGraph<String, Integer> {
 			@Override
 			public Paint transform(String geneName) {
 				if(visualizationViewer.getPickedVertexState().isPicked(geneName)) {
-					return Color.RED;
+					return Color.BLACK;
 				}
 				return Color.BLACK;
 			}
@@ -710,5 +712,147 @@ public class TLN extends AssociationGraph<String, Integer> {
 		prerequisites.add(Prerequisite.GENE_EXPRESSION);
 		prerequisites.add(Prerequisite.SNP_LIST_SELECTED);
 		return prerequisites;
+	}
+
+	public void rebuildGraphFromVisibleElements() {
+		Collection<String> allNodes = new HashSet<String>(this.graph.getVertices());
+		Collection<Integer> allEdges = new HashSet<Integer>(this.graph.getEdges());
+		
+		Collection<String> visibleNodes = new HashSet<String>();
+		Collection<Integer> visibleEdges = new HashSet<Integer>();
+		
+		
+		
+		//determine visible nodes
+		for(String node : allNodes) {
+			Context<Graph<String, Integer>, String> c = new Context<Graph<String, Integer>, String>();
+			c.element = node;
+			c.graph = this.graph;
+			boolean shown = this.edgeControls.showNode.evaluate(c);
+			boolean picked = this.visualizationViewer.getPickedVertexState().isPicked(node);
+			
+			boolean hasEdge = this.graph.outDegree(node) > 0;
+			
+			if(picked) {
+				visibleNodes.add(node);
+			}
+			if(shown && !hasEdge) {
+				//do not add
+			} else {
+				visibleNodes.add(node);
+			}
+		}
+		for(Integer edge : allEdges) {
+			Context<Graph<String, Integer>, Integer> c = new Context<Graph<String, Integer>, Integer>();
+			c.element = edge;
+			c.graph = this.graph;
+			GenePair gp = edgesToGenePairs.get(edge);
+			
+			boolean shown = visibleNodes.contains(gp.gene1.getName()) && visibleNodes.contains(gp.gene2.getName());
+			
+			String geneName = edgesToGene.get(edge);
+			
+			boolean picked = this.visualizationViewer.getPickedVertexState().isPicked(geneName);
+			
+			if(!edgeControls.edgeStrokeHighlightBox.isSelected()) {
+				picked = true;
+			}
+			
+			if(shown && picked) {
+				visibleEdges.add(edge);
+			}
+		}
+		
+		//clear current graph
+		for(Integer edge : allEdges) {
+			this.graph.removeEdge(edge);
+		}
+		for(String node : allNodes) {
+			this.graph.removeVertex(node);
+		}
+		
+		//initialize color map
+		Color[]  colors = GeneColors.colorBrewer(visibleNodes.size());
+		if(visibleNodes.size() > 11) {
+			colors = GeneColors.rainbow(visibleNodes.size(), 0.8);
+		}
+		
+		//add new nodes
+		int i = 0;
+		for(String node : visibleNodes) {
+			this.graph.addVertex(node);
+			geneColors.put(node, colors[i++]);
+		}
+		
+		//add new edges
+		for(Integer edge : visibleEdges) {
+			GenePair gp = edgesToGenePairs.get(edge);
+			this.graph.addEdge(edge, gp.gene1.getName(), gp.gene2.getName(), EdgeType.UNDIRECTED);
+		}
+		
+		//set the edge stroke proportional to the edge weight
+		Transformer<Integer, Stroke> edgeStroke = new Transformer<Integer, Stroke>() {
+			@Override
+			public Stroke transform(Integer edgeID) {
+				//scale: maximal edge width = node.width * 0.8
+				return new BasicStroke((edgeWeights.get(edgeID).floatValue()/(float)maxEdgeWeight) * 25.f);
+			}
+		};
+		//set edge weights as edge labels
+		Transformer<Integer, String> edgeLabeller = new Transformer<Integer, String>() {
+			@Override
+			public String transform(Integer edgeID) {
+				if(setting.showEdgeLabels())
+					return edgeWeights.get(edgeID).toString();
+				else
+					return "";
+			}
+		};
+		//define colors for the genes
+				Transformer<String, Paint> vertexPaint = new Transformer<String, Paint>() {
+					@Override
+					public Paint transform(String geneName) {	
+						Color c = geneColors.get(geneName);
+						Gene g = getData().getGenes().getGene(geneName);
+						TLResults tlrs = (TLResults) getData().getMetaInformationManager().get(TLResults.MYTYPE).get(0);
+						if(tlrs.get(g) == null) {
+							c = Color.GRAY;
+						}
+						return c;
+					}
+				};
+				//define colors for the edges
+				Transformer<Integer, Paint> edgePaint = new Transformer<Integer, Paint>() {
+					@Override
+					public Paint transform(Integer edgeID) {
+						Color c = geneColors.get(edgesToGene.get(edgeID));
+				
+						if(edgeControls.edgeStrokeHighlightBox.isSelected()) {
+							String vertex = edgesToGene.get(edgeID);
+							boolean picked = visualizationViewer.getPickedVertexState().isPicked(vertex);
+
+							if(picked) {
+								return c;
+							} else {
+								int alpha = 255 - edgeControls.edgeStrokeTransparencySlider.getValue();
+								Color c2 = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+								return c2;
+							}
+						}
+						
+						return c; 
+					}
+				};
+		
+		this.edgeControls.hiddenNodes.clear();
+		
+		RenderContext<String, Integer> renderContext = this.visualizationViewer.getRenderContext();
+		renderContext.setEdgeStrokeTransformer(edgeStroke);
+		renderContext.setEdgeLabelTransformer(edgeLabeller);
+		renderContext.setVertexFillPaintTransformer(vertexPaint);
+		renderContext.setEdgeDrawPaintTransformer(edgePaint);
+		
+		this.visualizationViewer.revalidate();
+		this.visualizationViewer.repaint();	
 	}
 }

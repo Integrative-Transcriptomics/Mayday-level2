@@ -13,6 +13,9 @@ public class Block {
 	protected int index=-1; // the index of this block in SuperGenome.blocks
 	protected String name;
 	
+	protected int sortingIndex = -1;
+
+	
 	public Block(SuperGenome superGenome, String name, int length) {
 		this.superGenome = superGenome;
 		this.length = length;

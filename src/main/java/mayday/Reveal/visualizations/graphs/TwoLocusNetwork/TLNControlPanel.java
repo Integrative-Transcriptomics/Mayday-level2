@@ -13,7 +13,9 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -36,8 +38,6 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import mayday.core.MaydayDefaults;
-
 import org.apache.commons.collections15.Predicate;
 
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -57,6 +57,7 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.layout.LayoutTransition;
 import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 import edu.uci.ics.jung.visualization.util.Animator;
+import mayday.core.MaydayDefaults;
 
 /**
  * @author jaeger
@@ -96,6 +97,16 @@ public class TLNControlPanel extends JFrame {
 	
 	JButton selectRemainingEdges;
 	JButton unselectAllEdges;
+	
+	Set<String> hiddenNodes = new HashSet<String>();
+	
+	JButton hideSelectedNodes;
+	JButton showAllNodes;
+	
+	JButton buildNewGraph;
+	
+	ShowEdgePredicate showEdge;
+	ShowNodePredicate showNode;
 	
 	/**
 	 * @param plink
@@ -146,6 +157,7 @@ public class TLNControlPanel extends JFrame {
                 }
             }
         });
+        lineButton.setSelected(true);
         
         quadButton = new JRadioButton("QuadCurve");
         quadButton.addItemListener(new ItemListener(){
@@ -156,7 +168,6 @@ public class TLNControlPanel extends JFrame {
                 }
             }
         });
-        quadButton.setSelected(true);
         
         cubicButton = new JRadioButton("CubicCurve");
         cubicButton.addItemListener(new ItemListener(){
@@ -247,8 +258,10 @@ public class TLNControlPanel extends JFrame {
 			}
         });
         
-        ShowEdgePredicate showEdge = new ShowEdgePredicate(plink, edgeWeightSlider, showSelfEdgesBox);
+        showEdge = new ShowEdgePredicate(plink, edgeWeightSlider, showSelfEdgesBox);
+        showNode = new ShowNodePredicate(plink);
         vv.getRenderContext().setEdgeIncludePredicate(showEdge);
+        vv.getRenderContext().setVertexIncludePredicate(showNode);
         
 		Class[] combos = getCombos();
         layoutCombo = new JComboBox(combos);
@@ -312,7 +325,7 @@ public class TLNControlPanel extends JFrame {
 			}
         });
         
-        edgeStrokeHighlightBox = new JCheckBox("Highlight edges with the same color as the selected node(s)");
+        edgeStrokeHighlightBox = new JCheckBox("Filter edges with the same color as the selected node(s)");
         edgeStrokeHighlightBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -347,6 +360,38 @@ public class TLNControlPanel extends JFrame {
 				vv.repaint();
 			}
         });
+        
+        hideSelectedNodes = new JButton("Hide selected nodes");
+        hideSelectedNodes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(String node : plink.graph.getVertices()) {
+					boolean isPicked = vv.getPickedVertexState().isPicked(node);
+					if(isPicked) {
+						hiddenNodes.add(node);
+					}
+				}
+				vv.repaint();
+			}
+        });
+        
+        showAllNodes = new JButton("Show all nodes");
+        showAllNodes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				hiddenNodes.clear();
+				vv.repaint();
+			}
+        });
+        
+        buildNewGraph = new JButton("Rebuild graph from visible elements");
+        buildNewGraph.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				plink.rebuildGraphFromVisibleElements();
+				vv.repaint();
+			}
+		});
 	}
 	
 	private void buildGUI() {
@@ -415,6 +460,9 @@ public class TLNControlPanel extends JFrame {
         nodeSettings.add(vertexStrokeHighlightBox);
         nodeSettings.add(vertexSizeByExpressionBox);
         nodeSettings.add(highlightNodeDegreeBox);
+        nodeSettings.add(hideSelectedNodes);
+        nodeSettings.add(showAllNodes);
+        nodeSettings.add(buildNewGraph);
         
         controls.add(nodeSettings);
         controls.add(edgeSettings);
@@ -500,6 +548,26 @@ public class TLNControlPanel extends JFrame {
         }
     }
     
+    public final static class ShowNodePredicate implements Predicate<Context<Graph<String, Integer>, String>> {
+
+    	protected TLN plink;
+    	
+    	public ShowNodePredicate(TLN plink) {
+    		this.plink = plink;
+    	}
+    	
+		@Override
+		public boolean evaluate(Context<Graph<String, Integer>, String> context) {
+			String node = context.element;
+			
+			if(plink.edgeControls.hiddenNodes.contains(node)) {
+				return false;
+			}
+			
+			return true;
+		}
+    }
+    
     /**
      * @author jaeger
      *
@@ -530,12 +598,23 @@ public class TLNControlPanel extends JFrame {
 				//exclude edges with weight = 0
 				if(plink.edgeWeights.get(edge) == 0) 
 					return false;
+				
+				if(plink.edgeControls.edgeStrokeHighlightBox.isSelected()) {
+					String vertex = plink.edgesToGene.get(edge);
+					boolean picked = plink.edgeControls.vv.getPickedVertexState().isPicked(vertex);
+
+					if(!picked) {
+						return false;
+					}
+				}
+				
 				boolean showSelfEdges = b.isSelected();
 				if(!showSelfEdges) {
 					Pair<String> endpoints = graph.getEndpoints(edge);
 					boolean isSelfEdge = endpoints.getFirst().equals(endpoints.getSecond());
 					return !isSelfEdge;
-				} 
+				}
+				
 				return true;
 			}
 			return false;

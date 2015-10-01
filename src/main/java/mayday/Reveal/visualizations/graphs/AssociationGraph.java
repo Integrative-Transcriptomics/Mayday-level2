@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.vis3.model.ViewModelListener;
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -32,7 +33,7 @@ import edu.uci.ics.jung.visualization.renderers.Renderer;
 @SuppressWarnings("serial")
 public abstract class AssociationGraph<V, E> extends RevealVisualization implements KeyListener, ViewModelListener {
 
-	protected Graph<V,E> graph;
+	public Graph<V,E> graph;
 	protected VisualizationViewer<V,E> visualizationViewer;
 	protected DefaultModalGraphMouse<V, E> graphMouse;
 	protected GraphZoomScrollPane scrollPane;
@@ -54,7 +55,7 @@ public abstract class AssociationGraph<V, E> extends RevealVisualization impleme
 	public void start() {
 		graph = this.buildGraph();
 		
-		Layout<V, E> layout = new KKLayout<V, E>(graph);
+		Layout<V, E> layout = new CircleLayout<V, E>(graph);
 		layout.setSize(new Dimension(800, 600));
 		
 		//define a new visualization view

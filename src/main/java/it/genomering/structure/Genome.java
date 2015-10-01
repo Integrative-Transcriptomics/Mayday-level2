@@ -1,14 +1,12 @@
 package it.genomering.structure;
 
-import it.genomering.render.RingDimensions;
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
+import it.genomering.render.RingDimensions;
 import mayday.core.EventFirer;
 
 public class Genome {
@@ -121,22 +119,17 @@ public class Genome {
 	
 	
 	public class BlockComparator implements Comparator<Block> {
-
-		HashMap<Block, Integer> reverseMap = new HashMap<Block, Integer>();
+		
 		public BlockComparator() {
 			for (int i=0; i!=blocks.size(); ++i) {
-				reverseMap.put(blocks.get(i).getBlock(),i);
+				blocks.get(i).getBlock().sortingIndex = i;
 			}
 		}
 		
 		@Override
 		public int compare(Block o1, Block o2) {
-			Integer b1 = reverseMap.get(o1);
-			Integer b2 = reverseMap.get(o2);
-			if (b1==null)
-				return -1;
-			if (b2==null)
-				return 1;
+			Integer b1 = o1.sortingIndex;
+			Integer b2 = o2.sortingIndex;
 			return b1.compareTo(b2);
 		}
 	}
