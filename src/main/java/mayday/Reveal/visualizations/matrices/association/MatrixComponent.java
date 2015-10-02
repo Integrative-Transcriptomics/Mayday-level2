@@ -37,8 +37,6 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 	private String[] rowHeader = new String[0];
 	private String[] colHeader = new String[0];
 	
-	private MatrixSetting setting;
-	
 	private DoubleMatrix data;
 	private DoubleMatrix betaData;
 	
@@ -70,8 +68,6 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		System.out.println(matrix.sortedIndices.size());
 		
 		this.setLayout(new BorderLayout());
-		
-		this.setting = new MatrixSetting(this);
 		
 		this.dataComp = new DataComponent();
 		this.rowComp = new RowHeaderComponent();
@@ -202,8 +198,8 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 	
 	public void resize() {
 		
-		int compWidth = setting.getCellWidth() * data.ncol();
-		int compHeight = setting.getCellHeight() * data.nrow();
+		int compWidth = matrix.setting.getCellWidth() * data.ncol();
+		int compHeight = matrix.setting.getCellHeight() * data.nrow();
 		
 		Graphics g = this.getGraphics();
 		int rowWidth = getRowHeaderSize(g) + 5;
@@ -284,17 +280,17 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		}
 		
 		public void paintComponent(Graphics g) {
-			double max = data.getMaxValue(false) * setting.getCircleScaling();
-			int cellWidth = setting.getCellWidth();
-			int cellHeight = setting.getCellHeight();
+			double max = data.getMaxValue(false) * matrix.setting.getCircleScaling();
+			int cellWidth = matrix.setting.getCellWidth();
+			int cellHeight = matrix.setting.getCellHeight();
 			int cellSize = Math.min(cellWidth, cellHeight);
 			
 			Graphics2D g2d = (Graphics2D)g;
 			g2d.setBackground(Color.WHITE);
 			g2d.clearRect(0, 0, getWidth(), getHeight());
 			
-			Color selectionColor = setting.getSelectionColor();
-			ColorGradient gradient = setting.getGradient();
+			Color selectionColor = matrix.setting.getSelectionColor();
+			ColorGradient gradient = matrix.setting.getMatrixColorGradient();
 			
 			g2d.setColor(Color.DARK_GRAY);
 			for(int i = 0; i < data.nrow(); i++) {
@@ -342,7 +338,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 				}
 			}
 			
-			if(setting.plotDiagonal()) {
+			if(matrix.setting.plotDiagonal()) {
 				int maxWidth = cellWidth * data.ncol();
 				int maxHeight = cellHeight * data.nrow();
 				
@@ -356,10 +352,10 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		public void mouseClicked(MouseEvent e) {
 			if(e.getButton() == MouseEvent.BUTTON1) {
 				int x = e.getX();
-				int cellSize = setting.getCellWidth();
+				int cellSize = matrix.setting.getCellWidth();
 				int xIndex = x / cellSize;
 				
-				cellSize = setting.getCellHeight();
+				cellSize = matrix.setting.getCellHeight();
 				int y = e.getY();
 				int yIndex = (y-3) / cellSize;
 				
@@ -439,11 +435,11 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 			int rot = e.getWheelRotation();
 			if(e.isControlDown()) {
 				if(e.isShiftDown() && ! e.isAltDown()) {
-					setting.modifyCellHeight(rot);
+					matrix.setting.modifyCellHeight(rot);
 				} else if(e.isAltDown() && !e.isShiftDown()) {
-					setting.modifyCellWidth(rot);
+					matrix.setting.modifyCellWidth(rot);
 				} else {
-					setting.modifyCellSize(rot);
+					matrix.setting.modifyCellSize(rot);
 				}
 				
 				MatrixComponent.this.resize();
@@ -470,10 +466,10 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		public void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D)g;
 			
-			int cellHeight = setting.getCellHeight();
+			int cellHeight = matrix.setting.getCellHeight();
 
 			AffineTransform af = g2.getTransform();
-			Color selectionColor = setting.getSelectionColor();
+			Color selectionColor = matrix.setting.getSelectionColor();
 			
 			for(int i = 0; i < data.nrow(); i++) {
 				Integer rowIndex = matrix.sortedIndices.get(i);
@@ -506,7 +502,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 			if(e.getButton() == MouseEvent.BUTTON1) {
 				int y = e.getY();
 				
-				int cellSize = setting.getCellHeight();
+				int cellSize = matrix.setting.getCellHeight();
 				int index = (y-3) / cellSize;
 				
 				if(index >= 0 && index < rowHeader.length) {
@@ -562,11 +558,11 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		public void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D)g;
 			
-			int cellWidth = setting.getCellWidth();
+			int cellWidth = matrix.setting.getCellWidth();
 			
 			AffineTransform af = g2.getTransform();
 			
-			Color c = setting.getSelectionColor();
+			Color c = matrix.setting.getSelectionColor();
 			Color c2 = new Color(c.getRed(), c.getGreen(), c.getBlue(), 100);
 			
 			for(int i = 0; i < data.ncol(); i++) {
@@ -610,7 +606,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		public void mouseClicked(MouseEvent e) {
 			if(e.getButton() == MouseEvent.BUTTON1) {
 				int x = e.getX();
-				int index = x / setting.getCellWidth();
+				int index = x / matrix.setting.getCellWidth();
 				
 				if(index < colHeader.length && index >= 0) {
 					if(e.getClickCount() > 1) {
@@ -657,20 +653,16 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 			g2.clearRect(0, 0, getWidth(), getHeight());
 		}
 	}
-	
-	public MatrixSetting getSetting() {
-		return this.setting;
-	}
 
 	public void updatePlot() {
 		repaint();
 	}
 
 	public void setGradient(double betaMin, double betaMax, int numBeta) {
-		if(setting != null) {
-			setting.getGradient().setResolution(numBeta);
-			setting.getGradient().setMin(betaMin);
-			setting.getGradient().setMax(betaMax);
+		if(matrix.setting != null) {
+			matrix.setting.getMatrixColorGradient().setResolution(numBeta);
+			matrix.setting.getMatrixColorGradient().setMin(betaMin);
+			matrix.setting.getMatrixColorGradient().setMax(betaMax);
 		}
 	}
 

@@ -69,6 +69,7 @@ public class SNPCharacterizations extends MetaInformationPlugin {
 	}
 	
 	public void add(SNPCharacterization snpChar) {
+		snpChar.setDataStorage(dataStorage);
 		this.snpChars.add(snpChar);
 	}
 	

@@ -21,9 +21,9 @@ import mayday.Reveal.data.ld.LDBlocks;
 import mayday.Reveal.data.meta.MetaInformation;
 import mayday.Reveal.data.meta.SLResults;
 import mayday.Reveal.data.meta.SingleLocusResult;
+import mayday.Reveal.data.meta.SingleLocusResult.Statistics;
 import mayday.Reveal.data.meta.TLResults;
 import mayday.Reveal.data.meta.TwoLocusResult;
-import mayday.Reveal.data.meta.SingleLocusResult.Statistics;
 import mayday.Reveal.functions.prerequisite.Prerequisite;
 import mayday.Reveal.utilities.MultiArraySorter;
 import mayday.Reveal.utilities.SNVLists;
@@ -47,7 +47,7 @@ import mayday.vis3.model.ViewModelEvent;
 @SuppressWarnings("serial")
 public class AssociationMatrix extends RevealVisualization {
 
-	private AssociationMatrixSetting setting;
+	AssociationMatrixSetting setting;
 	
 	private GeneList genesInRow;
 	private GeneList genesInColumn;
@@ -578,9 +578,6 @@ public class AssociationMatrix extends RevealVisualization {
 		setting = new AssociationMatrixSetting(this);
 		matrixComp.setViewModel();
 		
-		plotContainer.addViewSetting(matrixComp.getSetting(), this);
-		plotContainer.addViewSetting(matrixComp.getAggregationComp().getSetting(), this);
-		
 		if(useTlr) {
 			calculateMatrixTwo();
 		} else {
@@ -613,5 +610,9 @@ public class AssociationMatrix extends RevealVisualization {
 		prerequisites.add(Prerequisite.GENE_EXPRESSION);
 		prerequisites.add(Prerequisite.SNP_LIST_SELECTED);
 		return prerequisites;
+	}
+
+	public AssociationMatrixSetting getAssociationMatrixSetting() {
+		return this.setting;
 	}
 }

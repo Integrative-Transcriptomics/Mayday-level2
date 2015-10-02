@@ -128,6 +128,8 @@ public class SNPCharacterizationPlugin extends SNVListPlugin {
 				writeLog("Genome annotations:\t" + tree + "\n");
 				
 				SNPCharacterizations snpChars = new SNPCharacterizations();
+				snpChars.setDataStorage(ds);
+				snpChars.setProjectHandler(projectHandler);
 				
 				int count = 0;
 				for(Subject person : persons) {
@@ -305,14 +307,22 @@ public class SNPCharacterizationPlugin extends SNVListPlugin {
 						snpChar.setIsModifiedAAB(!sameB);
 						
 						if(snpChar.nonSynonymous()) {
-							if(cas.isStartCodon(modifiedCodonA) || cas.isStartCodon(modifiedCodonB)) {
+							if(cas.isStartCodon(modifiedCodonA) && !sameA || cas.isStartCodon(modifiedCodonB) && !sameB) {
 								snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_START_CODON_INSERTED);
+							} else {
+								if(!(codon.equals(modifiedCodonA) && codon.equals(modifiedCodonB))) {
+									snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_MODIFIER);
+								} else {
+									snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR);
+								}
+							}
+						} else {
+							if(!(codon.equals(modifiedCodonA) && codon.equals(modifiedCodonB))) {
+								snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_MODIFIER);
 							} else {
 								snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR);
 							}
 						}
-						
-						snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_SYNONYMOUS);
 					} 
 					//in the 3' UTR
 					else if(globalSNPPos > startCodonPosition) {
@@ -405,14 +415,22 @@ public class SNPCharacterizationPlugin extends SNVListPlugin {
 							snpChar.setIsModifiedAAB(!sameB);
 							
 							if(snpChar.nonSynonymous()) {
-								if(cas.isStartCodon(modifiedCodonA) || cas.isStartCodon(modifiedCodonB)) {
+								if(cas.isStartCodon(modifiedCodonA) && !sameA || cas.isStartCodon(modifiedCodonB) && !sameB) {
 									snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_START_CODON_INSERTED);
+								} else {
+									if(!(codon.equals(modifiedCodonB) && codon.equals(modifiedCodonA))) {
+										snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_MODIFIER);
+									} else {
+										snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR);
+									}
+								}
+							} else {
+								if(!(codon.equals(modifiedCodonB) && codon.equals(modifiedCodonA))) {
+									snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_MODIFIER);
 								} else {
 									snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR);
 								}
 							}
-							
-							snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_SYNONYMOUS);
 						} else if(snp.getPosition() > loc.getStop()){ //down stream of first exon -> Intron
 							snpChar.setCharacterizationFeature(SNPCharacterization.INTRON);
 						} else { //snp hits somewhere in the exon
@@ -449,6 +467,9 @@ public class SNPCharacterizationPlugin extends SNVListPlugin {
 			nucSeq = nucSeq.substring(0, nucSeq.length() - phase);
 			
 			String feature = e.getFeature().toLowerCase();
+			
+			snpA = replace(snpA);
+			snpB = replace(snpB);
 			
 			//snp hits a coding feature
 			if(feature.contains("gene") || feature.contains("mrna") || feature.contains("transcript") || feature.contains("cds")) {
@@ -546,8 +567,8 @@ public class SNPCharacterizationPlugin extends SNVListPlugin {
 						
 						//translate first codon
 						String codon = getCodon(rseq, 0);
-						String modifiedCodonA = modifyCodon(codon, snpA, 0);
-						String modifiedCodonB = modifyCodon(codon, snpB, 0);
+						String modifiedCodonA = modifyCodon(codon, snpA, localSNPPos);
+						String modifiedCodonB = modifyCodon(codon, snpB, localSNPPos);
 						
 						//translate the codons
 						String prot = translateCodon(codon, cas);
@@ -566,14 +587,22 @@ public class SNPCharacterizationPlugin extends SNVListPlugin {
 						snpChar.setIsModifiedAAB(!sameB);
 						
 						if(snpChar.nonSynonymous()) {
-							if(cas.isStartCodon(modifiedCodonA) || cas.isStartCodon(modifiedCodonB)) {
+							if(cas.isStartCodon(modifiedCodonA) && !sameA || cas.isStartCodon(modifiedCodonB) && !sameB) {
 								snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_START_CODON_INSERTED);
+							} else {
+								if(!(codon.equals(modifiedCodonB) && codon.equals(modifiedCodonA))) {
+									snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_MODIFIER);
+								} else {
+									snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR);
+								}
+							}
+						} else {
+							if(!(codon.equals(modifiedCodonB) && codon.equals(modifiedCodonA))) {
+								snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_MODIFIER);
 							} else {
 								snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR);
 							}
 						}
-						
-						snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_SYNONYMOUS);
 					}
 					//in the 3' UTR
 					else if(globalSNPPos < startCodonPosition) {
@@ -671,15 +700,22 @@ public class SNPCharacterizationPlugin extends SNVListPlugin {
 							snpChar.setIsModifiedAAB(!sameB);
 							
 							if(snpChar.nonSynonymous()) {
-								if(cas.isStartCodon(modifiedCodonA) || cas.isStartCodon(modifiedCodonB)) {
+								if(cas.isStartCodon(modifiedCodonA) && !sameA || cas.isStartCodon(modifiedCodonB) && !sameB) {
 									snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_START_CODON_INSERTED);
+								} else {
+									if(!(codon.equals(modifiedCodonB) && codon.equals(modifiedCodonA))) {
+										snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_MODIFIER);
+									} else {
+										snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR);
+									}
+								}
+							} else {
+								if(!(codon.equals(modifiedCodonB) && codon.equals(modifiedCodonA))) {
+									snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_MODIFIER);
 								} else {
 									snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR);
 								}
 							}
-							
-							snpChar.setCharacterizationFeature(SNPCharacterization.FIVE_PRIME_UTR_SYNONYMOUS);
-							
 						} else if(snp.getPosition() < loc.getStart()){ //down stream of first exon -> Intron
 							snpChar.setCharacterizationFeature(SNPCharacterization.INTRON);
 						} else { //snp hits somewhere in the exon
@@ -711,9 +747,10 @@ public class SNPCharacterizationPlugin extends SNVListPlugin {
 			}
 		}
 		
+		snpChar.setGFFElement(e.getID());
 		return snpChar;
 	}
-	
+
 	private int getFirstStopCodonPosition(String nucSeq, CodonsAminoacids cas, int startCodonPosition) {
 		for(int i = startCodonPosition + 3; i < nucSeq.length(); i+=3) {
 			if(nucSeq.length() - i >= 3) {

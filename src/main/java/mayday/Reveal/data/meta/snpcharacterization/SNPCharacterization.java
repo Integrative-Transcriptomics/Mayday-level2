@@ -24,13 +24,12 @@ public class SNPCharacterization implements MetaInformation {
 	public static final int THREE_PRIME_UTR = 7;
 	public static final int INTRON = 8;
 	public static final int EXON = 9;
-	public static final int FIVE_PRIME_UTR_SYNONYMOUS = 10;
+	public static final int FIVE_PRIME_UTR_MODIFIER = 10;
 	
 	public static final int IMPACT_HIGH = 3;
 	public static final int IMPACT_MEDIUM = 2;
 	public static final int IMPACT_LOW = 1;
 	public static final int IMPACT_NO = 0;
-
 
 	private String personID;
 	private String personName;
@@ -214,9 +213,14 @@ public class SNPCharacterization implements MetaInformation {
 		case INTRON:
 			return IMPACT_NO;
 		case EXON:
+			if(snp.getReferenceNucleotide()==getIndividualNucleotideA() 
+				&& snp.getReferenceNucleotide() == getIndividualNucleotideB()) {
+				return IMPACT_NO;
+			} else {
+				return IMPACT_MEDIUM;
+			}
+		case FIVE_PRIME_UTR_MODIFIER:
 			return IMPACT_MEDIUM;
-		case FIVE_PRIME_UTR_SYNONYMOUS:
-			return IMPACT_NO;
 		default:
 			if(nonSynonymous) {
 				return IMPACT_HIGH;
@@ -232,8 +236,8 @@ public class SNPCharacterization implements MetaInformation {
 			return "5' UTR";
 		case FIVE_PRIME_UTR_START_CODON_INSERTED:
 			return "5' UTR Start Inserted";
-		case FIVE_PRIME_UTR_SYNONYMOUS:
-			return "5' UTR Synonymous";
+		case FIVE_PRIME_UTR_MODIFIER:
+			return "5' UTR Modifier";
 		case SPLICE_SITE_ACCEPTOR:
 			return "Splice Site Acceptor";
 		case SPLICE_SITE_DONOR:

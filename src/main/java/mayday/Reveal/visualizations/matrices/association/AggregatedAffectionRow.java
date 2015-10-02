@@ -28,13 +28,9 @@ public class AggregatedAffectionRow extends JPanel {
 	private JPanel placeHolderRight;
 	private JScrollPane dataScroller;
 	
-	private AggregationSetting setting;
-	
 	public AggregatedAffectionRow(AssociationMatrix matrix) {
 		this.matrix = matrix;
 		this.setLayout(new BorderLayout());
-		
-		setting = new AggregationSetting(matrix);
 		
 		this.dataComp = new DataComponent();
 		this.rowHeader = new RowHeader();
@@ -96,8 +92,8 @@ public class AggregatedAffectionRow extends JPanel {
 				min = unaffectedValues[i];
 		}
 		
-		setting.getColorGradient().setMax(max);
-		setting.getColorGradient().setMin(min);
+		matrix.setting.getExpressionColorGradient().setMax(max);
+		matrix.setting.getExpressionColorGradient().setMin(min);
 		
 		this.data = new DoubleMatrix(2, genes.size());
 		
@@ -106,10 +102,8 @@ public class AggregatedAffectionRow extends JPanel {
 	}
 
 	public void resizeComps(int rowWidth, int placeHolderWidth) {
-		MatrixSetting setting = matrix.getMatrixComponent().getSetting();
-		
-		int compWidth = setting.getCellWidth() * data.ncol();
-		int compHeight = setting.getCellHeight() * data.nrow();
+		int compWidth = matrix.setting.getCellWidth() * data.ncol();
+		int compHeight = matrix.setting.getCellHeight() * data.nrow();
 		
 		dataComp.setPreferredSize(new Dimension(compWidth, compHeight));
 		rowHeader.setPreferredSize(new Dimension(rowWidth, compHeight));
@@ -136,14 +130,12 @@ public class AggregatedAffectionRow extends JPanel {
 		public void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g;
 			
-			MatrixSetting matrixSetting = matrix.getMatrixComponent().getSetting();
-			
 //			double max = data.getMaxValue(false) * setting.getCircleScaling();
-			int cellWidth = matrixSetting.getCellWidth();
-			int cellHeight = matrixSetting.getCellHeight();
+			int cellWidth = matrix.setting.getCellWidth();
+			int cellHeight = matrix.setting.getCellHeight();
 //			int cellSize = Math.min(cellWidth, cellHeight);
 			
-			ColorGradient gradient = getSetting().getColorGradient();
+			ColorGradient gradient = matrix.setting.getExpressionColorGradient();
 			
 			for(int i = 0; i < data.nrow(); i++) {
 //				Integer rowIndex = matrix.sortedIndices.get(i);
@@ -171,7 +163,7 @@ public class AggregatedAffectionRow extends JPanel {
 		public void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D)g;
 			
-			int cellHeight = matrix.getMatrixComponent().getSetting().getCellHeight();
+			int cellHeight = matrix.setting.getCellHeight();
 
 			AffineTransform af = g2.getTransform();
 			
@@ -191,9 +183,5 @@ public class AggregatedAffectionRow extends JPanel {
 				}
 			}
 		}
-	}
-
-	public AggregationSetting getSetting() {
-		return this.setting;
 	}
 }
