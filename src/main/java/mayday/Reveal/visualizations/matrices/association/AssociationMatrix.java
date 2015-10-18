@@ -52,8 +52,9 @@ public class AssociationMatrix extends RevealVisualization {
 	private GeneList genesInRow;
 	private GeneList genesInColumn;
 	
-	private DoubleMatrix matrix;
+	private DoubleMatrix snpPairMatrix;
 	private DoubleMatrix betaMatrix;
+	private DoubleMatrix pMatrix;
 	private HashMap<Gene, Integer> geneIDs;
 	private HashMap<String, Integer> geneCombiIDs;
 	private SNVList snps;
@@ -112,8 +113,9 @@ public class AssociationMatrix extends RevealVisualization {
 			int numGenesRow = genesInRow.size();
 			int numGenesColumn = genesInColumn.size();
 			
-			matrix = new DoubleMatrix(numGenesRow, numGenesColumn);
+			snpPairMatrix = new DoubleMatrix(numGenesRow, numGenesColumn);
 			betaMatrix = new DoubleMatrix(numGenesRow, numGenesColumn);
+			pMatrix = new DoubleMatrix(numGenesRow, numGenesColumn);
 			
 			indexSnpMapping = new HashMap<String, Set<SNV>>();
 			
@@ -162,8 +164,9 @@ public class AssociationMatrix extends RevealVisualization {
 				}
 			}
 			
-			matrix = new DoubleMatrix(combis, numGenes);
+			snpPairMatrix = new DoubleMatrix(combis, numGenes);
 			betaMatrix = new DoubleMatrix(combis, numGenes);
+			pMatrix = new DoubleMatrix(combis, numGenes);
 			
 			indexSnpMapping = new HashMap<String, Set<SNV>>();
 			
@@ -198,11 +201,11 @@ public class AssociationMatrix extends RevealVisualization {
 	}
 	
 	private void calculateInitialSorting() {
-		DoubleVector mostCounts = new DoubleVector(matrix.nrow());
-		for(int i = 0; i < matrix.nrow(); i++) {
+		DoubleVector mostCounts = new DoubleVector(snpPairMatrix.nrow());
+		for(int i = 0; i < snpPairMatrix.nrow(); i++) {
 			double counts = 0;
-			for(int j = 0; j < matrix.ncol(); j++) {
-				Double value = matrix.getValue(i, j);
+			for(int j = 0; j < snpPairMatrix.ncol(); j++) {
+				Double value = snpPairMatrix.getValue(i, j);
 				if(Double.compare(value, 0) > 0) {
 					counts += value;
 				}
@@ -214,7 +217,17 @@ public class AssociationMatrix extends RevealVisualization {
 	}
 
 	protected DoubleMatrix getDataMatrix() {
-		return this.matrix;
+		if(setting != null) {
+			switch(setting.getDataType()) {
+			case AssociationMatrixSetting.PVALUE:
+				return this.pMatrix;
+			case AssociationMatrixSetting.SNPPAIRCOUNT:
+				return this.snpPairMatrix;
+			default:
+				return this.snpPairMatrix;
+			}
+		}
+		return snpPairMatrix;
 	}
 	
 	protected DoubleMatrix getBetaMatrix() {
@@ -241,25 +254,25 @@ public class AssociationMatrix extends RevealVisualization {
 		
 		TLResults tlrs = (TLResults) data.getMetaInformationManager().get(TLResults.MYTYPE).get(0);
 		GeneList genes = data.getGenes();
-//		Set<Double> distinctIntensities = new TreeSet<Double>();
-//		cellsToGene.clear();
-//		cellsToGenePairs.clear();
-//		cellsToSNPs.clear();
-//		maxCellIntensity = 0;
-//		genesToCells.clear();
+		
 		Set<SNV> distinctSNPs = new HashSet<SNV>();
 		
 		Set<Double> distinctBeta = new HashSet<Double>();
 		double betaMin = Double.MAX_VALUE;
 		double betaMax = Double.MIN_VALUE;
 		
+		double pThreshold = 0.05;
+		
+		if(setting != null) {
+			pThreshold = setting.getPValue();
+		}
+		
 		Set<Integer> usedBlocks = new HashSet<Integer>();
 		
 		for(int i = 0; i < genesInColumn.size(); i++) {
 			Gene gene = genesInColumn.getGene(i);
 			TwoLocusResult tlr = tlrs.get(gene);
-//			List<Integer> cellIDs = new LinkedList<Integer>();
-//			int cell = 0;
+
 			if(tlr != null) {
 				Set<GenePair> genePairs = tlr.keySet();
 				for(GenePair gp : genePairs) {
@@ -269,8 +282,8 @@ public class AssociationMatrix extends RevealVisualization {
 					List<TwoLocusResult.Statistics> stats = tlr.statMapping.get(gp);
 					
 					double currentIntensity = 0;
+					double pSum = 0;
 					double betaSum = 0;
-//					int snpCount = 0;
 					
 					for(int j = 0; j < snpPairs.size(); j++) {
 						SNVPair sp = snpPairs.get(j);
@@ -292,27 +305,18 @@ public class AssociationMatrix extends RevealVisualization {
 						}
 						
 						TwoLocusResult.Statistics sts = stats.get(j);
-//						snpCount++;
-						
-//						//correct for ld structure
-//						if(setting.useLDBlocks()) {
-//							if(ldStructure.hasLDEdge(sp))
-//								continue;
-//						}
-						
-//						switch(setting.getDataValues()) {
-//						case AssociationMatrixSetting.NUMMBER_OF_SNPS:
-//							currentIntensity += 1;
-//							break;
-//						case AssociationMatrixSetting.P_VALUE:
-//							currentIntensity += sts.p > 0 ? -Math.log10(sts.p) : 0;
-//							break;
-//						}
 						
 						Double beta = sts.beta;
+						Double p = sts.p;
 						
 						if(beta != null) {
 							betaSum += beta;
+						}
+						
+						if(p != null && p > 0) {
+							if(p <= pThreshold) {
+								pSum += -Math.log10(p);
+							}
 						}
 						
 						currentIntensity += 1;
@@ -323,24 +327,7 @@ public class AssociationMatrix extends RevealVisualization {
 					
 					double cellIntensity = currentIntensity;
 					
-//					switch(setting.getDataValues()) {
-//					case AssociationMatrixSetting.NUMMBER_OF_SNPS:
-//						//nothing to do
-//						break;
-//					case AssociationMatrixSetting.P_VALUE:
-//						//take mean p-value
-//						if(cellIntensity > 0)
-//							cellIntensity /= snpCount;
-//						break;
-//					}
-					
-					//determine the maximum edge weight to scale the edge widths
-//					if(cellIntensity > maxCellIntensity)
-//						maxCellIntensity = cellIntensity;
-					
 					if(cellIntensity > 0) {
-//						distinctIntensities.add(cellIntensity);
-						
 						Gene gene1 = gp.gene1;
 						Gene gene2 = gp.gene2;
 						
@@ -355,17 +342,19 @@ public class AssociationMatrix extends RevealVisualization {
 						
 						String geneCombi = gene1.getDisplayName() + ":" + gene2.getDisplayName();
 						Integer combiIndex = geneCombiIDs.get(geneCombi);
+						
 						if(combiIndex == null) {
-							
 							geneCombi = gene2.getDisplayName() + ":" + gene1.getDisplayName();
 							combiIndex = geneCombiIDs.get(geneCombi);
 							
 							if(combiIndex == null)
-								System.out.println("Something is wrong!");
+								System.err.println("Something is wrong! Gene combination cannot be found!");
 						}
-						matrix.setValue(combiIndex, i, cellIntensity);
+						
+						snpPairMatrix.setValue(combiIndex, i, cellIntensity);
 						
 						Double newBeta = betaSum / cellIntensity;
+						Double newP = pSum / cellIntensity;
 							
 						if(!Double.isInfinite(newBeta) && !Double.isNaN(newBeta)) {
 							betaMatrix.setValue(combiIndex, i, newBeta);
@@ -383,29 +372,15 @@ public class AssociationMatrix extends RevealVisualization {
 							betaMatrix.setValue(combiIndex, i, 0);
 						}
 						
-//						cellIntensities.put(cell, cellIntensity);
-						//store edges in the corresponding mapping structures
-//						cellsToGenePairs.put(cell, gp);
-//						cellsToGene.put(cell, gene.getName());
-//						cellsToSNPs.put(cell, distinctSNPs);
-//						distinctSNPs = new HashSet<SNP>();
-//						cellIDs.add(cell);
-						//increase edge identifier
-//						cell++;
+						if(!Double.isInfinite(newP) && !Double.isNaN(newP)) {
+							pMatrix.setValue(combiIndex, i, newP);
+						} else {
+							pMatrix.setValue(combiIndex, i, 0);
+						}
 					}
 				}
 			}
-//			genesToCells.put(gene.getName(), cellIDs);
 		}
-//		
-//		distinctIntensitiesArray.clear();
-//		for(Double intensity : distinctIntensities) {
-//			distinctIntensitiesArray.add(intensity);
-//		}
-//		
-//		if(setting.useLDBlocks()) {
-//			ldStructure.resetEdges();
-//		}
 		
 		int numBeta = distinctBeta.size();
 		matrixComp.setGradient(betaMin, betaMax, numBeta);
@@ -437,13 +412,13 @@ public class AssociationMatrix extends RevealVisualization {
 			pThreshold = setting.getPValue();
 		}
 		
-		matrix.clear();
+		snpPairMatrix.clear();
 		betaMatrix.clear();
 		
 		Set<String> usedBlocks = new HashSet<String>();
 		
-		for(Probe p : genesInColumn) {
-			Gene g1 = (Gene)p;
+		for(Probe probe : genesInColumn) {
+			Gene g1 = (Gene)probe;
 			SingleLocusResult slr = slrs.get(g1);
 			
 			if(slr == null)
@@ -462,19 +437,21 @@ public class AssociationMatrix extends RevealVisualization {
 				int geneIndex2 = geneIDs.get(g2);
 				
 				String key = geneIndex2 + "" + geneIndex1;
+				
 				if(!indexSnpMapping.containsKey(key)) {
 					indexSnpMapping.put(key, new HashSet<SNV>());
 				}
 				
 				Statistics stat = slr.get(s);
 				Double beta = stat.beta;
+				Double p = stat.p;
 				
 				if(Double.compare(stat.p, pThreshold) < 0) {
 					if(setting.useLDBlocks()) {
 						int bid = ldBlocks.getBlockID(s);
 						if(bid != -1) {
 							if(usedBlocks.contains(bid)) {
-								double v = matrix.getValue(geneIndex2, geneIndex1);
+								double v = snpPairMatrix.getValue(geneIndex2, geneIndex1);
 								continue;
 							} else {
 								String s1 = bid + ":" + geneIndex2;
@@ -486,8 +463,14 @@ public class AssociationMatrix extends RevealVisualization {
 						}
 					}
 					
-					double newValue = matrix.getValue(geneIndex2, geneIndex1) + 1;
-					matrix.setValue(geneIndex2, geneIndex1, newValue);
+					double newValue = snpPairMatrix.getValue(geneIndex2, geneIndex1) + 1;
+					snpPairMatrix.setValue(geneIndex2, geneIndex1, newValue);
+					
+					if(p != null && Double.compare(p, 0) > 0) {
+						double newP = pMatrix.getValue(geneIndex2, geneIndex1) - Math.log10(p);
+						pMatrix.setValue(geneIndex2, geneIndex1, newP);
+					}
+					
 					indexSnpMapping.get(key).add(s);
 					
 					if(beta != null) {
@@ -502,10 +485,11 @@ public class AssociationMatrix extends RevealVisualization {
 		double betaMin = Double.MAX_VALUE;
 		double betaMax = Double.MIN_VALUE;
 		
-		for(int i = 0; i < matrix.nrow(); i++) {
-			for(int j = 0; j < matrix.ncol(); j++) {
+		for(int i = 0; i < snpPairMatrix.nrow(); i++) {
+			for(int j = 0; j < snpPairMatrix.ncol(); j++) {
 				Double oldBeta = betaMatrix.getValue(i, j);
-				Double count = matrix.getValue(i, j);
+				Double oldP = pMatrix.getValue(i, j);
+				Double count = snpPairMatrix.getValue(i, j);
 				if(Double.compare(count, 0) > 0) {
 					Double newBeta = oldBeta / count;
 					
@@ -523,6 +507,14 @@ public class AssociationMatrix extends RevealVisualization {
 						distinctBeta.add(newBeta);
 					} else {
 						betaMatrix.setValue(i, j, 0);
+					}
+					
+					Double newP = oldP / count;
+					
+					if(!Double.isInfinite(newP) && !Double.isNaN(newP)) {
+						pMatrix.setValue(i, j, newP);
+					} else {
+						pMatrix.setValue(i, j, 0);
 					}
 				}
 			}
@@ -610,9 +602,5 @@ public class AssociationMatrix extends RevealVisualization {
 		prerequisites.add(Prerequisite.GENE_EXPRESSION);
 		prerequisites.add(Prerequisite.SNP_LIST_SELECTED);
 		return prerequisites;
-	}
-
-	public AssociationMatrixSetting getAssociationMatrixSetting() {
-		return this.setting;
 	}
 }

@@ -7,7 +7,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
 
 import mayday.Reveal.data.SNVList;
 import mayday.Reveal.visualizations.SNVSummaryPlot.SummaryPlotFunctions;
@@ -52,7 +51,6 @@ public class SNVAggregationTrack extends SNVSummaryTrackComponent {
 			
 			if(reference != -1) {
 				this.aggHeightA[i] = getAggregatedHeight(affected[i], reference);
-				System.out.println(Arrays.toString(aggHeightA));
 				this.aggHeightB[i] = getAggregatedHeight(unaffected[i], reference);
 				
 				this.totalHeight[i] = aggHeightA[i] + aggHeightB[i];

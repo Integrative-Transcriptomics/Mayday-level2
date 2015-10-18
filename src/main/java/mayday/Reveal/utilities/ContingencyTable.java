@@ -43,9 +43,9 @@ public class ContingencyTable {
 				countA_cases++;
 				countB_cases++;
 			} else if(A == major) {
-				countA_cases++;
+				countA_cases+=2;
 			} else {
-				countB_cases++;
+				countB_cases+=2;
 			}
 		}
 		
@@ -67,9 +67,9 @@ public class ContingencyTable {
 				countA_controls++;
 				countB_controls++;
 			} else if(A == major) {
-				countA_controls++;
+				countA_controls+=2;
 			} else {
-				countB_controls++;
+				countB_controls+=2;
 			}
 		}
 		

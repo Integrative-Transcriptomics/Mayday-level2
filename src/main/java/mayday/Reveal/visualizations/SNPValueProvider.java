@@ -9,6 +9,7 @@ import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.Genome;
 import mayday.Reveal.data.meta.SingleLocusResult;
+import mayday.Reveal.data.meta.SingleLocusResult.Statistics;
 import mayday.Reveal.data.meta.StatisticalTestResult;
 import mayday.Reveal.viewmodel.RevealViewModel;
 
@@ -81,7 +82,11 @@ public class SNPValueProvider {
 			if(slr == null)
 				return 0;
 			
-			double p = slr.get(s).p;
+			double p = Double.NaN;
+			Statistics stats = slr.get(s);
+			
+			if(stats != null)
+				p = stats.p;
 			
 			if(Double.isNaN(p)) { //ignore NaNs
 				return 0;

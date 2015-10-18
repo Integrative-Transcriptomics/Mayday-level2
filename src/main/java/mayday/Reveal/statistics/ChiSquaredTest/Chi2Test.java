@@ -46,11 +46,23 @@ public class Chi2Test implements StatisticalTest {
 			p_val = 1 - dist.cumulativeProbability(Z2);
 		}
 		
+		if(p_val < 0) {
+			p_val = 0;
+		}
+		
+		if(p_val > 1) {
+			p_val = 1;
+		}
+		
+		if(Double.isNaN(p_val)) {
+			p_val = 1;
+		}
+		
 		return p_val;
 	}
 
 	@Override
 	public String getName() {
-		return "Chi²-Test";
+		return "ChiSq-Test";
 	}
 }

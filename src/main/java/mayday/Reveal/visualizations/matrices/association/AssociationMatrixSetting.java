@@ -20,10 +20,9 @@ public class AssociationMatrixSetting extends HierarchicalSetting {
 	
 	public static final int SNPPAIRCOUNT = 0;
 	public static final int PVALUE = 1;
-	public static final int R2VALUE = 2;
 	
 	private RestrictedStringSetting dataTypes;
-	private String[] dataTypeNames = {"SNP Pair Counts", "Cumulative p-Value", "Cumulative R² Value"};
+	private String[] dataTypeNames = {"SNP Pair Count", "Cumulative p-Value"};
 	
 	private BooleanSetting useLDBlocks;
 	
@@ -37,11 +36,11 @@ public class AssociationMatrixSetting extends HierarchicalSetting {
 	private BooleanSetting plotDiagonal;
 	
 	public AssociationMatrixSetting(AssociationMatrix matrix) {
-		super("Single Locus Association Matrix Setting");
+		super("Association Matrix Setting");
 		this.matrix = matrix;
 		
-		addSetting(pValueThreshold = new DoubleSetting("p-Value Threshold", "p-value threshold for single locus association", 0.05));
-		addSetting(dataTypes = new RestrictedStringSetting("Data Types", "Select the data type from single locus results that should be visualized", 0, dataTypeNames));
+		addSetting(pValueThreshold = new DoubleSetting("p-Value Threshold", "p-value threshold for association", 0.05));
+		addSetting(dataTypes = new RestrictedStringSetting("Data Types", "Select the data type that should be visualized", 0, dataTypeNames));
 		addSetting(useLDBlocks = new BooleanSetting("Use LD Blocks", null, false));
 		
 		addSetting(selectionColor = new ColorSetting("Selection Color", null, Color.RED));
@@ -50,7 +49,7 @@ public class AssociationMatrixSetting extends HierarchicalSetting {
 		addSetting(cellHeight = new IntSetting("Cell Height", null, 15));
 		addSetting(cellWidth = new IntSetting("Cell Width", null, 15));
 		addSetting(plotDiagonal = new BooleanSetting("Highlight Diagonal", "Plot a highlighting diagonal line", false));
-		addSetting(circleScaling = new DoubleSetting("Circle Scaling", null, 1., 0., 1., true, true));
+		addSetting(circleScaling = new DoubleSetting("Circle Scaling", null, 0.1, 0., 1., true, true));
 		
 		addChangeListener(new SLAMChangeListener());
 	}

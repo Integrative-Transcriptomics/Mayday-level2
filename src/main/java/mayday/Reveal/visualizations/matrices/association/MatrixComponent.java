@@ -37,7 +37,6 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 	private String[] rowHeader = new String[0];
 	private String[] colHeader = new String[0];
 	
-	private DoubleMatrix data;
 	private DoubleMatrix betaData;
 	
 	private DataComponent dataComp;
@@ -60,12 +59,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		this.matrix = matrix;
 		this.colHeader = colHeader;
 		this.rowHeader = rowHeader;
-		this.data = matrix.getDataMatrix();
 		this.betaData = matrix.getBetaMatrix();
-		
-		System.out.println(this.data.nrow());
-		System.out.println(this.data.ncol());
-		System.out.println(matrix.sortedIndices.size());
 		
 		this.setLayout(new BorderLayout());
 		
@@ -159,7 +153,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		
 		colHeight = 0;
 		
-		for(int i = 0; i < data.ncol(); i++) {
+		for(int i = 0; i < matrix.getDataMatrix().ncol(); i++) {
 			String id = colHeader[i];
 			Rectangle2D bounds = g.getFontMetrics().getStringBounds(id, g);
 			if(bounds.getWidth() > colHeight)
@@ -175,7 +169,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		
 		rowWidth = 0;
 		
-		for(int i = 0; i < data.nrow(); i++) {
+		for(int i = 0; i < matrix.getDataMatrix().nrow(); i++) {
 			String id = rowHeader[i];
 			Rectangle2D bounds = g.getFontMetrics().getStringBounds(id, g);
 			if(bounds.getWidth() > rowWidth)
@@ -198,8 +192,8 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 	
 	public void resize() {
 		
-		int compWidth = matrix.setting.getCellWidth() * data.ncol();
-		int compHeight = matrix.setting.getCellHeight() * data.nrow();
+		int compWidth = matrix.setting.getCellWidth() * matrix.getDataMatrix().ncol();
+		int compHeight = matrix.setting.getCellHeight() * matrix.getDataMatrix().nrow();
 		
 		Graphics g = this.getGraphics();
 		int rowWidth = getRowHeaderSize(g) + 5;
@@ -232,10 +226,6 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		case RevealViewModelEvent.SNP_SELECTION_CHANGED:
 			break;
 		}
-	}
-	
-	public void setData(DoubleMatrix matrix) {
-		this.data = matrix;
 	}
 	
 	public void setRowHeader(String[] rowHeader) {
@@ -280,7 +270,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		}
 		
 		public void paintComponent(Graphics g) {
-			double max = data.getMaxValue(false) * matrix.setting.getCircleScaling();
+			double max = matrix.getDataMatrix().getMaxValue(false) * matrix.setting.getCircleScaling();
 			int cellWidth = matrix.setting.getCellWidth();
 			int cellHeight = matrix.setting.getCellHeight();
 			int cellSize = Math.min(cellWidth, cellHeight);
@@ -293,10 +283,10 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 			ColorGradient gradient = matrix.setting.getMatrixColorGradient();
 			
 			g2d.setColor(Color.DARK_GRAY);
-			for(int i = 0; i < data.nrow(); i++) {
+			for(int i = 0; i < matrix.getDataMatrix().nrow(); i++) {
 				Integer rowIndex = matrix.sortedIndices.get(i);
-				for(int j = 0; j < data.ncol(); j++) {
-					double val = data.getValue(rowIndex.intValue(), j);
+				for(int j = 0; j < matrix.getDataMatrix().ncol(); j++) {
+					double val = matrix.getDataMatrix().getValue(rowIndex.intValue(), j);
 //					int alpha = (int)((val / max) * 255);
 					int diameter = (int)Math.rint(((val / max) * cellSize));
 					
@@ -327,7 +317,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 				}
 			}
 			
-			for(int i = 0; i < data.ncol(); i++) {
+			for(int i = 0; i < matrix.getDataMatrix().ncol(); i++) {
 				Gene gene = matrix.getGenes().getGene(i);
 				if(getViewModel().isSelected(gene)) {
 					Color c = new Color(selectionColor.getRed(), selectionColor.getGreen(), selectionColor.getBlue(), 100);
@@ -339,8 +329,8 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 			}
 			
 			if(matrix.setting.plotDiagonal()) {
-				int maxWidth = cellWidth * data.ncol();
-				int maxHeight = cellHeight * data.nrow();
+				int maxWidth = cellWidth * matrix.getDataMatrix().ncol();
+				int maxHeight = cellHeight * matrix.getDataMatrix().nrow();
 				
 				Line2D diagonalLine = new Line2D.Double(0, 0, maxWidth, maxHeight);
 				g2d.setColor(Color.BLUE);
@@ -471,7 +461,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 			AffineTransform af = g2.getTransform();
 			Color selectionColor = matrix.setting.getSelectionColor();
 			
-			for(int i = 0; i < data.nrow(); i++) {
+			for(int i = 0; i < matrix.getDataMatrix().nrow(); i++) {
 				Integer rowIndex = matrix.sortedIndices.get(i);
 				if(rowIndex == null)
 					continue;
@@ -565,7 +555,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 			Color c = matrix.setting.getSelectionColor();
 			Color c2 = new Color(c.getRed(), c.getGreen(), c.getBlue(), 100);
 			
-			for(int i = 0; i < data.ncol(); i++) {
+			for(int i = 0; i < matrix.getDataMatrix().ncol(); i++) {
 
 				String headerString = colHeader[i];
 				Rectangle2D bounds = g2.getFontMetrics().getStringBounds(headerString, g2);
@@ -610,7 +600,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 				
 				if(index < colHeader.length && index >= 0) {
 					if(e.getClickCount() > 1) {
-						AbstractVector template = data.getColumn(index);
+						AbstractVector template = matrix.getDataMatrix().getColumn(index);
 						matrix.sort(template);
 					} else {
 						Gene gene = matrix.getGenes().getGene(index);

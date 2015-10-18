@@ -381,6 +381,8 @@ public class Genome extends MetaInformationPlugin {
 			}
 			
 			while((line = br.readLine()) != null) {
+				if(line.length() == 0)
+					continue;
 				String[] splitted = line.split("\t");
 				String title = splitted[0];
 				String mappedTitle = splitted[1];

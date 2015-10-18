@@ -3,6 +3,8 @@ package mayday.Reveal.visualizations.snpmap;
 import mayday.Reveal.utilities.RevealMenuConstants;
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.Reveal.visualizations.RevealVisualizationPlugin;
+import mayday.core.pluma.PluginInfo;
+import mayday.core.pluma.PluginManagerException;
 
 public class SNPMapPlugin extends RevealVisualizationPlugin {
 
@@ -48,11 +50,20 @@ public class SNPMapPlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public boolean showInToolbar() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean usesViewSetting() {
 		return true;
+	}
+	
+	/*
+	 * do not register this plugin
+	 * (non-Javadoc)
+	 * @see mayday.Reveal.visualizations.RevealVisualizationPlugin#register()
+	 */
+	public PluginInfo register() throws PluginManagerException {
+		return null;
 	}
 }
