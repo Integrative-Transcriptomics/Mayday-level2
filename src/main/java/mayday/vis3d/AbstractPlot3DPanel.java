@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -95,6 +96,9 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 	 * Sets the GLCanvas and generates GLU and GLUT
 	 */
 	public AbstractPlot3DPanel() {
+		// dont allow jogl to cover the menu
+		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+
 		this.canvas = new GLCanvas(getGLCaps());
 		
 		HeavyWeightWorkaround.forceHeavyWeightPopups(this);

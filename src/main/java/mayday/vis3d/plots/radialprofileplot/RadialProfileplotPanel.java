@@ -417,8 +417,6 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 		gl.glNewList(surface, GL2.GL_COMPILE);
 			this.drawSurface(gl);
 		gl.glEndList();
-		
-		this.updateOptimalView();
 	}
 	
 	private void updateOptimalView() {
@@ -433,7 +431,12 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 				}
 				circumference += renderer.getBounds(probes.get(i).getDisplayName()).getHeight() * fontScale;
 			}
-			settings.setRadius(circumference / (2.0 * Math.PI));
+
+			double radius = circumference / (2.0 * Math.PI);
+			double scale = Math.max(this.coordSystem.getSetting().getVisibleArea().getHeight(),
+					this.coordSystem.getSetting().getVisibleArea().getWidth());
+
+			settings.setRadius(scale / radius);
 		}
 	}
 	
