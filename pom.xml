@@ -76,7 +76,7 @@
         <!-- jogl used by:  vis3d -->
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
-            <artifactId>jogl-all</artifactId>
+            <artifactId>jogl-all-main</artifactId>
             <!--set to same version as other jogamp dependencies -->
             <version>2.3.2</version>
         </dependency>
@@ -91,7 +91,7 @@
 
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
-            <artifactId>gluegen-rt</artifactId>
+            <artifactId>gluegen-rt-main</artifactId>
             <!--set to same version as other jogamp dependencies -->
             <version>2.3.2</version>
         </dependency>

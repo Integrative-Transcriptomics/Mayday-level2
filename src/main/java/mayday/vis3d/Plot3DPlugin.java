@@ -39,7 +39,7 @@ public abstract class Plot3DPlugin extends PlotPlugin {
 		PluginInfo pli = new PluginInfo(
 				this.getClass(),
 				"mayday.vis3d." + pluginClass,
-				new String[]{"mayday.vis3d.nativelib"},
+				new String[0],
 				MaydayDefaults.Plugins.CATEGORY_PLOT,
 				new HashMap<String, Object>(),
 				author, email, description,	plotName

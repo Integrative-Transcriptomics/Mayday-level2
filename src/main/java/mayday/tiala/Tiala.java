@@ -24,17 +24,17 @@ public class Tiala extends AbstractPlugin implements DatasetPlugin {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public PluginInfo register() throws PluginManagerException {
-		PluginInfo pli = new PluginInfo(
-				(Class)this.getClass(),
-				"PAS.crossDS.Tiala",
-				new String[]{"mayday.vis3d.nativelib"},
-				Constants.MC_DATASET,
-				new HashMap<String, Object>(),
-				"Günter Jäger",
-				"jaeger@informatik.uni-tuebingen.de",
-				"Computes an alignment of different time-series datasets", 
-				"Tiala - Timeseries Alignment Analysis"
-		);
+	PluginInfo pli = new PluginInfo(
+			(Class)this.getClass(),
+			"PAS.crossDS.Tiala",
+			new String[0],
+			Constants.MC_DATASET,
+			new HashMap<String, Object>(),
+			"Günter Jäger",
+			"jaeger@informatik.uni-tuebingen.de",
+			"Computes an alignment of different time-series datasets",
+			"Tiala - Timeseries Alignment Analysis"
+	);
 		return pli;
 	}
 
