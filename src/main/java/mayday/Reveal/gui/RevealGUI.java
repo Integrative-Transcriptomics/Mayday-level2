@@ -160,7 +160,6 @@ public class RevealGUI extends MaydayFrame {
 		}
 		
 		defaultDockable = new DefaultMultipleCDockable( factory );
-		defaultDockable.setResizeLocked(true);
 		defaultDockable.setCloseable(false);
 		defaultDockable.setMinimizable(false);
 		defaultDockable.setMaximizable(false);

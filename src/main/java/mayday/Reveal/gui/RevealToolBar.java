@@ -10,7 +10,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JToolBar;
 
 import mayday.Reveal.actions.DeleteProjectAction;
@@ -33,8 +32,6 @@ public class RevealToolBar extends JToolBar {
 	JButton loadProjectButton;
 	JButton saveProjectButton;
 	JButton deleteProjectButton;
-	
-	JComboBox availableGenomes;
 	
 	private RevealGUI gui;
 	
