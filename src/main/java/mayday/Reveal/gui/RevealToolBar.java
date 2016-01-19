@@ -1,12 +1,8 @@
 package mayday.Reveal.gui;
 
 import java.awt.FlowLayout;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -21,6 +17,7 @@ import mayday.Reveal.actions.DeleteProjectAction;
 import mayday.Reveal.actions.io.LoadProject;
 import mayday.Reveal.actions.io.SaveProject;
 import mayday.Reveal.io.project.NewProject;
+import mayday.Reveal.utilities.Images;
 import mayday.Reveal.visualizations.RevealVisualizationPlugin;
 import mayday.core.pluma.PluginManager;
 import mayday.core.pluma.filemanager.FMFile;
@@ -123,21 +120,12 @@ public class RevealToolBar extends JToolBar {
 	private ImageIcon loadImage(String file) {
 		FMFile fmf = PluginManager.getInstance().getFilemanager().getFile(file);									
 		try {
-			return new ImageIcon(getScaledImage(ImageIO.read(fmf.getStream()), 24, 24));
+			return new ImageIcon(Images.getScaledImage(ImageIO.read(fmf.getStream()), 24, 24));
 		} catch (IOException e) {
 			e.printStackTrace();			
 		}
 		return new ImageIcon();
 	}
-	
-	private Image getScaledImage(Image srcImg, int w, int h) {
-        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = resizedImg.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2.drawImage(srcImg, 0, 0, w, h, null);
-        g2.dispose();
-        return resizedImg;
-    }
 
 	public void addItem(RevealVisualizationPlugin plotPlugin, AbstractAction a) {
 		JButton button = new JButton();

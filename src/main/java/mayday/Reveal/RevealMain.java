@@ -33,6 +33,8 @@ public class RevealMain {
 		
 		//set up pairwise comunication
 		this.revealGUI = new RevealGUI(projectHandler);
+		this.revealGUI.initializeComponents();
+		
 		projectHandler.setGUI(this.revealGUI);
 		
 		//set up plugins

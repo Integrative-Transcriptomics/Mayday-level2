@@ -9,16 +9,26 @@ import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.DefaultMultipleCDockable;
+import bibliothek.gui.dock.common.DefaultSingleCDockable;
+import bibliothek.gui.dock.common.EmptyMultipleCDockableFactory;
+import bibliothek.gui.dock.common.MultipleCDockable;
+import bibliothek.gui.dock.common.MultipleCDockableFactory;
+import bibliothek.gui.dock.common.MultipleCDockableLayout;
+import bibliothek.gui.dock.common.grouping.PlaceholderGrouping;
+import bibliothek.gui.dock.common.perspective.CGridPerspective;
+import bibliothek.gui.dock.common.perspective.CPerspective;
+import bibliothek.gui.dock.common.theme.ThemeMap;
+import bibliothek.util.Path;
 import mayday.Reveal.RevealPlugin;
 import mayday.Reveal.actions.ExitReveal;
 import mayday.Reveal.actions.snplist.SNVListPlugin;
@@ -29,13 +39,13 @@ import mayday.Reveal.functions.prerequisite.PrerequisiteChecker;
 import mayday.Reveal.gui.menu.MetaInformationPopupMenu;
 import mayday.Reveal.gui.menu.RevealMenuBar;
 import mayday.Reveal.gui.menu.SNPListPopupMenu;
-import mayday.Reveal.settings.SettingPanelCreator;
+import mayday.Reveal.utilities.Images;
 import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.Reveal.visualizations.RevealVisualizationPlugin;
 import mayday.core.gui.MaydayFrame;
-import mayday.core.settings.SettingComponent;
-import mayday.core.settings.generic.HierarchicalSetting;
+import mayday.core.pluma.PluginManager;
+import mayday.core.pluma.filemanager.FMFile;
 import mayday.vis3.components.DetachablePlot;
 import mayday.vis3.components.PlotScrollPane;
 import mayday.vis3.model.Visualizer;
@@ -50,10 +60,6 @@ public class RevealGUI extends MaydayFrame {
 	private RevealMenuBar menuBar;
 	private JTree dataPanel;
 	private JTree metaDataPanel;
-	private JTabbedPane plotsPanel;
-//	private JPanel overviewPanel;
-//	
-//	private JSplitPane centerSplitPane;
 	
 	private RevealToolBar toolBar;
 	
@@ -61,6 +67,11 @@ public class RevealGUI extends MaydayFrame {
 	private MetaInformationPopupMenu metaInformationPopupMenu;
 	
 	private ProjectHandler projectHandler;
+	
+	private CControl control;
+	private MultipleCDockableFactory<MultipleCDockable, MultipleCDockableLayout> factory;
+	
+	private DefaultMultipleCDockable defaultDockable;
 	
 	/**
 	 * @param projectHandler 
@@ -70,55 +81,18 @@ public class RevealGUI extends MaydayFrame {
 		super("Reveal - Visual eQTL Analytics");
 		
 		this.projectHandler = projectHandler;
-		
-		this.setLayout(new BorderLayout());
-		
+		toolBar = new RevealToolBar(this);
 		menuBar = new RevealMenuBar();
+		
 		this.setJMenuBar(menuBar);
 		
-		toolBar = new RevealToolBar(this);
-		this.add(toolBar, BorderLayout.NORTH);
-		
 		dataPanel = new RevealDataPanel(this);
-		JScrollPane dataScroller = new JScrollPane(dataPanel);
 		metaDataPanel = new RevealMetaDataPanel(this);
-		JScrollPane metaDataScroller = new JScrollPane(metaDataPanel);
-		
-		plotsPanel = new RevealTabbedPane();
 		
 		snplistPopupMenu = new SNPListPopupMenu(projectHandler);
 		metaInformationPopupMenu = new MetaInformationPopupMenu(projectHandler);
 		
-//		overviewPanel = new RevealOverviewPanel(this);
-		
-//		centerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-//                overviewPanel, plotsPanel);
-//		centerSplitPane.setDividerLocation(0.15);
-//		centerSplitPane.setResizeWeight(0.15);
-//		centerSplitPane.setContinuousLayout(true);
-//		centerSplitPane.setOneTouchExpandable(true);
-		
-		JSplitPane projectPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, dataScroller, metaDataScroller);
-		projectPane.setDividerLocation(0.5);
-		projectPane.setResizeWeight(0.5);
-		projectPane.setContinuousLayout(true);
-		projectPane.setOneTouchExpandable(true);
-		
-		dataScroller.setBorder(BorderFactory.createTitledBorder("Projects"));
-		metaDataScroller.setBorder(BorderFactory.createTitledBorder("Meta-Information"));
-		
-		JSplitPane leftSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
-				projectPane, plotsPanel);
-		leftSplitPane.setDividerLocation(0.15);
-		leftSplitPane.setResizeWeight(0.15);
-		leftSplitPane.setContinuousLayout(true);
-		leftSplitPane.setOneTouchExpandable(true);
-		
-		this.add(leftSplitPane, BorderLayout.CENTER);
-		
-//		this.setMinimumSize(new Dimension(800, 600));
 		this.setPreferredSize(new Dimension(1024, 768));
-		
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
 		this.addWindowListener(new WindowAdapter() {
@@ -128,7 +102,81 @@ public class RevealGUI extends MaydayFrame {
 				a.run(null);
 			}
 		});
+	}
+	
+	public void initializeComponents() {		
+		this.setLayout(new BorderLayout());
 
+		JScrollPane dataScroller = new JScrollPane(dataPanel);
+		JScrollPane metaDataScroller = new JScrollPane(metaDataPanel);
+		
+		this.control = new CControl(this);
+		
+		ThemeMap themes = control.getThemes();
+		themes.select(ThemeMap.KEY_ECLIPSE_THEME);
+		
+		this.add(control.getContentArea(), BorderLayout.CENTER);
+		this.add(toolBar, BorderLayout.NORTH);
+		
+		this.factory = new EmptyMultipleCDockableFactory<MultipleCDockable>(){
+			@Override
+			public MultipleCDockable createDockable() {
+				return null;
+			}
+		};
+		
+		control.addMultipleDockableFactory("RevealFactory", factory);
+		
+		CPerspective layout = control.getPerspectives().createEmptyPerspective();
+		CGridPerspective center = layout.getContentArea().getCenter();
+		center.gridPlaceholder(0, 0, 1, 1, new Path("Projects", "Projects"));
+		center.gridPlaceholder(0, 1, 1, 1, new Path("Meta-Information", "Meta-Information"));
+		center.gridPlaceholder(1, 0, 5, 2, new Path("Visualization", "Visualization"));
+		
+		control.getPerspectives().setPerspective(layout, true);
+		
+		DefaultSingleCDockable dataScrollerDockable = new DefaultSingleCDockable("Projects", "Projects", dataScroller);
+		dataScrollerDockable.setResizeLocked(true);
+		dataScrollerDockable.setGrouping(new PlaceholderGrouping(control, new Path("Projects", "Projects")));
+		
+		try {
+			FMFile fmf = PluginManager.getInstance().getFilemanager().getFile("/mayday/GWAS/icons/seo1.png");
+			ImageIcon dataIcon = new ImageIcon(Images.getScaledImage(ImageIO.read(fmf.getStream()), 20, 20));
+			dataScrollerDockable.setTitleIcon(dataIcon);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		DefaultSingleCDockable metaDataScrollerDockable = new DefaultSingleCDockable("Meta-Information","Meta-Information", metaDataScroller);
+		metaDataScrollerDockable.setResizeLocked(true);
+		metaDataScrollerDockable.setGrouping(new PlaceholderGrouping(control, new Path("Meta-Information", "Meta-Information")));
+
+		try {
+			FMFile fmf = PluginManager.getInstance().getFilemanager().getFile("/mayday/GWAS/icons/schedule.png");
+			ImageIcon metaDataIcon = new ImageIcon(Images.getScaledImage(ImageIO.read(fmf.getStream()), 20, 20));
+			metaDataScrollerDockable.setTitleIcon(metaDataIcon);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		defaultDockable = new DefaultMultipleCDockable( factory );
+		defaultDockable.setResizeLocked(true);
+		defaultDockable.setCloseable(false);
+		defaultDockable.setMinimizable(false);
+		defaultDockable.setMaximizable(false);
+		defaultDockable.setExternalizable(false);
+		defaultDockable.setTitleIcon(new ImageIcon());
+		defaultDockable.setSticky(true);
+		defaultDockable.setGrouping(new PlaceholderGrouping(control, new Path("Visualization", "Visualization")));
+		control.addDockable(defaultDockable);
+		defaultDockable.setVisible(true);
+		
+		control.addDockable(dataScrollerDockable);
+		dataScrollerDockable.setVisible(true);
+		
+		control.addDockable(metaDataScrollerDockable);
+		metaDataScrollerDockable.setVisible(true);
+		
 		this.pack();
 	}
 
@@ -163,16 +211,7 @@ public class RevealGUI extends MaydayFrame {
 					String snpListNames = SNVLists.createUniqueSNVListName(selection);
 					String title = plotPlugin.getMenuName() + " (" + snpListNames + ")";
 					
-					if(plotPlugin.usesViewSetting()) {
-						JSplitPane splitPane = displayPlot(title, plot, !plotPlugin.usesScrollPane(), true);
-						HierarchicalSetting viewSetting = plot.getViewSetting();
-						SettingComponent plotSetting = viewSetting.getGUIElement();
-						
-						JPanel settingPanel = SettingPanelCreator.getSettingPanel(plotSetting);
-						splitPane.setRightComponent(settingPanel);
-					} else {
-						displayPlot(title, plot, !plotPlugin.usesScrollPane(), false);
-					}
+					displayPlot(title, plot, !plotPlugin.usesScrollPane(), plotPlugin.usesViewSetting());
 				}
 			};
 			
@@ -183,26 +222,16 @@ public class RevealGUI extends MaydayFrame {
 		}
 	}
 	
-	/**
-	 * @param name 
-	 * @param c
-	 */
-	public JSplitPane displayPlot(String name, Component plot, boolean scrollPane, boolean useViewSetting) {
-		if(useViewSetting) {
-			Component plotPanel = registerPlot(plot, scrollPane);
-			
-			JSplitPane plotPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-			plotPane.setOneTouchExpandable(true);
-			plotPane.setResizeWeight(1.0);
-			plotPane.setLeftComponent(plotPanel);
-			
-			this.plotsPanel.addTab(name, plotPane);
-			
-			return plotPane;
-		} else {
-			this.plotsPanel.addTab(name, registerPlot(plot, scrollPane));
-			return null;
-		}
+	public void displayPlot(String name, Component plot, boolean scrollPane, boolean useViewSetting) {
+		DefaultMultipleCDockable dockable = new DefaultMultipleCDockable( factory );
+		dockable.setTitleText(name);
+		dockable.setCloseable(true);
+		dockable.setRemoveOnClose(true);
+		dockable.add(registerPlot(plot, scrollPane));
+		
+		dockable.setGrouping(new PlaceholderGrouping(control, new Path("Visualization", "Visualization")));
+		control.addDockable(dockable);
+		dockable.setVisible(true);
 	}
 	
 	private Component registerPlot(Component plot, boolean useScrollPane) {
@@ -214,10 +243,9 @@ public class RevealGUI extends MaydayFrame {
 		}
 		
 		Visualizer ncv = projectHandler.getViewModel(projectHandler.getSelectedProject()).getVisualizer();
-		
 		DetachablePlot dp = new DetachablePlot(useScrollPane ? scrollPane : plot, ncv, "", false);
 		dp.setCollapsible(false);
-
+		
 		return dp;
 	}
 	
