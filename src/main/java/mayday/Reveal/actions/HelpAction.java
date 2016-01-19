@@ -35,7 +35,7 @@ public class HelpAction extends RevealPlugin {
 
 	@Override
 	public void run(Collection<SNVList> snpLists) {
-		BrowserToolkit.openURL("http://www-ps.informatik.uni-tuebingen.de/it/software/reveal/");
+		BrowserToolkit.openURL("http://it.inf.uni-tuebingen.de/?page_id=179");
 	}
 
 	@Override

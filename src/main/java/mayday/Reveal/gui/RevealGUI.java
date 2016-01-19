@@ -147,7 +147,7 @@ public class RevealGUI extends MaydayFrame {
 			ex.printStackTrace();
 		}
 		
-		DefaultSingleCDockable metaDataScrollerDockable = new DefaultSingleCDockable("Meta-Information","Meta-Information", metaDataScroller);
+		DefaultSingleCDockable metaDataScrollerDockable = new DefaultSingleCDockable("Meta-Data","Meta-Data", metaDataScroller);
 		metaDataScrollerDockable.setResizeLocked(true);
 		metaDataScrollerDockable.setGrouping(new PlaceholderGrouping(control, new Path("Meta-Information", "Meta-Information")));
 
