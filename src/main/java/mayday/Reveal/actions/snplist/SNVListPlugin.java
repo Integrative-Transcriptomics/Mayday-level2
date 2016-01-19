@@ -18,4 +18,6 @@ public abstract class SNVListPlugin extends RevealPlugin {
 	public String getCategory() {
 		return CATEGORY;
 	}
+	
+	public abstract String getPopupMenuCategroy();
 }

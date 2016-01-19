@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import mayday.Reveal.actions.RevealTask;
 import mayday.Reveal.data.SNVList;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.Reveal.io.vcf.VCFParser;
 import mayday.Reveal.settings.SubjectListSetting;
 import mayday.Reveal.utilities.SNVLists;
@@ -87,5 +88,10 @@ public class ExportSNPList extends SNVListPlugin {
 				t.start();
 			}
 		}
+	}
+	
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.IO_CATEGORY;
 	}
 }

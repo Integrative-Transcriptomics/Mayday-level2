@@ -13,6 +13,9 @@ import mayday.Reveal.data.meta.manipulation.MIManipulationPlugin;
 @SuppressWarnings("serial")
 public class MetaInformationPopupMenu extends RevealPopupMenu {
 	
+	public static final String NONE_CATEGORY  = "";
+	public static final String MANIPULATION_CATEGORY = "Manipulation";
+	
 	public MetaInformationPopupMenu(ProjectHandler projectHandler) {
 		super(projectHandler);
 	}
@@ -29,6 +32,7 @@ public class MetaInformationPopupMenu extends RevealPopupMenu {
 			}
 		});
 		
-		insertInto(this, item);
+		String category = plugin.getPopupMenuCategory();
+		insertInto(this, item, category);
 	}
 }

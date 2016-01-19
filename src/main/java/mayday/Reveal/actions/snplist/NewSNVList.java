@@ -10,6 +10,7 @@ import mayday.Reveal.filter.Rule;
 import mayday.Reveal.filter.RuleSet;
 import mayday.Reveal.filter.DataProcessors.Item;
 import mayday.Reveal.filter.processors.ContainedInSNPListFilter;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.core.gui.properties.PropertiesDialogFactory;
 import mayday.core.gui.properties.dialogs.AbstractPropertiesDialog;
 
@@ -63,5 +64,10 @@ public class NewSNVList extends SNVListPlugin {
         if(!apd.isCancelled()) {
             projectHandler.getSelectedProject().addSNVList(snpList.getAttribute().getName(), snpList);        	
         }
+	}
+	
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.MANIPULATION_CATEGORY;
 	}
 }

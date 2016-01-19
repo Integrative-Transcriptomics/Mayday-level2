@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.SNVList;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.core.gui.properties.PropertiesDialogFactory;
 import mayday.core.gui.properties.dialogs.AbstractPropertiesDialog;
 
@@ -69,5 +70,10 @@ public class ModifySNPList extends SNVListPlugin {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
+	}
+	
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.MANIPULATION_CATEGORY;
 	}
 }

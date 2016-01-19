@@ -15,6 +15,7 @@ import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.data.SubjectList;
 import mayday.Reveal.data.meta.StatisticalTestResult;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.Reveal.statistics.StatisticalTest;
 import mayday.Reveal.utilities.ContingencyTable;
 import mayday.Reveal.utilities.RevealMenuConstants;
@@ -153,5 +154,10 @@ public class Chi2TestPlugin extends SNVListPlugin {
 	@Override
 	public String getCategory() {
 		return super.getCategory()+"/Statistics";
+	}
+	
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.STATISTICS_CATEGORY;
 	}
 }

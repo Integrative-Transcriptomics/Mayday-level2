@@ -16,10 +16,10 @@ import mayday.Reveal.events.SNVListListener;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
 import mayday.Reveal.filter.gui.SNPListSelectionDialog;
-import mayday.Reveal.gui.OptionPanelProvider;
+import mayday.Reveal.gui.IOptionPanelProvider;
 import mayday.core.io.StorageNode;
 
-public class ContainedInSNPListFilter extends AbstractDataProcessor<SNV, Boolean> implements SNVListListener, OptionPanelProvider, StorageNodeStorable {
+public class ContainedInSNPListFilter extends AbstractDataProcessor<SNV, Boolean> implements SNVListListener, IOptionPanelProvider, StorageNodeStorable {
 	
 	public static final String MYTYPE = "ContainedInSNPList";
 	

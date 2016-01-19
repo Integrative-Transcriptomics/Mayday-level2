@@ -10,10 +10,10 @@ import javax.swing.event.EventListenerList;
 import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.SNVList;
 import mayday.Reveal.filter.gui.RuleSetGUI;
-import mayday.Reveal.gui.OptionPanelProvider;
+import mayday.Reveal.gui.IOptionPanelProvider;
 import mayday.core.io.StorageNode;
 
-public class RuleSet implements SNPFilter, ChangeListener, StorageNodeStorable, OptionPanelProvider {
+public class RuleSet implements SNPFilter, ChangeListener, StorageNodeStorable, IOptionPanelProvider {
 	
 	private int combinationMode = COMBINE_AND;
 	public static final int COMBINE_AND = 0;

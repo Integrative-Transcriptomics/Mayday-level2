@@ -2,6 +2,6 @@ package mayday.Reveal.gui;
 
 import javax.swing.JPanel;
 
-public interface OptionPanelProvider {
+public interface IOptionPanelProvider {
 	public JPanel getOptionPanel();
 }

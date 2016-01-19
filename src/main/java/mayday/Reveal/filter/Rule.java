@@ -10,13 +10,13 @@ import javax.swing.event.EventListenerList;
 import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.SNVList;
 import mayday.Reveal.filter.gui.RuleGUI;
-import mayday.Reveal.gui.OptionPanelProvider;
+import mayday.Reveal.gui.IOptionPanelProvider;
 import mayday.core.io.StorageNode;
 import mayday.core.pluma.PluginInfo;
 import mayday.core.pluma.PluginManager;
 
 @SuppressWarnings("unchecked")
-public class Rule implements SNPFilter, ChangeListener, StorageNodeStorable, OptionPanelProvider {
+public class Rule implements SNPFilter, ChangeListener, StorageNodeStorable, IOptionPanelProvider {
 
 	@SuppressWarnings("rawtypes")
 	protected Stack<AbstractDataProcessor> sources = new Stack<AbstractDataProcessor>();

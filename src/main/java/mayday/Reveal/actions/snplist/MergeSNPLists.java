@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.SNVList;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.Reveal.utilities.SNVLists;
 
 public class MergeSNPLists extends SNVListPlugin {
@@ -41,5 +42,10 @@ public class MergeSNPLists extends SNVListPlugin {
 			}
 			ds.addSNVList(merged.getAttribute().getName(), merged);
 		}
+	}
+	
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.MANIPULATION_CATEGORY;
 	}
 }

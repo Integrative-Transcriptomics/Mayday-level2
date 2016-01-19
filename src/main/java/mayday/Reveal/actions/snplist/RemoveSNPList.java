@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.SNVList;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 
 public class RemoveSNPList extends SNVListPlugin {
 
@@ -39,5 +40,10 @@ public class RemoveSNPList extends SNVListPlugin {
 		}
 		
 		ds.removeSNVLists(snpLists);
+	}
+
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.MANIPULATION_CATEGORY;
 	}
 }

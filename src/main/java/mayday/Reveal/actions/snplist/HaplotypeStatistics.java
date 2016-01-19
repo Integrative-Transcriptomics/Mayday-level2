@@ -13,6 +13,7 @@ import mayday.Reveal.data.SNV;
 import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.Subject;
 import mayday.Reveal.data.SubjectList;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.Reveal.utilities.SNVLists;
 import mayday.core.Probe;
 import mayday.core.settings.SettingDialog;
@@ -176,5 +177,10 @@ public class HaplotypeStatistics extends SNVListPlugin {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.STATISTICS_CATEGORY;
 	}
 }

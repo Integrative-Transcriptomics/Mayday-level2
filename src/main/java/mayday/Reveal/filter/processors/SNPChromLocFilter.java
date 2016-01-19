@@ -13,10 +13,10 @@ import javax.swing.event.DocumentListener;
 import mayday.Reveal.data.SNV;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
-import mayday.Reveal.gui.OptionPanelProvider;
+import mayday.Reveal.gui.IOptionPanelProvider;
 import mayday.core.io.StorageNode;
 
-public class SNPChromLocFilter extends AbstractDataProcessor<SNV, Boolean> implements OptionPanelProvider, StorageNodeStorable {
+public class SNPChromLocFilter extends AbstractDataProcessor<SNV, Boolean> implements IOptionPanelProvider, StorageNodeStorable {
 
 	private String chromosome = "";
 	private Integer startPosition = 0;

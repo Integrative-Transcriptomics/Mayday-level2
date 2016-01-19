@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import mayday.Reveal.actions.snplist.SNVListPlugin;
 import mayday.Reveal.data.SNVList;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.Reveal.utilities.RevealMenuConstants;
 import mayday.Reveal.utilities.SNVLists;
 import mayday.core.settings.SettingDialog;
@@ -76,5 +77,10 @@ public class ImportExternalSNPsAction extends SNVListPlugin {
 	@Override
 	public String getMenu() {
 		return RevealMenuConstants.SNPLIST_MENU + "/Import";
+	}
+	
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.IO_CATEGORY;
 	}
 }

@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.DataProcessors;
 import mayday.Reveal.filter.Rule;
-import mayday.Reveal.gui.OptionPanelProvider;
+import mayday.Reveal.gui.IOptionPanelProvider;
 import mayday.core.pluma.PluginManager;
 
 @SuppressWarnings("serial")
@@ -74,8 +74,8 @@ public class DataProcessorGUI extends JPanel {
 				
 		add(selectedSource, BorderLayout.NORTH);
 		
-		if (dataSource!=null && dataSource instanceof OptionPanelProvider) {
-			add(((OptionPanelProvider)dataSource).getOptionPanel(), BorderLayout.CENTER);
+		if (dataSource!=null && dataSource instanceof IOptionPanelProvider) {
+			add(((IOptionPanelProvider)dataSource).getOptionPanel(), BorderLayout.CENTER);
 		}
 					
 	}

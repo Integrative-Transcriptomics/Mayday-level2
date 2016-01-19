@@ -13,11 +13,11 @@ import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.SNV;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
-import mayday.Reveal.gui.OptionPanelProvider;
+import mayday.Reveal.gui.IOptionPanelProvider;
 import mayday.core.Probe;
 import mayday.core.io.StorageNode;
 
-public class ClosestGeneFilter extends AbstractDataProcessor<SNV, Boolean> implements OptionPanelProvider, StorageNodeStorable {
+public class ClosestGeneFilter extends AbstractDataProcessor<SNV, Boolean> implements IOptionPanelProvider, StorageNodeStorable {
 
 	private String geneName = "";
 	private int index = 0;

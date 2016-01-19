@@ -18,7 +18,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import mayday.Reveal.data.SNVList;
 import mayday.Reveal.filter.RuleSet;
-import mayday.Reveal.gui.OptionPanelProvider;
+import mayday.Reveal.gui.IOptionPanelProvider;
 import mayday.Reveal.utilities.SNVLists;
 import mayday.core.DelayedUpdateTask;
 
@@ -56,8 +56,8 @@ public class RuleEditorPanel extends JPanel {
 				DefaultMutableTreeNode tn = (DefaultMutableTreeNode)leftPane.getSelectedNode();
 				if (tn!=null) {
 					Object uo = tn.getUserObject();
-					if (uo instanceof OptionPanelProvider) {
-						jsli.setRightComponent(((OptionPanelProvider)uo).getOptionPanel());
+					if (uo instanceof IOptionPanelProvider) {
+						jsli.setRightComponent(((IOptionPanelProvider)uo).getOptionPanel());
 					}
 				} else
 					jsli.setRightComponent(rightPane);

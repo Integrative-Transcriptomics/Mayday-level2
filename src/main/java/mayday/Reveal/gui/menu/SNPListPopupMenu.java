@@ -11,6 +11,11 @@ import mayday.Reveal.data.ProjectHandler;
 @SuppressWarnings("serial")
 public class SNPListPopupMenu extends RevealPopupMenu {
 	
+	public static final String NONE_CATEGORY = "";
+	public static final String STATISTICS_CATEGORY = "Statistics";
+	public static final String MANIPULATION_CATEGORY = "Manipulation";
+	public static final String IO_CATEGORY = "IO";
+	
 	public SNPListPopupMenu(ProjectHandler projectHandler) {
 		super(projectHandler);
 	}
@@ -24,6 +29,8 @@ public class SNPListPopupMenu extends RevealPopupMenu {
 				plugin.run(projectHandler.getSelectedSNVLists());
 			}
 		});
-		insertInto(this, item);
+		
+		String category = plugin.getPopupMenuCategroy();
+		insertInto(this, item, category);
 	}
 }

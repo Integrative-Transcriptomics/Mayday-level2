@@ -21,7 +21,7 @@ import mayday.Reveal.data.meta.StatisticalTestResult;
 import mayday.Reveal.data.meta.TLResults;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
-import mayday.Reveal.gui.OptionPanelProvider;
+import mayday.Reveal.gui.IOptionPanelProvider;
 import mayday.core.io.StorageNode;
 
 /**
@@ -29,7 +29,7 @@ import mayday.core.io.StorageNode;
  * @author jaeger
  *
  */
-public class MetaInformationFilter extends AbstractDataProcessor<SNV, Object> implements StorageNodeStorable, OptionPanelProvider {
+public class MetaInformationFilter extends AbstractDataProcessor<SNV, Object> implements StorageNodeStorable, IOptionPanelProvider {
 
 	private MetaInformation metaInfo = null;
 	private String gene = "";

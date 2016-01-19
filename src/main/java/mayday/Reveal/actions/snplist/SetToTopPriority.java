@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.SNVList;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.viewmodel.RevealViewModel;
 
@@ -45,5 +46,10 @@ public class SetToTopPriority extends SNVListPlugin {
 			
 			vm.setTopPrioritySNPList(SNVLists.createUniqueSNVList(snpLists));
 		}
+	}
+	
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.MANIPULATION_CATEGORY;
 	}
 }

@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.SNVList;
 import mayday.Reveal.data.meta.Genome;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.Reveal.utilities.SNVLists;
 import mayday.core.tasks.AbstractTask;
 
@@ -64,5 +65,10 @@ public class UpdateSNPReferences extends SNVListPlugin {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
+	}
+	
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.NONE_CATEGORY;
 	}
 }

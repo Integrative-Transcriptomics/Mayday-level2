@@ -19,6 +19,7 @@ import mayday.Reveal.data.meta.snpcharacterization.SNPCharacterizations;
 import mayday.Reveal.functions.CodonsAminoacids;
 import mayday.Reveal.functions.CodonsAminoacids.Aminoacid;
 import mayday.Reveal.functions.CodonsAminoacids.Codon;
+import mayday.Reveal.gui.menu.SNPListPopupMenu;
 import mayday.Reveal.io.gff3.ChromosomalLocation;
 import mayday.Reveal.io.gff3.GFFElement;
 import mayday.Reveal.io.gff3.GFFTree;
@@ -822,5 +823,10 @@ public class SNPCharacterizationPlugin extends SNVListPlugin {
 		int start =  gffElement.getChromosomalLocation().getStart();
 		int snpPos = snp.getPosition();
 		return snpPos - start;
+	}
+	
+	@Override
+	public String getPopupMenuCategroy() {
+		return SNPListPopupMenu.NONE_CATEGORY;
 	}
 }

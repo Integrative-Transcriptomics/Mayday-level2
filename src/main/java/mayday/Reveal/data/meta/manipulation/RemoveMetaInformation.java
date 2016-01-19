@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import mayday.Reveal.data.DataStorage;
 import mayday.Reveal.data.meta.MetaInformation;
+import mayday.Reveal.gui.menu.MetaInformationPopupMenu;
 
 public class RemoveMetaInformation extends MIManipulationPlugin {
 	
@@ -31,5 +32,10 @@ public class RemoveMetaInformation extends MIManipulationPlugin {
 	public void runManipulation(Collection<MetaInformation> mis) {
 		DataStorage ds = projectHandler.getSelectedProject();
 		ds.getMetaInformationManager().removeAll(mis);
+	}
+
+	@Override
+	public String getPopupMenuCategory() {
+		return MetaInformationPopupMenu.NONE_CATEGORY;
 	}
 }

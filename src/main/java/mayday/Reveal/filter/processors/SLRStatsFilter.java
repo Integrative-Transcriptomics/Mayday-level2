@@ -12,7 +12,7 @@ import mayday.Reveal.data.meta.SingleLocusResult;
 import mayday.Reveal.data.meta.SingleLocusResult.Statistics;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
-import mayday.Reveal.gui.OptionPanelProvider;
+import mayday.Reveal.gui.IOptionPanelProvider;
 import mayday.core.io.StorageNode;
 
 /**
@@ -20,7 +20,7 @@ import mayday.core.io.StorageNode;
  * @author jaeger
  *
  */
-public class SLRStatsFilter extends AbstractDataProcessor<SingleLocusResult.Statistics, Double> implements OptionPanelProvider, StorageNodeStorable {
+public class SLRStatsFilter extends AbstractDataProcessor<SingleLocusResult.Statistics, Double> implements IOptionPanelProvider, StorageNodeStorable {
 	
 	private String[] filterValues = {"Beta", "SE", "R2", "t", "p"};
 	private JComboBox valueSelectionBox;

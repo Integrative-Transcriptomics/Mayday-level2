@@ -13,10 +13,10 @@ import javax.swing.JTextField;
 import mayday.Reveal.data.SNV;
 import mayday.Reveal.filter.AbstractDataProcessor;
 import mayday.Reveal.filter.StorageNodeStorable;
-import mayday.Reveal.gui.OptionPanelProvider;
+import mayday.Reveal.gui.IOptionPanelProvider;
 import mayday.core.io.StorageNode;
 
-public class SNPIDListFilter extends AbstractDataProcessor<SNV, Boolean> implements OptionPanelProvider, StorageNodeStorable {
+public class SNPIDListFilter extends AbstractDataProcessor<SNV, Boolean> implements IOptionPanelProvider, StorageNodeStorable {
 
 	private List<String> snpIDs = new LinkedList<String>();
 	private JTextField textField = new JTextField();

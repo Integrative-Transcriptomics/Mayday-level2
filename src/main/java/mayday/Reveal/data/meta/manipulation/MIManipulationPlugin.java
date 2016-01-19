@@ -29,4 +29,6 @@ public abstract class MIManipulationPlugin extends RevealPlugin {
 	public String getCategory() {
 		return CATEGORY;
 	}
+
+	public abstract String getPopupMenuCategory();
 }
