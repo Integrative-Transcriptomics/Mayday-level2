@@ -103,7 +103,7 @@
         	<version>1.1.2</version>
         </dependency>
         <dependency>
-        	<groupId>bibliothek</groupId>
+        	<groupId>bibliothek.gui.dock</groupId>
         	<artifactId>docking-frames-core</artifactId>
         	<version>1.1.2</version>
         </dependency>
