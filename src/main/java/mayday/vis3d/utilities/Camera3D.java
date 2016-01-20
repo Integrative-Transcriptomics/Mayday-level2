@@ -85,7 +85,7 @@ public class Camera3D extends Camera implements MouseListener, MouseMotionListen
 	 * @param height
 	 */
 	public void setCamera(GL2 gl, GLU glu, double width, double height) {
-		gl.glViewport(0, 0, (int)width, (int)height);
+		gl.glViewport(0, 0, (int)width * 2, (int)height * 2);
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(60, width/height, 1.0, 1000.0);
