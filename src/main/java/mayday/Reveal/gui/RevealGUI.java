@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.MultipleCDockableLayout;
 import bibliothek.gui.dock.common.grouping.PlaceholderGrouping;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.perspective.CGridPerspective;
 import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.common.theme.ThemeMap;
@@ -72,6 +74,8 @@ public class RevealGUI extends MaydayFrame {
 	private MultipleCDockableFactory<MultipleCDockable, MultipleCDockableLayout> factory;
 	
 	private DefaultMultipleCDockable defaultDockable;
+	
+	private Set<CDockable> visualizations = new HashSet<CDockable>();
 	
 	/**
 	 * @param projectHandler 
@@ -165,6 +169,7 @@ public class RevealGUI extends MaydayFrame {
 		defaultDockable.setMaximizable(false);
 		defaultDockable.setExternalizable(false);
 		defaultDockable.setTitleIcon(new ImageIcon());
+		defaultDockable.setTitleText("Visualizations");
 		defaultDockable.setSticky(true);
 		defaultDockable.setGrouping(new PlaceholderGrouping(control, new Path("Visualization", "Visualization")));
 		control.addDockable(defaultDockable);
@@ -222,7 +227,24 @@ public class RevealGUI extends MaydayFrame {
 	}
 	
 	public void displayPlot(String name, Component plot, boolean scrollPane, boolean useViewSetting) {
-		DefaultMultipleCDockable dockable = new DefaultMultipleCDockable( factory );
+		DefaultMultipleCDockable dockable = new DefaultMultipleCDockable( factory ) {
+			public void setVisible(boolean visible) {
+				if(visible == false) {
+					boolean removed = visualizations.remove(this);
+					if(visualizations.size() == 0 && removed) {
+						control.addDockable(defaultDockable);
+						defaultDockable.setVisible(true);
+					}
+					super.setVisible(visible);
+				} else {
+					super.setVisible(visible);
+					if(visualizations.size() == 0) {
+						defaultDockable.setVisible(false);
+					}
+					visualizations.add(this);
+				}
+			}
+		};
 		dockable.setTitleText(name);
 		dockable.setCloseable(true);
 		dockable.setRemoveOnClose(true);
