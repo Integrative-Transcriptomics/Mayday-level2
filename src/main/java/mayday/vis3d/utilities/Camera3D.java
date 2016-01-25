@@ -1,7 +1,6 @@
 package mayday.vis3d.utilities;
 
-import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -85,7 +84,22 @@ public class Camera3D extends Camera implements MouseListener, MouseMotionListen
 	 * @param height
 	 */
 	public void setCamera(GL2 gl, GLU glu, double width, double height) {
-		gl.glViewport(0, 0, (int)width * 2, (int)height * 2);
+		if (System.getProperty("os.name").equals("Mac OS X")) {
+			/*
+			Workaround issue of Jogl with MAC and java 1.7+ that prevents opengl
+			from using the full canvas.
+
+			See: https://jogamp.org/bugzilla/show_bug.cgi?id=589
+
+			Remove this part at these positions when the bug is fixed:
+			 AbstractPlot3DPanel.paint()
+			 Camera3D.setCamera()
+			 */
+			width *= 2;
+			height *= 2;
+		}
+
+		gl.glViewport(0, 0, (int)width, (int)height);
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(60, width/height, 1.0, 1000.0);
@@ -324,29 +338,29 @@ public class Camera3D extends Camera implements MouseListener, MouseMotionListen
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if(e.isControlDown()) {
 			int curRot = e.getWheelRotation();
-			double xPos = getPosition().x;
-			double yPos = getPosition().y;
-			double zPos = getPosition().z;
-			double xlook = getViewingDirection().x;
-			double ylook = getViewingDirection().y;
-			double zlook = getViewingDirection().z;
-			
-			if(curRot < 0){
-				curRot = Math.abs(curRot);
-				xPos = getPosition().x + getZoomStepX() * curRot;
-				zPos = getPosition().z + getZoomStepZ() * curRot;
-			} else {
-				xPos = getPosition().x - getZoomStepX() * curRot;
-				zPos = getPosition().z - getZoomStepZ() * curRot;
-			}
-			
-			xlook = getPosition().x + getZoomStepX() * 1000.0;
-			zlook = getPosition().z + getZoomStepZ() * 1000.0;
-			
-			setPosition(xPos, yPos, zPos);
-			setViewingDirection(xlook, ylook, zlook);
-			
+			zoom(curRot);
 			((Component)e.getSource()).repaint();
 		}
+	}
+
+	public void zoom(int curRot) {
+		double factor = 10000.0;
+
+		double xPos = getPosition().x;
+		double yPos = getPosition().y;
+		double zPos = getPosition().z;
+		double xlook = getViewingDirection().x;
+		double ylook = getViewingDirection().y;
+		double zlook = getViewingDirection().z;
+
+		xPos = getPosition().x - getZoomStepX() * curRot;
+		zPos = getPosition().z - getZoomStepZ() * curRot;
+
+		xlook = getPosition().x + getZoomStepX() * factor;
+		zlook = getPosition().z + getZoomStepZ() * factor;
+
+		setPosition(xPos, yPos, zPos);
+		setViewingDirection(xlook, ylook, zlook);
+
 	}
 }
