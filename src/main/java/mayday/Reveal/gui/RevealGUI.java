@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +15,9 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTree;
 
 import bibliothek.gui.dock.common.CControl;
@@ -25,6 +28,7 @@ import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.MultipleCDockableLayout;
 import bibliothek.gui.dock.common.grouping.PlaceholderGrouping;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.perspective.CGridPerspective;
 import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.common.theme.ThemeMap;
@@ -39,6 +43,7 @@ import mayday.Reveal.functions.prerequisite.PrerequisiteChecker;
 import mayday.Reveal.gui.menu.MetaInformationPopupMenu;
 import mayday.Reveal.gui.menu.RevealMenuBar;
 import mayday.Reveal.gui.menu.SNPListPopupMenu;
+import mayday.Reveal.settings.SettingPanelCreator;
 import mayday.Reveal.utilities.Images;
 import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.visualizations.RevealVisualization;
@@ -46,6 +51,8 @@ import mayday.Reveal.visualizations.RevealVisualizationPlugin;
 import mayday.core.gui.MaydayFrame;
 import mayday.core.pluma.PluginManager;
 import mayday.core.pluma.filemanager.FMFile;
+import mayday.core.settings.SettingComponent;
+import mayday.core.settings.generic.HierarchicalSetting;
 import mayday.vis3.components.DetachablePlot;
 import mayday.vis3.components.PlotScrollPane;
 import mayday.vis3.model.Visualizer;
@@ -72,6 +79,8 @@ public class RevealGUI extends MaydayFrame {
 	private MultipleCDockableFactory<MultipleCDockable, MultipleCDockableLayout> factory;
 	
 	private DefaultMultipleCDockable defaultDockable;
+	
+	private Set<CDockable> visualizations = new HashSet<CDockable>();
 	
 	/**
 	 * @param projectHandler 
@@ -165,6 +174,7 @@ public class RevealGUI extends MaydayFrame {
 		defaultDockable.setMaximizable(false);
 		defaultDockable.setExternalizable(false);
 		defaultDockable.setTitleIcon(new ImageIcon());
+		defaultDockable.setTitleText("Visualizations");
 		defaultDockable.setSticky(true);
 		defaultDockable.setGrouping(new PlaceholderGrouping(control, new Path("Visualization", "Visualization")));
 		control.addDockable(defaultDockable);
@@ -210,7 +220,19 @@ public class RevealGUI extends MaydayFrame {
 					String snpListNames = SNVLists.createUniqueSNVListName(selection);
 					String title = plotPlugin.getMenuName() + " (" + snpListNames + ")";
 					
-					displayPlot(title, plot, !plotPlugin.usesScrollPane(), plotPlugin.usesViewSetting());
+					if(plotPlugin.usesViewSetting()) {
+						JSplitPane splitPane = displayPlot(title, plot, !plotPlugin.usesScrollPane(), true);
+						HierarchicalSetting viewSetting = plot.getViewSetting();
+						SettingComponent plotSetting = viewSetting.getGUIElement();
+						
+						JPanel settingPanel = SettingPanelCreator.getSettingPanel(plotSetting);
+						splitPane.setRightComponent(settingPanel);
+						splitPane.setDividerLocation(0.85);
+						splitPane.setResizeWeight(1.0);
+						splitPane.setOneTouchExpandable(true);
+					} else {
+						displayPlot(title, plot, !plotPlugin.usesScrollPane(), false);
+					}
 				}
 			};
 			
@@ -221,16 +243,45 @@ public class RevealGUI extends MaydayFrame {
 		}
 	}
 	
-	public void displayPlot(String name, Component plot, boolean scrollPane, boolean useViewSetting) {
-		DefaultMultipleCDockable dockable = new DefaultMultipleCDockable( factory );
+	public JSplitPane displayPlot(String name, Component plot, boolean scrollPane, boolean useViewSetting) {
+		DefaultMultipleCDockable dockable = new DefaultMultipleCDockable( factory ) {
+			public void setVisible(boolean visible) {
+				if(visible == false) {
+					boolean removed = visualizations.remove(this);
+					if(visualizations.size() == 0 && removed) {
+						control.addDockable(defaultDockable);
+						defaultDockable.setVisible(true);
+					}
+					super.setVisible(visible);
+				} else {
+					super.setVisible(visible);
+					if(visualizations.size() == 0) {
+						defaultDockable.setVisible(false);
+					}
+					visualizations.add(this);
+				}
+			}
+		};
+		
 		dockable.setTitleText(name);
 		dockable.setCloseable(true);
 		dockable.setRemoveOnClose(true);
-		dockable.add(registerPlot(plot, scrollPane));
+		
+		JSplitPane splitter = null;
+		
+		if(useViewSetting) {
+			splitter = new JSplitPane();
+			splitter.setLeftComponent(registerPlot(plot, scrollPane));
+			dockable.add(splitter);
+		} else {
+			dockable.add(registerPlot(plot, scrollPane));
+		}
 		
 		dockable.setGrouping(new PlaceholderGrouping(control, new Path("Visualization", "Visualization")));
 		control.addDockable(dockable);
 		dockable.setVisible(true);
+		
+		return splitter;
 	}
 	
 	private Component registerPlot(Component plot, boolean useScrollPane) {
