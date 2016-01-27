@@ -42,7 +42,6 @@ public class Camera3D extends Camera implements MouseListener, MouseMotionListen
 	private Rotation3D<Double> rotation;
 	protected boolean MB3 = false;
 	
-	
 	//zooming
 	private double xStep = Math.cos(Math.toRadians(-90.0));
 	private double zStep = Math.sin(Math.toRadians(-90.0));
@@ -84,7 +83,13 @@ public class Camera3D extends Camera implements MouseListener, MouseMotionListen
 	 * @param height
 	 */
 	public void setCamera(GL2 gl, GLU glu, double width, double height) {
-		gl.glViewport(0, 0, (int)width, (int)height);
+
+		// DON'T!!!!!
+		// java 1.7 and jogl on Mac OS seems to have issue
+		// setting viewport multiple times is weird,
+		// the reshape function will do that!
+		//gl.glViewport(0, 0, (int)width, (int)height);
+
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(60, width/height, 1.0, 1000.0);

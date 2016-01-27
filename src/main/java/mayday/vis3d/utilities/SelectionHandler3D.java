@@ -365,7 +365,7 @@ public class SelectionHandler3D extends SelectionHandler {
 			//gl.glEnable(GL.GL_LIGHTING);
 			gl.glPopAttrib();
 			
-			camera.setCamera(gl, glu, width, height);
+			//camera.setCamera(gl, glu, width, height);
 		}
 	}
 	

@@ -331,7 +331,7 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		gl.glClearColor(bgColor[0], bgColor[1], bgColor[2], 0.0f);
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		camera.setCamera(gl, glu, width, height);
-		
+
 		gl.glPushMatrix();
 		camera.adjustCamera(gl);
 		drawSelectable(gl, GL2.GL_RENDER);
@@ -387,12 +387,16 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 			update(gl);
 			update = false;
 		}
+
+		int height = canvas.getHeight();//(int) canvas.getPreferredSize().getHeight();
+		int width = canvas.getWidth();//int) canvas.getPreferredSize().getWidth();
+
 		
-		drawScene(gl, getWidth(), getHeight());
+		drawScene(gl, width, height);
 		
 		if(selectionHandler != null) {
-			selectionHandler.drawSelectionRectangle(gl, glu, getWidth(), getHeight(), camera);
-			selectionHandler.pickObjects(gl, glu, getWidth(), getHeight(), camera);
+			selectionHandler.drawSelectionRectangle(gl, glu, width, height, camera);
+			selectionHandler.pickObjects(gl, glu, width, height, camera);
 		}
 		
 		gl.glFlush();
@@ -417,7 +421,8 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
 		drawable.getGL().glViewport(x, y, width, height);
-		updatePlot();
+		// reshape is just a notification, dispaly is called afterwards by the framework
+		//updatePlot();
 	}
 	
 	protected class ColorChangeListener implements ChangeListener {
