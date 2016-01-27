@@ -84,21 +84,6 @@ public class Camera3D extends Camera implements MouseListener, MouseMotionListen
 	 * @param height
 	 */
 	public void setCamera(GL2 gl, GLU glu, double width, double height) {
-		if (System.getProperty("os.name").equals("Mac OS X")) {
-			/*
-			Workaround issue of Jogl with MAC and java 1.7+ that prevents opengl
-			from using the full canvas.
-
-			See: https://jogamp.org/bugzilla/show_bug.cgi?id=589
-
-			Remove this part at these positions when the bug is fixed:
-			 AbstractPlot3DPanel.paint()
-			 Camera3D.setCamera()
-			 */
-			width *= 2;
-			height *= 2;
-		}
-
 		gl.glViewport(0, 0, (int)width, (int)height);
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
