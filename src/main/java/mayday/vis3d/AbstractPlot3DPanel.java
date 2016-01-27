@@ -425,7 +425,14 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		//view have to care about high resolution displays
 		// https://jogamp.org/bugzilla/show_bug.cgi?id=741
 
-		drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
+		if (System.getProperty("system.os").equals("Mac OS X")) {
+			// Mac Os
+			// window size != viewport size
+			drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
+		} else {
+			// window size == viewport size
+			drawable.getGL().glViewport(x, y, this.getWidth(), this.getHeight());
+		}
 		// reshape is just a notification, dispaly is called afterwards by the framework
 		//updatePlot();
 	}
