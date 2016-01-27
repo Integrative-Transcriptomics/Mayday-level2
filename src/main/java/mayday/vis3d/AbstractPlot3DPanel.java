@@ -388,8 +388,8 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 			update = false;
 		}
 
-		int height = canvas.getHeight();//(int) canvas.getPreferredSize().getHeight();
-		int width = canvas.getWidth();//int) canvas.getPreferredSize().getWidth();
+		int height = canvas.getHeight();
+		int width = canvas.getWidth();
 
 		
 		drawScene(gl, width, height);
@@ -420,7 +420,10 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
-		drawable.getGL().glViewport(x, y, width, height);
+		//System.out.println(width +" "+ getWidth() + " "+ getParent().getWidth());
+		//https://jogamp.org/deployment/v2.2.3/javadoc/jogl/javadoc/javax/media/opengl/GLEventListener.html#reshape(javax.media.opengl.GLAutoDrawable,%20int,%20int,%20int,%20int)
+		//viewport already updated
+		//drawable.getGL().glViewport(x, y, width, height);
 		// reshape is just a notification, dispaly is called afterwards by the framework
 		//updatePlot();
 	}

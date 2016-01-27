@@ -433,10 +433,7 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 			}
 
 			double radius = circumference / (2.0 * Math.PI);
-			double scale = Math.max(this.coordSystem.getSetting().getVisibleArea().getHeight(),
-					this.coordSystem.getSetting().getVisibleArea().getWidth());
-
-			settings.setRadius(scale / radius);
+			settings.setRadius(radius);
 		}
 	}
 	
