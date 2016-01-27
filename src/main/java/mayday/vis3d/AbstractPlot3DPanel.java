@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.jogamp.nativewindow.NativeSurface;
 import mayday.core.ProbeListEvent;
 import mayday.core.ProbeListListener;
 import mayday.core.plugins.probe.ProbeMenu;
@@ -420,10 +421,11 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
-		//System.out.println(width +" "+ getWidth() + " "+ getParent().getWidth());
-		//https://jogamp.org/deployment/v2.2.3/javadoc/jogl/javadoc/javax/media/opengl/GLEventListener.html#reshape(javax.media.opengl.GLAutoDrawable,%20int,%20int,%20int,%20int)
-		//viewport already updated
-		//drawable.getGL().glViewport(x, y, width, height);
+		//System.out.println(width +" "+ drawable.getSurfaceWidth() + " " + getWidth());
+		//view have to care about high resolution displays
+		// https://jogamp.org/bugzilla/show_bug.cgi?id=741
+
+		drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
 		// reshape is just a notification, dispaly is called afterwards by the framework
 		//updatePlot();
 	}
