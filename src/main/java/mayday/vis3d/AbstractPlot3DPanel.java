@@ -421,19 +421,13 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
-		//System.out.println(width +" "+ drawable.getSurfaceWidth() + " " + getWidth());
-		//view have to care about high resolution displays
-		// https://jogamp.org/bugzilla/show_bug.cgi?id=741
-
-		if (System.getProperty("system.os").equals("Mac OS X")) {
-			// Mac Os
-			// window size != viewport size
-			drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
-		} else {
-			// window size == viewport size
-			drawable.getGL().glViewport(x, y, this.getWidth(), this.getHeight());
-		}
-		// reshape is just a notification, dispaly is called afterwards by the framework
+		// It could happend that
+		// this.getWidth() != drawable.getSurfaceWidth()
+		// Because of high resolution screens (Apples Retian display),
+		// the width of the canvas Swing object is not necessarily the number
+		// of pixels needed by opengl to fill the object.
+		drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
+		// reshape is just a notification, display() is called afterwards by the framework
 		//updatePlot();
 	}
 	
