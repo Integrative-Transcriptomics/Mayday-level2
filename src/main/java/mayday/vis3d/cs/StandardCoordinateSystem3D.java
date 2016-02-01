@@ -1,14 +1,26 @@
 package mayday.vis3d.cs;
 
-import java.awt.Color;
+import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Array;
+import java.nio.FloatBuffer;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Vector;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 
+import com.sun.scenario.effect.impl.BufferUtil;
 import mayday.vis3d.AbstractPlot3DPanel;
 import mayday.vis3d.cs.settings.CoordinateSystem3DSetting;
+import org.apache.commons.collections15.BufferUtils;
 
 /**
  * @author G\u00FCnter J\u00E4ger
@@ -39,6 +51,13 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 
 	@Override
 	public void draw(GL2 gl, GLU glu) {
+		gl.glEnable(GL2.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL2.GL_LEQUAL);
+		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
+		gl.glEnable(GL2.GL_LIGHT0);
+		gl.glEnable(GL2.GL_LIGHTING);
+		gl.glEnable(GL2.GL_COLOR_MATERIAL);
+
 		this.drawAxes(gl, glu);
 	}
 
@@ -145,9 +164,10 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 				gl.glRotated(zrot, 0, 0, 1);
 				gl.glRotated(yrot, 0, 1, 0);
 				gl.glRotated(xrot, 1, 0, 0);
-				getRenderer().begin3DRendering();
-				getRenderer().draw3D(xlabels[i], -(float)w2, -0.1f, 0.0f, scale);
-				getRenderer().end3DRendering();
+//				getRenderer().begin3DRendering();
+//				getRenderer().draw3D(xlabels[i], -(float)w2, -0.1f, 0.0f, scale);
+				vectorText(xlabels[i], gl, -(float)w2, -0.1f, 0.0f, scale);
+//				getRenderer().end3DRendering();
 				gl.glPopMatrix();
 			}
 			
@@ -164,9 +184,10 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 				gl.glRotated(zrot, 0, 0, 1);
 				gl.glRotated(yrot, 0, 1, 0);
 				gl.glRotated(xrot, 1, 0, 0);
-				getRenderer().begin3DRendering();
-				getRenderer().draw3D(ylabels[i], -(float)w - 0.1f, 0.0f, 0.0f, scale);
-				getRenderer().end3DRendering();
+//				getRenderer().begin3DRendering();
+//				getRenderer().draw3D(ylabels[i], -(float)w - 0.1f, 0.0f, 0.0f, scale);
+				vectorText(ylabels[i], gl, -(float)w - 0.1f, 0.0f, 0.0f, scale);
+//				getRenderer().end3DRendering();
 				gl.glPopMatrix();
 			}
 			
@@ -184,9 +205,10 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 				gl.glRotated(zrot, 0, 0, 1);
 				gl.glRotated(yrot, 0, 1, 0);
 				gl.glRotated(xrot, 1, 0, 0);
-				getRenderer().begin3DRendering();
-				getRenderer().draw3D(zlabels[i], -(float)w2, -(float)h2 - 0.1f, 0, scale);
-				getRenderer().end3DRendering();
+				//getRenderer().begin3DRendering();
+				//getRenderer().draw3D(zlabels[i], -(float)w2, -(float)h2 - 0.1f, 0, scale);
+				vectorText(zlabels[i], gl, -(float)w2, -(float)h2 - 0.1f, 0, scale);
+				//getRenderer().end3DRendering();
 				gl.glPopMatrix();
 			}
 			
@@ -206,9 +228,10 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 			gl.glRotated(zrot, 0, 0, 1);
 			gl.glRotated(yrot, 0, 1, 0);
 			gl.glRotated(xrot, 1, 0, 0);
-			getRenderer().begin3DRendering();
-			getRenderer().draw3D(xLabel, -(float)w2, -(float)h2, 0, scale);
-			getRenderer().end3DRendering();
+//			getRenderer().begin3DRendering();
+//			getRenderer().draw3D(xLabel, -(float)w2, -(float)h2, 0, scale);
+			vectorText(xLabel, gl, -(float)w2, -(float)h2, 0, scale);
+//			getRenderer().end3DRendering();
 			gl.glPopMatrix();
 			
 			bounds = getRenderer().getBounds(yLabel);
@@ -222,9 +245,10 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 			gl.glRotated(zrot, 0, 0, 1);
 			gl.glRotated(yrot, 0, 1, 0);
 			gl.glRotated(xrot, 1, 0, 0);
-			getRenderer().begin3DRendering();
-			getRenderer().draw3D(yLabel, -(float)w2, -(float)h2, 0, scale);
-			getRenderer().end3DRendering();
+//			getRenderer().begin3DRendering();
+//			getRenderer().draw3D(yLabel, -(float)w2, -(float)h2, 0, scale);
+			vectorText(yLabel, gl, -(float)w2, -(float)h2, 0, scale);
+//			getRenderer().end3DRendering();
 			gl.glPopMatrix();
 			
 			bounds = getRenderer().getBounds(zLabel);
@@ -238,12 +262,66 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 			gl.glRotated(zrot, 0, 0, 1);
 			gl.glRotated(yrot, 0, 1, 0);
 			gl.glRotated(xrot, 1, 0, 0);
-			getRenderer().begin3DRendering();
-			getRenderer().draw3D(zLabel, -(float)w2, -(float)h2, -(float)w2, scale);
-			getRenderer().end3DRendering();
+//			getRenderer().begin3DRendering();
+//			getRenderer().draw3D(zLabel, -(float)w2, -(float)h2, -(float)w2, scale);
+			vectorText(zLabel, gl, -(float)w2, -(float)h2, -(float)w2, scale);
+//			getRenderer().end3DRendering();
 			gl.glPopMatrix();
 			
 			getRenderer().setColor(Color.BLACK);
+		}
+	}
+
+	public void vectorText(String text, GL gl, float x, float y, float z, float scale) {
+		FontRenderContext frc = getRenderer().getFontRenderContext();
+		GlyphVector gv = getRenderer().getFont().createGlyphVector(frc,text);
+		Shape shp = gv.getOutline();
+		AffineTransform aff = new AffineTransform();
+		aff.scale(scale, scale);
+		PathIterator iter = shp.getPathIterator(aff, 0.00001);
+
+
+		gl.getGL2().glTranslated(x, y, z);
+
+
+		GL2 gl2 = gl.getGL2();
+		float[] lastpoint;// = new float[3]
+		float[] start = new float[3];
+//		System.out.println("NEXT");
+		while(!iter.isDone()) {
+			float[] coords = new float[6];
+			int lineType = iter.currentSegment(coords);
+			/*System.out.print(lineType + ": ");
+			for(float f : coords) {
+				System.out.print(f + ", ");
+			}
+			System.out.print("\n");*/
+			gl2.glColor3d(0, 0, 0);
+			switch(lineType) {
+				case PathIterator.SEG_MOVETO:
+					start = coords;
+					gl2.glBegin(GL2.GL_LINE_STRIP);
+					//gl2.glBegin(GL2.GL_POLYGON);
+					gl2.glVertex3f(start[0], -start[1], 0.0f);
+					break;
+				case PathIterator.SEG_CLOSE:
+					gl2.glVertex3f(start[0], -start[1], 0.0f);
+					gl2.glEnd();
+					break;
+				case PathIterator.SEG_CUBICTO:
+					gl2.glVertex3f(coords[0], -coords[1], 0.0f);
+					gl2.glVertex3f(coords[2], -coords[3], 0.0f);
+					gl2.glVertex3f(coords[4], -coords[5], 0.0f);
+					break;
+				case PathIterator.SEG_LINETO:
+					gl2.glVertex3f(coords[0], -coords[1], 0.0f);
+					break;
+				case PathIterator.SEG_QUADTO:
+					gl2.glVertex3f(coords[0], -coords[1], 0.0f);
+					gl2.glVertex3f(coords[2], -coords[3], 0.0f);
+					break;
+			}
+			iter.next();
 		}
 	}
 
