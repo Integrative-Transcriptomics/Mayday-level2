@@ -434,8 +434,9 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		// Webstarter & !Mac => canvas dim
 
 		// (widht, height parameter of this function seems to always be the surface dim)
-		if(MaydayDefaults.isWebstartApplication() &&
-				!System.getProperty("os.name").equals("Max OS X")) {
+		if(System.getProperty("os.name").equals("Max OS X")) {
+			drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
+		} else if(MaydayDefaults.isWebstartApplication()) {
 			drawable.getGL().glViewport(x, y, this.getWidth(), this.getHeight());
 		} else {
 			drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
