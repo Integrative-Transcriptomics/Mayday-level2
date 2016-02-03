@@ -15,6 +15,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.jogamp.nativewindow.NativeSurface;
+import mayday.core.MaydayDefaults;
 import mayday.core.ProbeListEvent;
 import mayday.core.ProbeListListener;
 import mayday.core.plugins.probe.ProbeMenu;
@@ -426,7 +427,19 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		// Because of high resolution screens (Apples Retian display),
 		// the width of the canvas Swing object is not necessarily the number
 		// of pixels needed by opengl to fill the object.
-		drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
+		// + There seems to be a complication if webstarter is used.
+
+		// Decision matrix for which dimension to use:
+		// Mac OS => Surface dim
+		// Webstarter & !Mac => canvas dim
+
+		// (widht, height parameter of this function seems to always be the surface dim)
+		if(MaydayDefaults.isWebstartApplication() &&
+				!System.getProperty("os.name").equals("Max OS X")) {
+			drawable.getGL().glViewport(x, y, this.getWidth(), this.getHeight());
+		} else {
+			drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
+		}
 		// reshape is just a notification, display() is called afterwards by the framework
 		//updatePlot();
 	}
