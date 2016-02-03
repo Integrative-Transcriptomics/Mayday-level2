@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Array;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +18,8 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 
+import com.jogamp.opengl.glu.GLUtessellator;
+import com.jogamp.opengl.glu.GLUtessellatorCallback;
 import com.sun.scenario.effect.impl.BufferUtil;
 import mayday.vis3d.AbstractPlot3DPanel;
 import mayday.vis3d.cs.settings.CoordinateSystem3DSetting;
@@ -26,13 +29,16 @@ import org.apache.commons.collections15.BufferUtils;
  * @author G\u00FCnter J\u00E4ger
  *
  */
-public class StandardCoordinateSystem3D extends CoordinateSystem3D {
+public class StandardCoordinateSystem3D extends CoordinateSystem3D implements GLUtessellatorCallback {
 	
 	/**
 	 * identifier of this coordinate system
 	 */
 	public static final String ID = "Standard";
-	
+
+	private GLU glu;
+	private GL gl;
+
 	/**
 	 * @param panel
 	 * @param settings
@@ -71,6 +77,8 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 	 * @param glu
 	 */
 	public void drawAxes(GL2 gl, GLU glu) {
+		this.glu = glu;
+		this.gl = gl;
 		double width = settings.getVisibleArea().getWidth();
 		double height = settings.getVisibleArea().getHeight();
 		double depth = settings.getVisibleArea().getDepth();
@@ -273,23 +281,54 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 	}
 
 	public void vectorText(String text, GL gl, float x, float y, float z, float scale) {
+		GL2 gl2 = gl.getGL2();
+
 		FontRenderContext frc = getRenderer().getFontRenderContext();
 		GlyphVector gv = getRenderer().getFont().createGlyphVector(frc,text);
 		Shape shp = gv.getOutline();
 		AffineTransform aff = new AffineTransform();
 		aff.scale(scale, scale);
-		PathIterator iter = shp.getPathIterator(aff, 0.00001);
+		PathIterator iter = shp.getPathIterator(aff, 0.01);//0.00001);
 
 
-		gl.getGL2().glTranslated(x, y, z);
+		gl2.glTranslated(x, y, z);
 
 
-		GL2 gl2 = gl.getGL2();
+		GLUtessellator tesselator = GLU.gluNewTess();
+		glu.gluTessCallback(tesselator, GLU.GLU_TESS_BEGIN, this);
+		glu.gluTessCallback(tesselator, GLU.GLU_TESS_VERTEX, this);
+		glu.gluTessCallback(tesselator, GLU.GLU_TESS_COMBINE, this);
+		glu.gluTessCallback(tesselator, GLU.GLU_TESS_END, this);
+		glu.gluTessCallback(tesselator, GLU.GLU_TESS_ERROR, this);
+
+
+		switch(iter.getWindingRule()) {
+			case PathIterator.WIND_EVEN_ODD:
+				glu.gluTessProperty(tesselator,
+						GLU.GLU_TESS_WINDING_RULE,
+						GLU.GLU_TESS_WINDING_ODD);
+				break;
+			case PathIterator.WIND_NON_ZERO:
+				glu.gluTessProperty(tesselator,
+						GLU.GLU_TESS_WINDING_RULE,
+						GLU.GLU_TESS_WINDING_NONZERO);
+				break;
+		}
+
+
+		//draw (points to glu tesselator must be independent objects)
+		//gl2.glNewList(gl2.glGenLists(1), GL2.GL_COMPILE);
+		gl2.glShadeModel(GL2.GL_FLAT);
+		gl2.glPushAttrib(GL2.GL_LINE_BIT);
+		gl2.glLineWidth(15.0f);
 		float[] lastpoint;// = new float[3]
-		float[] start = new float[3];
+		double[] start = new double[3];
+		Object userData = null;
+		glu.gluTessBeginPolygon(tesselator, userData);
 //		System.out.println("NEXT");
 		while(!iter.isDone()) {
-			float[] coords = new float[6];
+			double[] coords = new double[6];
+			double[] vertexData;
 			int lineType = iter.currentSegment(coords);
 			/*System.out.print(lineType + ": ");
 			for(float f : coords) {
@@ -299,34 +338,163 @@ public class StandardCoordinateSystem3D extends CoordinateSystem3D {
 			gl2.glColor3d(0, 0, 0);
 			switch(lineType) {
 				case PathIterator.SEG_MOVETO:
+					//gl2.glBegin(GL2.GL_LINE_STRIP);
+					//gl2.glVertex3f(start[0], -start[1], 0.0f);
+					glu.gluTessBeginContour(tesselator);
 					start = coords;
-					gl2.glBegin(GL2.GL_LINE_STRIP);
-					//gl2.glBegin(GL2.GL_POLYGON);
-					gl2.glVertex3f(start[0], -start[1], 0.0f);
+					vertexData = new double[] {
+							start[0], -start[1], 0.0,
+							0, 0, 0
+					};
+					glu.gluTessVertex(tesselator, vertexData, 0, vertexData);
 					break;
 				case PathIterator.SEG_CLOSE:
-					gl2.glVertex3f(start[0], -start[1], 0.0f);
-					gl2.glEnd();
-					break;
-				case PathIterator.SEG_CUBICTO:
-					gl2.glVertex3f(coords[0], -coords[1], 0.0f);
-					gl2.glVertex3f(coords[2], -coords[3], 0.0f);
-					gl2.glVertex3f(coords[4], -coords[5], 0.0f);
+					vertexData = new double[]  {
+							start[0], -start[1], 0.0,
+							0, 0, 0
+					};
+					//glu.gluTessVertex(tesselator, vertexData, 0, vertexData);
+					//gl2.glVertex3f(start[0], -start[1], 0.0f);
+					//gl2.glEnd();
+					glu.gluTessEndContour(tesselator);
 					break;
 				case PathIterator.SEG_LINETO:
-					gl2.glVertex3f(coords[0], -coords[1], 0.0f);
+					vertexData = new double[]  {
+							coords[0], -coords[1], 0.0,
+							0, 0, 0
+					};
+					glu.gluTessVertex(tesselator, vertexData, 0, vertexData);
+//					gl2.glVertex3f(coords[0], -coords[1], 0.0f);
+					break;
+				case PathIterator.SEG_CUBICTO:
+					System.err.println("this really happens");
+					vertexData = new double[]  {
+							coords[0], -coords[1], 0.0,
+							0, 0, 0
+					};
+					glu.gluTessVertex(tesselator, vertexData, 0, vertexData);
+//					gl2.glVertex3f(coords[0], -coords[1], 0.0f);
+//					gl2.glVertex3f(coords[2], -coords[3], 0.0f);
+//					gl2.glVertex3f(coords[4], -coords[5], 0.0f);
 					break;
 				case PathIterator.SEG_QUADTO:
-					gl2.glVertex3f(coords[0], -coords[1], 0.0f);
-					gl2.glVertex3f(coords[2], -coords[3], 0.0f);
+					System.err.println("this really happens");
+					vertexData = new double[]  {
+							coords[0], -coords[1], 0.0,
+							0, 0, 0
+					};
+					glu.gluTessVertex(tesselator, vertexData, 0, vertexData);
+//					gl2.glVertex3f(coords[0], -coords[1], 0.0f);
+//					gl2.glVertex3f(coords[2], -coords[3], 0.0f);*/
 					break;
 			}
 			iter.next();
 		}
+		gl2.glPopAttrib();
+		glu.gluTessEndPolygon(tesselator);
+		//gl2.glEndList();
 	}
 
 	@Override
 	public String getID() {
 		return ID;
+	}
+
+	@Override
+	public void begin(int primitiveType) {
+		gl.getGL2().glBegin(primitiveType);
+	}
+
+	@Override
+	public void beginData(int primitiveType, Object userData) {
+		begin(primitiveType);
+	}
+
+	@Override
+	public void edgeFlag(boolean b) {
+		// nothing to do here
+	}
+
+	@Override
+	public void edgeFlagData(boolean b, Object o) {
+		// nothing to do here
+	}
+
+	@Override
+	public void vertex(Object vertexData) {
+		//double[] point =  (double[]) vertexData;
+		//gl.getGL2().glVertex3d(point[0], point[1], point[2]);
+		double[] pointer;
+		if (vertexData instanceof double[]) {
+			pointer = (double[]) vertexData;
+			if (pointer.length == 6)
+				gl.getGL2().glColor3dv(pointer, 3);
+			gl.getGL2().glVertex3dv(pointer, 0);
+		}
+	}
+
+	@Override
+	public void vertexData(Object vertexData, Object userData) {
+		vertex(vertexData);
+	}
+
+	@Override
+	public void end() {
+		gl.getGL2().glEnd();
+	}
+
+	@Override
+	public void endData(Object o) {
+		end();
+	}
+
+	@Override
+	public void combine(
+			double[] coords,
+			Object[] vertex_data, //some may be null
+			float[] weight,
+			Object[] dataOut //length 1
+	) {
+//		dataForSplitOrMergeVertex[0] = Arrays.copyOf(position3DVertex,
+//				position3DVertex.length);
+		double[] vertex = new double[6];
+		vertex[0] = coords[0];
+		vertex[1] = coords[1];
+		vertex[2] = coords[2];
+		for (int i = 3; i < 6; i++) {
+			vertex[i] = 0;
+			if (vertex_data[0] != null)
+				vertex[i] += weight[0] * ((double[]) vertex_data[0])[i];
+			if (vertex_data[1] != null)
+				vertex[i] += weight[1] * ((double[]) vertex_data[1])[i];
+			if (vertex_data[2] != null)
+				vertex[i] += weight[2] * ((double[]) vertex_data[2])[i];
+			if (vertex_data[3] != null)
+				vertex[i] += weight[3] * ((double[]) vertex_data[3])[i];
+		}
+		dataOut[0] = vertex;
+	}
+
+	@Override
+	public void combineData(
+			double[] position3DVertex,
+			Object[] dataOfFourNeighbourVertices, //some may be null
+			float[] weightsOfFourNeighbourVertices,
+			Object[] dataForSplitOrMergeVertex, //length 1
+			Object userData
+	) {
+		combine(position3DVertex, dataOfFourNeighbourVertices,
+				weightsOfFourNeighbourVertices, dataForSplitOrMergeVertex);
+	}
+
+	@Override
+	public void error(int errorID) {
+		System.err.println("Tesselation error: " + errorID + ", " +
+				glu.gluErrorString(errorID));
+	}
+
+	@Override
+	public void errorData(int errorID, Object userData) {
+		error(errorID);
 	}
 }
