@@ -22,7 +22,6 @@ public abstract class CoordinateSystem3D {
 		
 	/**
 	 * @param panel
-	 * @param dimension
 	 * @param settings
 	 */
 	public CoordinateSystem3D(AbstractPlot3DPanel panel, CoordinateSystem3DSetting settings) {
