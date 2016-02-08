@@ -422,25 +422,7 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
-		// It could happend that
-		// this.getWidth() != drawable.getSurfaceWidth()
-		// Because of high resolution screens (Apples Retian display),
-		// the width of the canvas Swing object is not necessarily the number
-		// of pixels needed by opengl to fill the object.
-		// + There seems to be a complication if webstarter is used.
-
-		// Decision matrix for which dimension to use:
-		// Mac OS => Surface dim
-		// Webstarter & !Mac => canvas dim
-
-		// (widht, height parameter of this function seems to always be the surface dim)
-		if(System.getProperty("os.name").equals("Max OS X")) {
-			drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
-		} else if(MaydayDefaults.isWebstartApplication()) {
-			drawable.getGL().glViewport(x, y, this.getWidth(), this.getHeight());
-		} else {
-			drawable.getGL().glViewport(x, y, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
-		}
+		drawable.getGL().glViewport(x, y, width, height);
 		// reshape is just a notification, display() is called afterwards by the framework
 		//updatePlot();
 	}
