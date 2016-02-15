@@ -27,6 +27,8 @@ import mayday.vis3.plots.multiprofile.ProfilePlotComponentMulti;
 import mayday.vis3.vis2base.DataSeries;
 import mayday.visualizations.PairwiseBoxPlot.PairwiseBoxScatterplotComponent;
 
+import javax.swing.*;
+
 @SuppressWarnings("serial")
 public class MultiBoxScatterplotComponent extends MultiPlotPanel implements ViewModelListener, PlotContainer {
 
@@ -90,7 +92,11 @@ public class MultiBoxScatterplotComponent extends MultiPlotPanel implements View
 		csd.setVisible(true);
 
 		if(csd.isCancelled()){
-
+			// cancel. setup is called after the frame is already created
+			// => close it
+			JFrame win = (JFrame) SwingUtilities.getWindowAncestor(this);
+			win.setVisible(false);
+			win.dispose();
 			return;
 		}else{
 			//check for user input validity
