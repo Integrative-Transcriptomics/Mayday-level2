@@ -1,8 +1,9 @@
 
 package mayday.wapiti.gui.actions.transform;
 
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -11,11 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 import mayday.core.gui.MaydayDialog;
 import mayday.core.pluma.PluginInfo;
@@ -152,7 +149,7 @@ public class AddTransformationAction extends AbstractAction {
 	} 
 	
 	public static void showApplicabilityReasons(Window parent, List<String> reasons) {
-		MaydayDialog md = new MaydayDialog(parent, "Applicability requirements of transformations");
+		final MaydayDialog md = new MaydayDialog(parent, "Applicability requirements of transformations");
 		StringBuffer rtext = new StringBuffer();
 		rtext.append("<html><table border=0>");
 		for (String r : reasons) {
@@ -168,6 +165,38 @@ public class AddTransformationAction extends AbstractAction {
 		jta.setEditable(false);
 		jta.setCaretPosition(0);
 		md.add(new JScrollPane(jta));
+
+		// Add close button with fancy border for seperation
+		JButton closeBtn;
+		{
+			JPanel BottomPanel = new JPanel();
+			BoxLayout BottomPanelLayout = new BoxLayout(BottomPanel, javax.swing.BoxLayout.Y_AXIS);
+			BottomPanel.setLayout(BottomPanelLayout);
+			md.add(BottomPanel, BorderLayout.SOUTH);
+			BottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			{
+				JSeparator jSeparator2 = new JSeparator();
+				BottomPanel.add(jSeparator2);
+				JPanel ButtonPanel = new JPanel();
+				BottomPanel.add(ButtonPanel);
+				FlowLayout ButtonPanelLayout = new FlowLayout();
+				ButtonPanelLayout.setAlignment(FlowLayout.RIGHT);
+				ButtonPanel.setLayout(ButtonPanelLayout);
+				{
+					closeBtn = new JButton();
+					ButtonPanel.add(closeBtn);
+					closeBtn.setText("Close");
+				}
+			}
+		}
+		// make that button actually close the window
+		closeBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				md.setVisible(false);
+			}
+		});
+
+
 		md.pack();
 		md.setSize(600, 400);
 		md.setModal(true);
