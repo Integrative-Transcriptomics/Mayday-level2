@@ -15,6 +15,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.jogamp.nativewindow.NativeSurface;
+import com.jogamp.opengl.*;
 import mayday.core.MaydayDefaults;
 import mayday.core.ProbeListEvent;
 import mayday.core.ProbeListListener;
@@ -33,11 +34,6 @@ import mayday.vis3d.utilities.SelectionHandler;
 import mayday.vis3d.utilities.SelectionHandler3D;
 
 import com.jogamp.common.nio.Buffers;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLEventListener;
-import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
@@ -172,6 +168,9 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		    bufferedImage.setRGB(0, 0, width, height, pixelInts, 0, width);
 
 		    g2.drawImage(bufferedImage, 0, 0, null);
+
+			// hopefully give control back to the original thread
+			canvas.getContext().release();
 		}
 	}
 
