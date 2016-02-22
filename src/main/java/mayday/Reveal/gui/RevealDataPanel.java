@@ -243,7 +243,7 @@ public class RevealDataPanel extends JTree implements ProjectEventListener, Tree
 		               	try {
 							a.triggerAction(snpList);
 						} catch (Exception ex) {
-							JOptionPane.showMessageDialog(gui, ex.getMessage());
+							JOptionPane.showMessageDialog(gui, ex.toString());
 						}
 	                }
 	            }

@@ -63,7 +63,7 @@ public class UpdateSNPReferences extends SNVListPlugin {
 			
 			task.start();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.toString());
 		}
 	}
 	

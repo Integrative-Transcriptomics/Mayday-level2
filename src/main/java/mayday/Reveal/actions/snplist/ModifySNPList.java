@@ -68,7 +68,7 @@ public class ModifySNPList extends SNVListPlugin {
 		try {
 			triggerAction(snpLists);
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.toString());
 		}
 	}
 	
