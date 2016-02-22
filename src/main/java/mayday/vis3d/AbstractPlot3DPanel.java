@@ -1,10 +1,6 @@
 package mayday.vis3d;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -127,9 +123,12 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 			canvas.getContext().makeCurrent();
 			GL2 gl = canvas.getGL().getGL2();
 			
-			int width = canvas.getWidth();
-			int height = canvas.getHeight();
-			
+			int width = canvas.getSurfaceWidth();
+			int height = canvas.getSurfaceHeight();
+			//int width = canvas.getWidth();
+			//int height = canvas.getHeight();
+
+
 			this.drawScene(gl, width, height);
 			
 			ByteBuffer pixelsRGB = Buffers.newDirectByteBuffer(width * height * 3);
@@ -137,7 +136,7 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		    gl.glReadBuffer(GL2.GL_BACK);
 		    gl.glPixelStorei(GL2.GL_PACK_ALIGNMENT, 1);
 
-		    gl.glReadPixels(0, 0, width, height, GL2.GL_RGB, GL2.GL_UNSIGNED_BYTE, pixelsRGB); 
+		    gl.glReadPixels(0, 0, width, height, GL2.GL_RGB, GL2.GL_UNSIGNED_BYTE, pixelsRGB);
 
 		    int[] pixelInts = new int[width * height];
 
@@ -167,7 +166,14 @@ public abstract class AbstractPlot3DPanel extends BasicPlotPanel implements GLEv
 		    BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		    bufferedImage.setRGB(0, 0, width, height, pixelInts, 0, width);
 
-		    g2.drawImage(bufferedImage, 0, 0, null);
+			// Adjust Image to the intended dimension, which could be lower than
+			// the surface dim of opengl
+			Image scaled = bufferedImage.getScaledInstance(
+					canvas.getWidth(),
+					canvas.getHeight(),
+					Image.SCALE_FAST);
+
+		    g2.drawImage(scaled, 0, 0, null);
 
 			// hopefully give control back to the original thread
 			canvas.getContext().release();
