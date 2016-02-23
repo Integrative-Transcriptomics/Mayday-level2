@@ -2,6 +2,7 @@ package mayday.Reveal.visualizations.matrices.association;
 
 import java.awt.Color;
 
+import mayday.core.settings.SettingComponent;
 import mayday.core.settings.events.SettingChangeEvent;
 import mayday.core.settings.events.SettingChangeListener;
 import mayday.core.settings.generic.HierarchicalSetting;
@@ -15,59 +16,99 @@ import mayday.vis3.gradient.ColorGradientSetting;
 
 public class AssociationMatrixSetting extends HierarchicalSetting {
 
+	public static final int NUM_SNV_PAIRS = 0;
+	public static final int AVERAGE_P_VALUE = 1;
+	
+	public static final int MEAN_EXPRESSION = 0;
+	public static final int MEDIAN_EXPRESSION = 1;
+	public static final int MIN_EXPRESSION = 2;
+	public static final int MAX_EXPRESSION = 3;
+	
 	private AssociationMatrix matrix;
 	private DoubleSetting pValueThreshold;
 	
 	public static final int SNPPAIRCOUNT = 0;
 	public static final int PVALUE = 1;
 	
-	private RestrictedStringSetting dataTypes;
-	private String[] dataTypeNames = {"SNP Pair Count", "Cumulative p-Value"};
-	
-	private BooleanSetting useLDBlocks;
+	private BooleanSetting normalizeLD;
 	
 	private ColorSetting selectionColor;
 	private IntSetting cellHeight;
 	private IntSetting cellWidth;
-	private ColorGradientSetting matrixGradient;
+	private ColorGradientSetting betaGradient;
 	private ColorGradientSetting expressionGradient;
 	private DoubleSetting circleScaling;
 	
 	private BooleanSetting plotDiagonal;
 	
+	private RestrictedStringSetting snvAggregationSetting;
+	private RestrictedStringSetting geneAggregationSetting;
+	
+	private BooleanSetting showGradients;
+	
 	public AssociationMatrixSetting(AssociationMatrix matrix) {
 		super("Association Matrix Setting");
 		this.matrix = matrix;
 		
-		addSetting(pValueThreshold = new DoubleSetting("p-Value Threshold", "p-value threshold for association", 0.05));
-		addSetting(dataTypes = new RestrictedStringSetting("Data Types", "Select the data type that should be visualized", 0, dataTypeNames));
-		addSetting(useLDBlocks = new BooleanSetting("Use LD Blocks", null, false));
+		addSetting(cellWidth = new IntSetting("Cell Width", null, 20));
+		addSetting(cellHeight = new IntSetting("Cell Height", null, 20));
+		addSetting(circleScaling = new DoubleSetting("Scaling", null, 0.005, 0., 1., true, true));
+
+		addSetting(geneAggregationSetting = new RestrictedStringSetting("Gene Aggregation Method", null, 0, "Mean", "Median", "Minimum", "Maximum"));
+		addSetting(snvAggregationSetting = new RestrictedStringSetting("SNV Aggregation Method", null, 0, "Number of SNV-Pairs", "Average p-Value"));
 		
-		addSetting(selectionColor = new ColorSetting("Selection Color", null, Color.RED));
+		addSetting(pValueThreshold = new DoubleSetting("p-Value Threshold", "p-value threshold for association", 0.05));
+		addSetting(normalizeLD = new BooleanSetting("Normalize LD", null, false));
+		
+		addSetting(selectionColor = new ColorSetting("Selection Color", null, Color.RED.brighter()));
 		addSetting(expressionGradient = new ColorGradientSetting("Expression Color Gradient", null, ColorGradient.createDefaultGradient(-1, +1)));
-		addSetting(matrixGradient = new ColorGradientSetting("Matrix Color Gradient", null, ColorGradient.createDefaultGradient(-1, +1)));
-		addSetting(cellHeight = new IntSetting("Cell Height", null, 15));
-		addSetting(cellWidth = new IntSetting("Cell Width", null, 15));
+		addSetting(betaGradient = new ColorGradientSetting("SNV Effect Color Gradient", null, ColorGradient.createDefaultGradient(-1, +1)));
+
 		addSetting(plotDiagonal = new BooleanSetting("Highlight Diagonal", "Plot a highlighting diagonal line", false));
-		addSetting(circleScaling = new DoubleSetting("Circle Scaling", null, 0.1, 0., 1., true, true));
+		
+		addSetting(showGradients = new BooleanSetting("Show Gradients", null, false));
 		
 		addChangeListener(new SLAMChangeListener());
 	}
 	
-	public boolean useLDBlocks() {
-		return this.useLDBlocks.getBooleanValue();
+	public boolean getShowGradients() {
+		return this.showGradients.getBooleanValue();
 	}
 	
-	public int getDataType() {
-		return this.dataTypes.getSelectedIndex();
+	public SettingComponent getBetaColorGradientGUI() {
+		return this.betaGradient.getGUIElement();
 	}
 	
-	public double getPValue() {
+	public SettingComponent getExpressionColorGradientGUI() {
+		return this.expressionGradient.getGUIElement();
+	}
+	
+	public int getGeneAggregationMethod() {
+		return this.geneAggregationSetting.getSelectedIndex();
+	}
+	
+	public int getSNVAggregationMethod() {
+		return this.snvAggregationSetting.getSelectedIndex();
+	}
+	
+	public boolean normalizeLD() {
+		return this.normalizeLD.getBooleanValue();
+	}
+	
+	public double getPValueThreshold() {
 		return this.pValueThreshold.getDoubleValue();
 	}
 	
-	public ColorGradient getMatrixColorGradient() {
-		return this.matrixGradient.getColorGradient();
+	public ColorGradient getBetaColorGradient() {
+		return this.betaGradient.getColorGradient();
+	}
+	
+	public void setBetaGradient(double min, double max, int resolution) {
+		ColorGradient cg = this.betaGradient.getColorGradient();
+		cg.setMin(min);
+		cg.setMax(max);
+		cg.setResolution(resolution);
+		this.betaGradient.setColorGradient(cg);
 	}
 	
 	public ColorGradient getExpressionColorGradient() {

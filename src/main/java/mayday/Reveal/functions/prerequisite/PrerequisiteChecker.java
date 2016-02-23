@@ -38,6 +38,11 @@ public class PrerequisiteChecker {
 				if(!ds.getMetaInformationManager().containsKey("TLRS"))
 					fulfilled = false;
 				break;
+			case Prerequisite.LOCUS_ASSOCIATION_RESULT:
+				if(!ds.getMetaInformationManager().containsKey("SLRS") 
+						&& !ds.getMetaInformationManager().containsKey("TLRS"))
+					fulfilled = false;
+				break;
 			case Prerequisite.STAT_TEST_RESULT:
 				if(!ds.getMetaInformationManager().containsKey(StatisticalTestResult.MYTYPE))
 					fulfilled = false;
@@ -59,5 +64,4 @@ public class PrerequisiteChecker {
 		
 		return fulfilled;
 	}
-		
 }

@@ -77,9 +77,7 @@ public class RevealGUI extends MaydayFrame {
 	
 	private CControl control;
 	private MultipleCDockableFactory<MultipleCDockable, MultipleCDockableLayout> factory;
-	
 	private DefaultMultipleCDockable defaultDockable;
-	
 	private Set<CDockable> visualizations = new HashSet<CDockable>();
 	
 	/**

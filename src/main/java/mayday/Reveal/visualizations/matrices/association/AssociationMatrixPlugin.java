@@ -18,7 +18,7 @@ public class AssociationMatrixPlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public String getName() {
-		return "SL/TL Association Matrix";
+		return "SNV Association Matrix";
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class AssociationMatrixPlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public String getMenuName() {
-		return "SL/TL Association Matrix";
+		return "SNV Association Matrix";
 	}
 
 	@Override

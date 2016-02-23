@@ -13,4 +13,5 @@ public class Prerequisite {
 	public static final int SNP_LIST_SELECTED = 8;
 	public static final int SNP_CHARACTERIZATION = 9;
 	public static final int LD_STRUCTURE = 10;
+	public static final int LOCUS_ASSOCIATION_RESULT = 11;
 }

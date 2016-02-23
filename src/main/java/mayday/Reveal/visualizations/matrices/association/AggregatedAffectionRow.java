@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
@@ -14,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import mayday.Reveal.data.GeneList;
+import mayday.core.MaydayDefaults;
 import mayday.core.structures.linalg.matrix.DoubleMatrix;
 import mayday.vis3.gradient.ColorGradient;
 
@@ -169,16 +172,21 @@ public class AggregatedAffectionRow extends JPanel {
 			
 			String[] rowNames = {"Affected", "Unaffected"};
 			
+			FontRenderContext l_frc = new FontRenderContext( MaydayDefaults.DEFAULT_FONT_RENDER_CONTEXT.getTransform(), 
+					false, MaydayDefaults.DEFAULT_FONT_RENDER_CONTEXT.usesFractionalMetrics() );
+			
 			for(int i = 0; i < data.nrow(); i++) {
 				String headerString = rowNames[i];
 				
-				Rectangle2D bounds = g2.getFontMetrics().getStringBounds(headerString, g2);
+				TextLayout sLayout = new TextLayout( headerString, MaydayDefaults.DEFAULT_PLOT_SMALL_LEGEND_FONT, l_frc );
+				
+				Rectangle2D bounds = sLayout.getBounds();
 				
 				if(bounds.getHeight()/1.5 <= cellHeight) {
 					g2.translate(0, i * cellHeight + 1);
 					
 					g2.translate(0, bounds.getHeight() + (cellHeight - bounds.getHeight())/2. - 2);
-					g2.drawString(headerString, 0, 0);
+					sLayout.draw(g2, 0, 0);
 					g2.setTransform(af);
 				}
 			}

@@ -10,6 +10,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
@@ -25,8 +27,7 @@ import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.SNV;
 import mayday.Reveal.viewmodel.RevealViewModel;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
-import mayday.core.structures.linalg.matrix.DoubleMatrix;
-import mayday.core.structures.linalg.vector.AbstractVector;
+import mayday.core.MaydayDefaults;
 import mayday.vis3.gradient.ColorGradient;
 import mayday.vis3.model.ViewModelEvent;
 import mayday.vis3.model.ViewModelListener;
@@ -36,8 +37,6 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 
 	private String[] rowHeader = new String[0];
 	private String[] colHeader = new String[0];
-	
-	private DoubleMatrix betaData;
 	
 	private DataComponent dataComp;
 	private RowHeaderComponent rowComp;
@@ -59,7 +58,6 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		this.matrix = matrix;
 		this.colHeader = colHeader;
 		this.rowHeader = rowHeader;
-		this.betaData = matrix.getBetaMatrix();
 		
 		this.setLayout(new BorderLayout());
 		
@@ -88,14 +86,45 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		
 		JScrollBar hSBcomp = compScroller.getHorizontalScrollBar();
 		JScrollBar hSBcol = colScroller.getHorizontalScrollBar();
+		
+		JScrollBar sb1 = new JScrollBar(hSBcol.getOrientation()) {
+			public void paint(Graphics g) {
+				g.setColor(Color.WHITE);
+				g.clearRect(0, 0, getWidth(), getHeight());
+				if(!matrix.isExporting())
+					super.paint(g);
+			}
+		};
+		sb1.setBackground(Color.WHITE);
+		sb1.setOpaque(false);
+		
+		colScroller.setHorizontalScrollBar(sb1);
+		hSBcol = sb1;
+		
 		hSBcol.setModel(hSBcomp.getModel()); // synchronize scrollbars
+		
 		//hide scrollbars
 		colScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		colScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
 		JScrollBar vSBcomp = compScroller.getVerticalScrollBar();
 		JScrollBar vSBrow = rowScroller.getVerticalScrollBar();
+		
+		JScrollBar sb2 = new JScrollBar(vSBcomp.getOrientation()) {
+			public void paint(Graphics g) {
+				g.setColor(Color.WHITE);
+				g.clearRect(0, 0, getWidth(), getHeight());
+				if(!matrix.isExporting())
+					super.paint(g);
+			}
+		};
+		
+		compScroller.setVerticalScrollBar(sb2);
+		vSBcomp = sb2;
+		
 		vSBrow.setModel(vSBcomp.getModel()); // synchronize scrollbars
+		
+		
 		//hide scrollbars
 		rowScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		rowScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -110,6 +139,10 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		
 		compScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		compScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		//remove scrollpane border
+		compScroller.setViewportBorder(null);
+		compScroller.setBorder(null);
 	}
 	
 	public void setViewModel() {
@@ -153,9 +186,15 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		
 		colHeight = 0;
 		
-		for(int i = 0; i < matrix.getDataMatrix().ncol(); i++) {
+		for(int i = 0; i < matrix.getDataMatrix()[0].length; i++) {
 			String id = colHeader[i];
-			Rectangle2D bounds = g.getFontMetrics().getStringBounds(id, g);
+			
+			FontRenderContext l_frc = new FontRenderContext( MaydayDefaults.DEFAULT_FONT_RENDER_CONTEXT.getTransform(), 
+					false, MaydayDefaults.DEFAULT_FONT_RENDER_CONTEXT.usesFractionalMetrics() );
+
+			TextLayout sLayout = new TextLayout( id, MaydayDefaults.DEFAULT_PLOT_SMALL_LEGEND_FONT, l_frc );
+			
+			Rectangle2D bounds = sLayout.getBounds();
 			if(bounds.getWidth() > colHeight)
 				colHeight = (int)Math.rint(bounds.getWidth());
 		}
@@ -169,7 +208,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		
 		rowWidth = 0;
 		
-		for(int i = 0; i < matrix.getDataMatrix().nrow(); i++) {
+		for(int i = 0; i < matrix.getDataMatrix().length; i++) {
 			String id = rowHeader[i];
 			Rectangle2D bounds = g.getFontMetrics().getStringBounds(id, g);
 			if(bounds.getWidth() > rowWidth)
@@ -179,11 +218,18 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		String a = "Affected";
 		String ua = "Unaffected";
 		
-		Rectangle2D bounds = g.getFontMetrics().getStringBounds(a, g);
+		FontRenderContext l_frc = new FontRenderContext( MaydayDefaults.DEFAULT_FONT_RENDER_CONTEXT.getTransform(), 
+				false, MaydayDefaults.DEFAULT_FONT_RENDER_CONTEXT.usesFractionalMetrics() );
+
+		TextLayout sLayout = new TextLayout( a, MaydayDefaults.DEFAULT_PLOT_SMALL_LEGEND_FONT, l_frc );
+		
+		Rectangle2D bounds = sLayout.getBounds();
 		if(bounds.getWidth() > rowWidth)
 			rowWidth = (int)Math.rint(bounds.getWidth());
 		
-		bounds = g.getFontMetrics().getStringBounds(ua, g);
+		sLayout = new TextLayout( ua, MaydayDefaults.DEFAULT_PLOT_SMALL_LEGEND_FONT, l_frc );
+		
+		bounds = sLayout.getBounds();
 		if(bounds.getWidth() > rowWidth)
 			rowWidth = (int)Math.rint(bounds.getWidth());
 		
@@ -192,8 +238,8 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 	
 	public void resize() {
 		
-		int compWidth = matrix.setting.getCellWidth() * matrix.getDataMatrix().ncol();
-		int compHeight = matrix.setting.getCellHeight() * matrix.getDataMatrix().nrow();
+		int compWidth = matrix.setting.getCellWidth() * matrix.getDataMatrix()[0].length;
+		int compHeight = matrix.setting.getCellHeight() * matrix.getDataMatrix().length;
 		
 		Graphics g = this.getGraphics();
 		int rowWidth = getRowHeaderSize(g) + 5;
@@ -270,24 +316,26 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		}
 		
 		public void paintComponent(Graphics g) {
-			double max = matrix.getDataMatrix().getMaxValue(false) * matrix.setting.getCircleScaling();
+			double max = matrix.setting.getCircleScaling();
 			int cellWidth = matrix.setting.getCellWidth();
 			int cellHeight = matrix.setting.getCellHeight();
 			int cellSize = Math.min(cellWidth, cellHeight);
 			
 			Graphics2D g2d = (Graphics2D)g;
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2d.setBackground(Color.WHITE);
 			g2d.clearRect(0, 0, getWidth(), getHeight());
 			
 			Color selectionColor = matrix.setting.getSelectionColor();
-			ColorGradient gradient = matrix.setting.getMatrixColorGradient();
+			ColorGradient gradient = matrix.setting.getBetaColorGradient();
 			
 			g2d.setColor(Color.DARK_GRAY);
-			for(int i = 0; i < matrix.getDataMatrix().nrow(); i++) {
+			for(int i = 0; i < matrix.getDataMatrix().length; i++) {
 				Integer rowIndex = matrix.sortedIndices.get(i);
-				for(int j = 0; j < matrix.getDataMatrix().ncol(); j++) {
-					double val = matrix.getDataMatrix().getValue(rowIndex.intValue(), j);
-//					int alpha = (int)((val / max) * 255);
+				for(int j = 0; j < matrix.getDataMatrix()[0].length; j++) {
+					double val = matrix.getDataMatrix()[rowIndex.intValue()][j] == null ? 
+							0 : matrix.getDataMatrix()[rowIndex.intValue()][j].getSizeValue();
+
 					int diameter = (int)Math.rint(((val / max) * cellSize));
 					
 					//this is the global maximum!
@@ -297,15 +345,12 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 					int x = (cellWidth - diameter)/2;
 					int y = (cellHeight - diameter)/2;
 					
-					//TODO
-					double beta = betaData.getValue(rowIndex, j);
+					double beta = matrix.getDataMatrix()[rowIndex.intValue()][j] == null ? 
+							0 : matrix.getDataMatrix()[rowIndex.intValue()][j].getColorValue();
 					
 					Color c = gradient.mapValueToColor(beta);
 					g2d.setColor(c);
 					g2d.fillOval(j*cellWidth+x, i*cellHeight+y, diameter, diameter);
-					
-//					g2d.setColor(c);
-//					g2d.fillRect(j*cellWidth, i*cellHeight, cellWidth, cellHeight);
 				}
 				
 				if(selectedIndices.contains(i)) {
@@ -317,7 +362,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 				}
 			}
 			
-			for(int i = 0; i < matrix.getDataMatrix().ncol(); i++) {
+			for(int i = 0; i < matrix.getDataMatrix()[0].length; i++) {
 				Gene gene = matrix.getGenes().getGene(i);
 				if(getViewModel().isSelected(gene)) {
 					Color c = new Color(selectionColor.getRed(), selectionColor.getGreen(), selectionColor.getBlue(), 100);
@@ -329,8 +374,8 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 			}
 			
 			if(matrix.setting.plotDiagonal()) {
-				int maxWidth = cellWidth * matrix.getDataMatrix().ncol();
-				int maxHeight = cellHeight * matrix.getDataMatrix().nrow();
+				int maxWidth = cellWidth * matrix.getDataMatrix()[0].length;
+				int maxHeight = cellHeight * matrix.getDataMatrix().length;
 				
 				Line2D diagonalLine = new Line2D.Double(0, 0, maxWidth, maxHeight);
 				g2d.setColor(Color.BLUE);
@@ -461,13 +506,18 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 			AffineTransform af = g2.getTransform();
 			Color selectionColor = matrix.setting.getSelectionColor();
 			
-			for(int i = 0; i < matrix.getDataMatrix().nrow(); i++) {
+			FontRenderContext l_frc = new FontRenderContext( MaydayDefaults.DEFAULT_FONT_RENDER_CONTEXT.getTransform(), 
+					false, MaydayDefaults.DEFAULT_FONT_RENDER_CONTEXT.usesFractionalMetrics() );
+			
+			for(int i = 0; i < matrix.getDataMatrix().length; i++) {
 				Integer rowIndex = matrix.sortedIndices.get(i);
 				if(rowIndex == null)
 					continue;
 				String headerString = rowHeader[rowIndex.intValue()];
+
+				TextLayout sLayout = new TextLayout( headerString, MaydayDefaults.DEFAULT_PLOT_SMALL_LEGEND_FONT, l_frc );
 				
-				Rectangle2D bounds = g2.getFontMetrics().getStringBounds(headerString, g2);
+				Rectangle2D bounds = sLayout.getBounds();
 				
 				if(bounds.getHeight()/1.5 <= cellHeight) {
 					g2.translate(0, i * cellHeight + 1);
@@ -481,7 +531,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 					}
 					
 					g2.translate(0, bounds.getHeight() + (cellHeight - bounds.getHeight())/2. - 2);
-					g2.drawString(headerString, 0, 0);
+					sLayout.draw(g2, 0, 0);
 					g2.setTransform(af);
 				}
 			}
@@ -555,10 +605,16 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 			Color c = matrix.setting.getSelectionColor();
 			Color c2 = new Color(c.getRed(), c.getGreen(), c.getBlue(), 100);
 			
-			for(int i = 0; i < matrix.getDataMatrix().ncol(); i++) {
+			FontRenderContext l_frc = new FontRenderContext( MaydayDefaults.DEFAULT_FONT_RENDER_CONTEXT.getTransform(), 
+					false, MaydayDefaults.DEFAULT_FONT_RENDER_CONTEXT.usesFractionalMetrics() );
+			
+			for(int i = 0; i < matrix.getDataMatrix()[0].length; i++) {
 
 				String headerString = colHeader[i];
-				Rectangle2D bounds = g2.getFontMetrics().getStringBounds(headerString, g2);
+
+				TextLayout sLayout = new TextLayout( headerString, MaydayDefaults.DEFAULT_PLOT_SMALL_LEGEND_FONT, l_frc );
+				
+				Rectangle2D bounds = sLayout.getBounds();
 				
 				if(bounds.getHeight()/1.5 <= cellWidth) {
 					Gene gene = matrix.getGenes().getGene(i);
@@ -576,7 +632,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 					g2.translate((i+1) * cellWidth - (cellWidth - bounds.getHeight())/2., getHeight() - bounds.getWidth() - 5);
 					g2.rotate( Math.PI / 2 );
 					
-					g2.drawString(headerString, 0, 10);
+					sLayout.draw(g2, 0, 10);
 					
 					g2.setTransform(af);
 				}
@@ -594,24 +650,24 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(e.getButton() == MouseEvent.BUTTON1) {
-				int x = e.getX();
-				int index = x / matrix.setting.getCellWidth();
-				
-				if(index < colHeader.length && index >= 0) {
-					if(e.getClickCount() > 1) {
-						AbstractVector template = matrix.getDataMatrix().getColumn(index);
-						matrix.sort(template);
-					} else {
-						Gene gene = matrix.getGenes().getGene(index);
-						if(e.isControlDown()) {
-							getViewModel().toggleProbeSelected(gene);
-						} else {
-							getViewModel().setProbeSelection(gene);
-						}
-					}
-				}
-			}
+//			if(e.getButton() == MouseEvent.BUTTON1) {
+//				int x = e.getX();
+//				int index = x / matrix.setting.getCellWidth();
+//				
+//				if(index < colHeader.length && index >= 0) {
+//					if(e.getClickCount() > 1) {
+//						AbstractVector template = matrix.getDataMatrix().getColumn(index);
+//						matrix.sort(template);
+//					} else {
+//						Gene gene = matrix.getGenes().getGene(index);
+//						if(e.isControlDown()) {
+//							getViewModel().toggleProbeSelected(gene);
+//						} else {
+//							getViewModel().setProbeSelection(gene);
+//						}
+//					}
+//				}
+//			}
 		}
 
 		@Override
@@ -650,9 +706,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 
 	public void setGradient(double betaMin, double betaMax, int numBeta) {
 		if(matrix.setting != null) {
-			matrix.setting.getMatrixColorGradient().setResolution(numBeta);
-			matrix.setting.getMatrixColorGradient().setMin(betaMin);
-			matrix.setting.getMatrixColorGradient().setMax(betaMax);
+			matrix.setting.setBetaGradient(betaMin, betaMax, numBeta);
 		}
 	}
 
