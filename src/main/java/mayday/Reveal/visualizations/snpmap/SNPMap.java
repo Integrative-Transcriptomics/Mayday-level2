@@ -334,9 +334,9 @@ public class SNPMap extends RevealVisualization {
 	}
 	
 	public void sort(DoubleVector template) {
-		Integer[] indices = MultiArraySorter.sort(template);
+		Integer[] indices = MultiArraySorter.sort(template, false);
 		//sort the person indices
-		personIndices = MultiArraySorter.sort(indices, personIndices);
+		personIndices = MultiArraySorter.indicesToMap(indices, personIndices);
 		metaComp.sort(indices);
 		updatePlot();
 	}

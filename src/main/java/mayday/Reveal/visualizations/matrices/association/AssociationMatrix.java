@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -184,19 +183,23 @@ public class AssociationMatrix extends RevealVisualization {
 	}
 	
 	private void calculateInitialSorting() {
-		DoubleVector mostCounts = new DoubleVector(cellData.length);
+		DoubleVector rowSums = new DoubleVector(cellData.length);
+		//for each row
 		for(int i = 0; i < cellData.length; i++) {
 			double counts = 0;
+			//calculate the row sum
 			for(int j = 0; j < cellData[0].length; j++) {
 				Double value = cellData[i][j] == null ? 0 : cellData[i][j].getSizeValue();
 				if(Double.compare(value, 0) > 0) {
 					counts += value;
 				}
 			}
-			mostCounts.set(i, counts);
+			rowSums.set(i, counts);
 			counts = 0;
 		}
-		sort(mostCounts);
+		
+		
+		sort(rowSums);
 	}
 
 	protected CellObject[][] getDataMatrix() {
@@ -500,7 +503,7 @@ public class AssociationMatrix extends RevealVisualization {
 			normalizeData(data, pMax);
 		}
 		
-		setting.setBetaGradient(betaMin, betaMax, distinctBeta.size());
+		setting.setBetaGradient(betaMin, betaMax, Math.max(distinctBeta.size(),1024));
 		
 		return data;
 	}
@@ -721,6 +724,8 @@ public class AssociationMatrix extends RevealVisualization {
 					cg.setSizeValue(cg.getSizeValue() - Math.log10(p));
 				}
 				
+				cg.setColorValue(beta);
+				
 				if(Double.compare(maxP, p) < 0) {
 					maxP = p;
 				}
@@ -748,16 +753,16 @@ public class AssociationMatrix extends RevealVisualization {
 			normalizeData(data, maxP);
 		}
 		
-		int numBeta = distinctBeta.size();
+		int numBeta = Math.max(distinctBeta.size(),1024);
 		setting.setBetaGradient(betaMin, betaMax, numBeta);
 		
 		return data;
 	}
 	
 	public void sort(AbstractVector template) {
-		Integer[] indices = MultiArraySorter.sort(template);
+		Integer[] indices = MultiArraySorter.sort(template, true);
 		//sort the indices
-		sortedIndices = MultiArraySorter.sort(indices, sortedIndices);
+		sortedIndices = MultiArraySorter.indicesToMap(indices, sortedIndices);
 		updatePlot();
 	}
 	

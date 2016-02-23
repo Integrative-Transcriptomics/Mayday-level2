@@ -21,4 +21,8 @@ public class CellObject {
 	public void setSizeValue(double value) {
 		this.sizeValue = value;
 	}
+
+	public void setColorValue(double colorValue) {
+		this.colorValue = colorValue;
+	}
 }

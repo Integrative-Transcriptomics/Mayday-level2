@@ -182,7 +182,7 @@ public class SNPMapMetaComponent extends JComponent implements ViewModelListener
 			
 			int i = 0;
 			for(Subject s :subjects) {
-				Integer rowIndex = snpMap.personIndices.getRight(s.getIndex());
+				Integer rowIndex = snpMap.personIndices.getRightToLeft(s.getIndex());
 //				System.out.println(rowIndex);
 				double value = columnData.get(j).get(rowIndex.intValue());
 				values.set(i++, value);

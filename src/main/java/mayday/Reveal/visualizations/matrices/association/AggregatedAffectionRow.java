@@ -11,6 +11,8 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -62,6 +64,8 @@ public class AggregatedAffectionRow extends JPanel {
 		Integer[] affected = matrix.getData().getSubjects().getAffectedSubjectIndices();
 		Integer[] unaffected = matrix.getData().getSubjects().getUnaffectedSubjectIndices();
 		
+		Set<Double> distinctExpression = new HashSet<Double>();
+		
 		double[] affectedValues = new double[genes.size()];
 		double[] unaffectedValues = new double[genes.size()];
 		
@@ -93,10 +97,12 @@ public class AggregatedAffectionRow extends JPanel {
 				max = unaffectedValues[i];
 			if(unaffectedValues[i] < min)
 				min = unaffectedValues[i];
+			
+			distinctExpression.add(affectedValues[i]);
+			distinctExpression.add(unaffectedValues[i]);
 		}
 		
-		matrix.setting.getExpressionColorGradient().setMax(max);
-		matrix.setting.getExpressionColorGradient().setMin(min);
+		matrix.setting.setExpressionColorGradient(min, max, Math.max(distinctExpression.size(),1024));
 		
 		this.data = new DoubleMatrix(2, genes.size());
 		

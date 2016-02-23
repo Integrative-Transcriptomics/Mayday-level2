@@ -13,6 +13,7 @@ import mayday.core.settings.typed.IntSetting;
 import mayday.core.settings.typed.RestrictedStringSetting;
 import mayday.vis3.gradient.ColorGradient;
 import mayday.vis3.gradient.ColorGradientSetting;
+import mayday.vis3.gradient.PredefinedGradients;
 
 public class AssociationMatrixSetting extends HierarchicalSetting {
 
@@ -61,8 +62,8 @@ public class AssociationMatrixSetting extends HierarchicalSetting {
 		addSetting(normalizeLD = new BooleanSetting("Normalize LD", null, false));
 		
 		addSetting(selectionColor = new ColorSetting("Selection Color", null, Color.RED.brighter()));
-		addSetting(expressionGradient = new ColorGradientSetting("Expression Color Gradient", null, ColorGradient.createDefaultGradient(-1, +1)));
-		addSetting(betaGradient = new ColorGradientSetting("SNV Effect Color Gradient", null, ColorGradient.createDefaultGradient(-1, +1)));
+		addSetting(expressionGradient = new ColorGradientSetting("Expression Color Gradient", null, ColorGradient.createDefaultGradient(-1, +1, PredefinedGradients.BREWER_BLUE_WHITE_RED)));
+		addSetting(betaGradient = new ColorGradientSetting("SNV Effect Color Gradient", null, ColorGradient.createDefaultGradient(-1, +1, PredefinedGradients.BREWER_BLUE_WHITE_RED)));
 
 		addSetting(plotDiagonal = new BooleanSetting("Highlight Diagonal", "Plot a highlighting diagonal line", false));
 		
@@ -113,6 +114,14 @@ public class AssociationMatrixSetting extends HierarchicalSetting {
 	
 	public ColorGradient getExpressionColorGradient() {
 		return this.expressionGradient.getColorGradient();
+	}
+	
+	public void setExpressionColorGradient(double min, double max, int resolution) {
+		ColorGradient cg = this.expressionGradient.getColorGradient();
+		cg.setMin(min);
+		cg.setMax(max);
+		cg.setResolution(resolution);
+		this.expressionGradient.setColorGradient(cg);
 	}
 	
 	public boolean plotDiagonal() {

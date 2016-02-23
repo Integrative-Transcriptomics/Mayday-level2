@@ -446,8 +446,8 @@ public class Genome extends MetaInformationPlugin {
 	public long getSequencLength(String seqName) {
 		String name = seqName;
 		//use original name if possible
-		if(seqNameMapping.getRight(seqName) != null)
-			name = seqNameMapping.getRight(seqName);
+		if(seqNameMapping.getRightToLeft(seqName) != null)
+			name = seqNameMapping.getRightToLeft(seqName);
 		return indexMap.get(name).seqLength;
 	}
 
