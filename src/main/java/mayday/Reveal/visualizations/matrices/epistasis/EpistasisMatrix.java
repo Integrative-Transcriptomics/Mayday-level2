@@ -1,4 +1,4 @@
-package mayday.Reveal.visualizations.matrices.twolocus;
+package mayday.Reveal.visualizations.matrices.epistasis;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
@@ -35,10 +35,10 @@ import mayday.vis3.model.ViewModelEvent;
  *
  */
 @SuppressWarnings("serial")
-public class AssociationMatrix extends RevealVisualization {
+public class EpistasisMatrix extends RevealVisualization {
 	
-	protected AssociationMatrixSetting setting;
-	private AssociationMatrixComponent plotComponent;
+	protected EpistasisMatrixSetting setting;
+	private EpistasisMatrixComponent plotComponent;
 	
 	protected double maxCellIntensity = 0;
 	
@@ -65,10 +65,10 @@ public class AssociationMatrix extends RevealVisualization {
 	 * create a new association matrix
 	 * @param projectHandler 
 	 */
-	public AssociationMatrix(ProjectHandler projectHandler) {
+	public EpistasisMatrix(ProjectHandler projectHandler) {
 		setData(projectHandler.getSelectedProject());
 		
-		this.plotComponent = new AssociationMatrixComponent(this);
+		this.plotComponent = new EpistasisMatrixComponent(this);
 		this.selectedSNPS = new SNVList("Selected SNPs", getData());
 		
 		this.setLayout(new BorderLayout());
@@ -166,10 +166,10 @@ public class AssociationMatrix extends RevealVisualization {
 						}
 						
 						switch(setting.getDataValues()) {
-						case AssociationMatrixSetting.NUMMBER_OF_SNPS:
+						case EpistasisMatrixSetting.NUMMBER_OF_SNPS:
 							currentIntensity += 1;
 							break;
-						case AssociationMatrixSetting.P_VALUE:
+						case EpistasisMatrixSetting.P_VALUE:
 							currentIntensity += sts.p > 0 ? -Math.log10(sts.p) : 0;
 							break;
 						}
@@ -181,10 +181,10 @@ public class AssociationMatrix extends RevealVisualization {
 					double cellIntensity = currentIntensity;
 					
 					switch(setting.getDataValues()) {
-					case AssociationMatrixSetting.NUMMBER_OF_SNPS:
+					case EpistasisMatrixSetting.NUMMBER_OF_SNPS:
 						//nothing to do
 						break;
-					case AssociationMatrixSetting.P_VALUE:
+					case EpistasisMatrixSetting.P_VALUE:
 						//take mean p-value
 						if(cellIntensity > 0)
 							cellIntensity /= snpCount;
@@ -224,7 +224,7 @@ public class AssociationMatrix extends RevealVisualization {
 
 	@Override
 	public HierarchicalSetting setupPrerequisites(PlotContainer plotContainer) {
-		setting = new AssociationMatrixSetting(this);
+		setting = new EpistasisMatrixSetting(this);
 		this.calculateCellIntensities();
 		setting.setColorGradient();
 		
@@ -238,18 +238,18 @@ public class AssociationMatrix extends RevealVisualization {
 	 */
 	public void updatePlot(int source) {
 		switch(source) {
-		case AssociationMatrixSetting.RESIZE_PLOT:
+		case EpistasisMatrixSetting.RESIZE_PLOT:
 			plotComponent.resize();
 			updatePlot();
 			break;
-		case AssociationMatrixSetting.REARRANGE_PLOT_COMPONENTS:
+		case EpistasisMatrixSetting.REARRANGE_PLOT_COMPONENTS:
 			plotComponent.arrangeComponents();
 			updatePlot();
 			break;
-		case AssociationMatrixSetting.LD_BLOCKS:
+		case EpistasisMatrixSetting.LD_BLOCKS:
 			updateTask(true);
 			break;
-		case AssociationMatrixSetting.DATA_VALUES:
+		case EpistasisMatrixSetting.DATA_VALUES:
 			updateTask(true);
 			break;
 		default:

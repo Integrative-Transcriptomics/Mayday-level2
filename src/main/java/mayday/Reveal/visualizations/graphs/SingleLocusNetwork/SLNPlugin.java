@@ -1,9 +1,8 @@
-package mayday.Reveal.visualizations.graphs.SingleLocusNetwork;
-//package mayday.GWAS.visualizations.graphs.SingleLocusNetwork;
+//package mayday.Reveal.visualizations.graphs.SingleLocusNetwork;
 //
-//import java.awt.Component;
-//
-//import mayday.GWAS.visualizations.RevealVisualizationPlugin;
+//import mayday.Reveal.utilities.RevealMenuConstants;
+//import mayday.Reveal.visualizations.RevealVisualization;
+//import mayday.Reveal.visualizations.RevealVisualizationPlugin;
 //
 //public class SLNPlugin extends RevealVisualizationPlugin {
 //
@@ -14,12 +13,12 @@ package mayday.Reveal.visualizations.graphs.SingleLocusNetwork;
 //
 //	@Override
 //	public String getDescription() {
-//		return "Network based on Single Locus Results";
+//		return "SL eQTL Association Network";
 //	}
 //
 //	@Override
 //	public String getName() {
-//		return "Single Locus Network";
+//		return "SL eQTL Association Network";
 //	}
 //
 //	@Override
@@ -29,7 +28,7 @@ package mayday.Reveal.visualizations.graphs.SingleLocusNetwork;
 //
 //	@Override
 //	public String getMenuName() {
-//		return "Single Locus Network";
+//		return "SL eQTL Association Network";
 //	}
 //
 //	@Override
@@ -38,7 +37,22 @@ package mayday.Reveal.visualizations.graphs.SingleLocusNetwork;
 //	}
 //
 //	@Override
-//	public Component getComponent() {
+//	public RevealVisualization getComponent() {
 //		return new SLN(projectHandler);
+//	}
+//
+//	@Override
+//	public boolean showInToolbar() {
+//		return true;
+//	}
+//
+//	@Override
+//	public boolean usesViewSetting() {
+//		return true;
+//	}
+//
+//	@Override
+//	public String getMenu() {
+//		return RevealMenuConstants.VIS_MENU_NETWORK_SUBMENU;
 //	}
 //}

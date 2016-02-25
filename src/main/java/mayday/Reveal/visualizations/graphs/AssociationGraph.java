@@ -1,7 +1,6 @@
 package mayday.Reveal.visualizations.graphs;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -10,11 +9,9 @@ import java.awt.event.KeyListener;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 
-import mayday.Reveal.visualizations.RevealVisualization;
-import mayday.vis3.model.ViewModelListener;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
-import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
@@ -22,6 +19,8 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer.InsidePositioner;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
+import mayday.Reveal.visualizations.RevealVisualization;
+import mayday.vis3.model.ViewModelListener;
 
 
 /**
@@ -53,14 +52,13 @@ public abstract class AssociationGraph<V, E> extends RevealVisualization impleme
 	 * start the calculations
 	 */
 	public void start() {
+		
 		graph = this.buildGraph();
 		
 		Layout<V, E> layout = new CircleLayout<V, E>(graph);
-		layout.setSize(new Dimension(800, 600));
 		
 		//define a new visualization view
 		visualizationViewer = new VisualizationViewer<V, E>(layout);
-		visualizationViewer.setPreferredSize(new Dimension(800, 600));
 		visualizationViewer.setBackground(Color.WHITE);
 		visualizationViewer.setForeground(Color.BLACK);
 		
@@ -80,7 +78,13 @@ public abstract class AssociationGraph<V, E> extends RevealVisualization impleme
 		
 		//scroll pane for zooming
 		scrollPane = new GraphZoomScrollPane(visualizationViewer);
-		add(scrollPane);
+		
+		JMenuBar mouseMenu = new JMenuBar();
+		mouseMenu.add(getGraphMouse().getModeMenu());
+		scrollPane.setCorner(mouseMenu);
+		
+		this.setLayout(new BorderLayout());
+		add(scrollPane, BorderLayout.CENTER);
 	}
 	
 	protected abstract Graph<V, E> buildGraph();

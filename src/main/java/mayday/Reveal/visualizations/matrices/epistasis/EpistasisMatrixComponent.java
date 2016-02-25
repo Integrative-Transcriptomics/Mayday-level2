@@ -1,4 +1,4 @@
-package mayday.Reveal.visualizations.matrices.twolocus;
+package mayday.Reveal.visualizations.matrices.epistasis;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -27,9 +27,9 @@ import mayday.Reveal.data.Gene;
 import mayday.Reveal.data.GeneList;
 import mayday.Reveal.data.GenePair;
 import mayday.Reveal.data.SNV;
-import mayday.Reveal.visualizations.matrices.twolocus.viewelements.Overview;
-import mayday.Reveal.visualizations.matrices.twolocus.viewelements.PlaceHolder;
-import mayday.Reveal.visualizations.matrices.twolocus.viewelements.SelectionTypeMenu;
+import mayday.Reveal.visualizations.matrices.epistasis.viewelements.Overview;
+import mayday.Reveal.visualizations.matrices.epistasis.viewelements.PlaceHolder;
+import mayday.Reveal.visualizations.matrices.epistasis.viewelements.SelectionTypeMenu;
 import mayday.core.Probe;
 
 /**
@@ -37,12 +37,12 @@ import mayday.core.Probe;
  *
  */
 @SuppressWarnings("serial")
-public class AssociationMatrixComponent extends JPanel {
+public class EpistasisMatrixComponent extends JPanel {
 	
 	private Color fgColor = Color.BLACK;
 	private Color bgColor = Color.WHITE;
 	
-	private AssociationMatrix matrix;
+	private EpistasisMatrix matrix;
 	private CellComponent[] cellComponents;
 	private BottomLabelPanel[] bottomLabels;
 	private LeftLabelPanel[] leftLabels;
@@ -65,7 +65,7 @@ public class AssociationMatrixComponent extends JPanel {
 	/**
 	 * @param associationMatrix
 	 */
-	public AssociationMatrixComponent(AssociationMatrix associationMatrix) {
+	public EpistasisMatrixComponent(EpistasisMatrix associationMatrix) {
 		this.matrix = associationMatrix;
 		this.genes = matrix.getData().getGenes();
 

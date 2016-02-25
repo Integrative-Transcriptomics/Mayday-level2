@@ -1,4 +1,4 @@
-package mayday.Reveal.visualizations.matrices.twolocus.viewelements;
+package mayday.Reveal.visualizations.matrices.epistasis.viewelements;
 
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -11,7 +11,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.plaf.basic.BasicIconFactory;
 
-import mayday.Reveal.visualizations.matrices.twolocus.AssociationMatrixSetting;
+import mayday.Reveal.visualizations.matrices.epistasis.EpistasisMatrixSetting;
 
 /**
  * @author jaeger
@@ -20,7 +20,7 @@ import mayday.Reveal.visualizations.matrices.twolocus.AssociationMatrixSetting;
 @SuppressWarnings("serial")
 public class SelectionTypeMenu extends JMenuBar {
 	private int selectionType;
-	private AssociationMatrixSetting setting;
+	private EpistasisMatrixSetting setting;
 	
 	/**
 	 * @param setting
@@ -33,7 +33,7 @@ public class SelectionTypeMenu extends JMenuBar {
 	/**
 	 * @param setting
 	 */
-	public void setSetting(AssociationMatrixSetting setting) {
+	public void setSetting(EpistasisMatrixSetting setting) {
 		this.setting = setting;
 	}
 	

@@ -1,4 +1,4 @@
-package mayday.Reveal.visualizations.matrices.twolocus.viewelements;
+package mayday.Reveal.visualizations.matrices.epistasis.viewelements;
 
 import java.awt.Color;
 

@@ -55,7 +55,7 @@ import mayday.Reveal.utilities.GeneColors;
 import mayday.Reveal.utilities.SNVLists;
 import mayday.Reveal.viewmodel.RevealViewModelEvent;
 import mayday.Reveal.visualizations.graphs.AssociationGraph;
-import mayday.Reveal.visualizations.matrices.twolocus.AssociationMatrixSetting;
+import mayday.Reveal.visualizations.matrices.epistasis.EpistasisMatrixSetting;
 import mayday.core.Probe;
 import mayday.core.settings.generic.HierarchicalSetting;
 import mayday.core.structures.linalg.vector.DoubleVector;
@@ -414,10 +414,10 @@ public class TLN extends AssociationGraph<String, Integer> {
 						double cellIntensity = currentIntensity;
 						
 						switch(setting.getDataValues()) {
-						case AssociationMatrixSetting.NUMMBER_OF_SNPS:
+						case EpistasisMatrixSetting.NUMMBER_OF_SNPS:
 							//nothing to do
 							break;
-						case AssociationMatrixSetting.P_VALUE:
+						case EpistasisMatrixSetting.P_VALUE:
 							//take mean p-value
 							if(cellIntensity > 0)
 								cellIntensity /= snpCount;

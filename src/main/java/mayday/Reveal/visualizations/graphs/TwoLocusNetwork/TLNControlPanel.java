@@ -30,7 +30,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
@@ -395,9 +394,6 @@ public class TLNControlPanel extends JFrame {
 	}
 	
 	private void buildGUI() {
-		JMenuBar mouseMenu = new JMenuBar();
-        mouseMenu.add(plink.getGraphMouse().getModeMenu());
-		plink.getScrollPane().setCorner(mouseMenu);
 		
 		ButtonGroup radio = new ButtonGroup();
         radio.add(lineButton);

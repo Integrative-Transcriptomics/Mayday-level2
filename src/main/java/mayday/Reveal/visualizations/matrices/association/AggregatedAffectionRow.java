@@ -40,8 +40,6 @@ public class AggregatedAffectionRow extends JPanel {
 		this.dataComp = new DataComponent();
 		this.rowHeader = new RowHeader();
 		
-//		this.calculateAggregationData();
-		
 		this.add(rowHeader, BorderLayout.WEST);
 		
 		dataScroller = new JScrollPane(dataComp);

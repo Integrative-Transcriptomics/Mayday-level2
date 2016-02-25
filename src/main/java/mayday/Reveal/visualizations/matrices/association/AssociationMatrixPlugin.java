@@ -13,22 +13,22 @@ public class AssociationMatrixPlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public String getDescription() {
-		return "eQTL Association Matrix based on PLINK Association Results";
+		return "eQTL Association Matrix";
 	}
 
 	@Override
 	public String getName() {
-		return "SNV Association Matrix";
+		return "eQTL Association Matrix";
 	}
 
 	@Override
 	public String getIconPath() {
-		return "mayday/GWAS/slMatrix.png";
+		return "mayday/GWAS/icons/plots/eQTL-AM.png";
 	}
 
 	@Override
 	public String getMenuName() {
-		return "SNV Association Matrix";
+		return "eQTL Association Matrix";
 	}
 
 	@Override

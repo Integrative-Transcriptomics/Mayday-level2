@@ -1,4 +1,4 @@
-package mayday.Reveal.visualizations.matrices.twolocus;
+package mayday.Reveal.visualizations.matrices.epistasis;
 
 import java.awt.Color;
 
@@ -20,7 +20,7 @@ import mayday.vis3.gradient.agents.Agent_Tricolore;
  * @author jaeger
  *
  */
-public class AssociationMatrixSetting extends HierarchicalSetting {
+public class EpistasisMatrixSetting extends HierarchicalSetting {
 
 	public static final int RESIZE_PLOT = 1;
 	public static final int REARRANGE_PLOT_COMPONENTS = 2;
@@ -30,7 +30,7 @@ public class AssociationMatrixSetting extends HierarchicalSetting {
 	public static final int NUMMBER_OF_SNPS = 0;
 	public static final int P_VALUE = 1;
 	
-	private AssociationMatrix matrix;
+	private EpistasisMatrix matrix;
 	
 	private ColorGradientSetting colorGradient;
 	
@@ -50,7 +50,7 @@ public class AssociationMatrixSetting extends HierarchicalSetting {
 	/**
 	 * @param matrix
 	 */
-	public AssociationMatrixSetting(AssociationMatrix matrix) {
+	public EpistasisMatrixSetting(EpistasisMatrix matrix) {
 		super("Association Matrix Setting");	
 		this.matrix = matrix;
 		
@@ -164,8 +164,8 @@ public class AssociationMatrixSetting extends HierarchicalSetting {
 		return this.colorGradient.getColorGradient();
 	}
 
-	public AssociationMatrixSetting clone() {
-		AssociationMatrixSetting ams = new AssociationMatrixSetting(matrix);
+	public EpistasisMatrixSetting clone() {
+		EpistasisMatrixSetting ams = new EpistasisMatrixSetting(matrix);
 		ams.fromPrefNode(this.toPrefNode());
 		return ams;
 	}

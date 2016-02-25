@@ -117,7 +117,7 @@ public class RevealToolBar extends JToolBar {
 	private ImageIcon loadImage(String file) {
 		FMFile fmf = PluginManager.getInstance().getFilemanager().getFile(file);									
 		try {
-			return new ImageIcon(Images.getScaledImage(ImageIO.read(fmf.getStream()), 24, 24));
+			return new ImageIcon(Images.getScaledImage(ImageIO.read(fmf.getStream()), 30, 30));
 		} catch (IOException e) {
 			e.printStackTrace();			
 		}

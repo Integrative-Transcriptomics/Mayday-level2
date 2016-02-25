@@ -1,34 +1,34 @@
-package mayday.Reveal.visualizations.graphs.TwoLocusNetwork;
+package mayday.Reveal.visualizations.matrices.epistasis;
 
 import mayday.Reveal.utilities.RevealMenuConstants;
 import mayday.Reveal.visualizations.RevealVisualization;
 import mayday.Reveal.visualizations.RevealVisualizationPlugin;
 
-public class TLNPlugin extends RevealVisualizationPlugin {
+public class EpistasisMatrixPlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public String getType() {
-		return "vis.TLN";
+		return "vis.TLAssociationMatrix";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Two Locus Network based on PLINK Two Locus Results";
+		return "Epistasis Matrix";
 	}
 
 	@Override
 	public String getName() {
-		return "Two Locus Network";
+		return "Epistasis Matrix";
 	}
 
 	@Override
 	public String getIconPath() {
-		return "mayday/GWAS/icons/plots/tlNetwork.png";
+		return "mayday/GWAS/associationMatrix.png";
 	}
 
 	@Override
 	public String getMenuName() {
-		return "Two Locus Network";
+		return "Epistasis Matrix";
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class TLNPlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public RevealVisualization getComponent() {
-		return new TLN(projectHandler);
+		return new EpistasisMatrix(projectHandler);
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class TLNPlugin extends RevealVisualizationPlugin {
 
 	@Override
 	public boolean showInToolbar() {
-		return true;
+		return false;
 	}
 
 	@Override

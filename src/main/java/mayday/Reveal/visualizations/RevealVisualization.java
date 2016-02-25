@@ -48,6 +48,9 @@ public abstract class RevealVisualization extends BasicPlotPanel implements View
 	public void setup(PlotContainer plotContainer) {
 		if(viewModel == null) {
 			viewModel = (RevealViewModel)plotContainer.getViewModel();
+		} else {
+			//only initialize once, even if added twice
+			return;
 		}
 		viewModel.addViewModelListener(this);
 		
