@@ -225,7 +225,7 @@ public class RevealGUI extends MaydayFrame {
 						
 						JPanel settingPanel = SettingPanelCreator.getSettingPanel(plotSetting);
 						splitPane.setRightComponent(settingPanel);
-						splitPane.setDividerLocation(0.85);
+						splitPane.setDividerLocation(0.8);
 						splitPane.setResizeWeight(1.0);
 						splitPane.setOneTouchExpandable(true);
 					} else {

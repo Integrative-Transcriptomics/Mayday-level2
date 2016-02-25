@@ -117,11 +117,23 @@ public class AssociationMatrixSetting extends HierarchicalSetting {
 	}
 	
 	public void setExpressionColorGradient(double min, double max, int resolution) {
+		boolean changed = false;
 		ColorGradient cg = this.expressionGradient.getColorGradient();
-		cg.setMin(min);
-		cg.setMax(max);
-		cg.setResolution(resolution);
-		this.expressionGradient.setColorGradient(cg);
+		if(cg.getMin() != min){
+			cg.setMin(min);
+			changed = true;
+		}
+		if(cg.getMax() != max){
+			cg.setMax(max);
+			changed = true;
+		}
+		if(cg.getResolution() != resolution){
+			cg.setResolution(resolution);
+			changed = true;
+		}
+		if(changed){
+			this.expressionGradient.setColorGradient(cg);
+		}
 	}
 	
 	public boolean plotDiagonal() {
@@ -186,7 +198,17 @@ public class AssociationMatrixSetting extends HierarchicalSetting {
 
 		@Override
 		public void stateChanged(SettingChangeEvent e) {
-			matrix.updatePlot();
+			Object source = e.getSource();
+			
+			boolean recalculate = false;
+			
+			if(source == geneAggregationSetting 
+					|| source == snvAggregationSetting
+					|| source == pValueThreshold
+					|| source == normalizeLD)
+				recalculate = true;
+			
+			matrix.updatePlot(recalculate);
 		}
 	}
 }

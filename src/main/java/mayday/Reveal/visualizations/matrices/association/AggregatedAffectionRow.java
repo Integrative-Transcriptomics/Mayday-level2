@@ -64,16 +64,38 @@ public class AggregatedAffectionRow extends JPanel {
 		Integer[] affected = matrix.getData().getSubjects().getAffectedSubjectIndices();
 		Integer[] unaffected = matrix.getData().getSubjects().getUnaffectedSubjectIndices();
 		
-		Set<Double> distinctExpression = new HashSet<Double>();
-		
 		double[] affectedValues = new double[genes.size()];
 		double[] unaffectedValues = new double[genes.size()];
 		
 		Arrays.fill(affectedValues, 0);
 		Arrays.fill(unaffectedValues, 0);
 		
+		switch(matrix.setting.getGeneAggregationMethod()) {
+		case AssociationMatrixSetting.MEAN_EXPRESSION:
+			meanAggregation(affected, affectedValues, unaffected, unaffectedValues, genes);
+			break;
+		case AssociationMatrixSetting.MEDIAN_EXPRESSION:
+			medianAggregation(affected, affectedValues, unaffected, unaffectedValues, genes);
+			break;
+		case AssociationMatrixSetting.MAX_EXPRESSION:
+			maxAggregation(affected, affectedValues, unaffected, unaffectedValues, genes);
+			break;
+		case AssociationMatrixSetting.MIN_EXPRESSION:
+			minAggregation(affected, affectedValues, unaffected, unaffectedValues, genes);
+			break;
+		}
+		
+		this.data = new DoubleMatrix(2, genes.size());
+		
+		this.data.setRow(0, affectedValues);
+		this.data.setRow(1, unaffectedValues);
+	}
+	
+private void meanAggregation(Integer[] affected, double[] affectedValues, Integer[] unaffected, double[] unaffectedValues, GeneList genes) {
+		
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
+		Set<Double> distinctExpression = new HashSet<Double>();
 		
 		for(int i = 0; i < genes.size(); i++) {
 			for(int subjectIndex : affected) {
@@ -103,11 +125,156 @@ public class AggregatedAffectionRow extends JPanel {
 		}
 		
 		matrix.setting.setExpressionColorGradient(min, max, Math.max(distinctExpression.size(),1024));
+	}
+	
+	private void medianAggregation(Integer[] affected, double[] affectedValues, Integer[] unaffected, double[] unaffectedValues, GeneList genes) {
+		double min = Double.MAX_VALUE;
+		double max = Double.MIN_VALUE;
+		Set<Double> distinctExpression = new HashSet<Double>();
 		
-		this.data = new DoubleMatrix(2, genes.size());
+		for(int i = 0; i < genes.size(); i++) {
+			
+			int count = 0;
+			double[] tmpValues = new double[affected.length];
+			
+			for(int subjectIndex : affected) {
+				tmpValues[count++] = matrix.getViewModel().getDataManipulator().getProbeValues(genes.getGene(i))[subjectIndex];
+			}
+			
+			Arrays.sort(tmpValues);
+			
+			double finalValue = tmpValues.length % 2 == 0 ? 
+					(tmpValues[(tmpValues.length-1)/2] + tmpValues[tmpValues.length/2])/2. 
+					: tmpValues[(tmpValues.length-1)/2];
+			
+			affectedValues[i] = finalValue;
+			
+			if(affectedValues[i] > max)
+				max = affectedValues[i];
+			if(affectedValues[i] < min)
+				min = affectedValues[i];
+			
+			count = 0;
+			tmpValues = new double[unaffected.length];
+			
+			for(int subjectIndex : unaffected) {
+				tmpValues[count++] = matrix.getViewModel().getDataManipulator().getProbeValues(genes.getGene(i))[subjectIndex];
+			}
+			
+			Arrays.sort(tmpValues);
+			
+			finalValue = tmpValues.length % 2 == 0 ? 
+					(tmpValues[(tmpValues.length-1)/2] + tmpValues[tmpValues.length/2])/2. 
+					: tmpValues[(tmpValues.length-1)/2];
+			
+			unaffectedValues[i] = finalValue;
+			
+			if(unaffectedValues[i] > max)
+				max = unaffectedValues[i];
+			if(unaffectedValues[i] < min)
+				min = unaffectedValues[i];
+			
+			distinctExpression.add(affectedValues[i]);
+			distinctExpression.add(unaffectedValues[i]);
+		}
 		
-		this.data.setRow(0, affectedValues);
-		this.data.setRow(1, unaffectedValues);
+		matrix.setting.setExpressionColorGradient(min, max, Math.max(distinctExpression.size(),1024));
+	}
+	
+	private void minAggregation(Integer[] affected, double[] affectedValues, Integer[] unaffected, double[] unaffectedValues, GeneList genes) {
+		double min = Double.MAX_VALUE;
+		double max = Double.MIN_VALUE;
+		Set<Double> distinctExpression = new HashSet<Double>();
+		
+		for(int i = 0; i < genes.size(); i++) {
+			
+			int count = 0;
+			double[] tmpValues = new double[affected.length];
+			
+			for(int subjectIndex : affected) {
+				tmpValues[count++] = matrix.getViewModel().getDataManipulator().getProbeValues(genes.getGene(i))[subjectIndex];
+			}
+			
+			Arrays.sort(tmpValues);
+			
+			double finalValue = tmpValues[0];
+			affectedValues[i] = finalValue;
+			
+			if(affectedValues[i] > max)
+				max = affectedValues[i];
+			if(affectedValues[i] < min)
+				min = affectedValues[i];
+			
+			count = 0;
+			tmpValues = new double[unaffected.length];
+			
+			for(int subjectIndex : unaffected) {
+				tmpValues[count++] = matrix.getViewModel().getDataManipulator().getProbeValues(genes.getGene(i))[subjectIndex];
+			}
+			
+			Arrays.sort(tmpValues);
+			
+			finalValue = tmpValues[0];
+			unaffectedValues[i] = finalValue;
+			
+			if(unaffectedValues[i] > max)
+				max = unaffectedValues[i];
+			if(unaffectedValues[i] < min)
+				min = unaffectedValues[i];
+			
+			distinctExpression.add(affectedValues[i]);
+			distinctExpression.add(unaffectedValues[i]);
+		}
+		
+		matrix.setting.setExpressionColorGradient(min, max, Math.max(distinctExpression.size(),1024));
+	}
+	
+	private void maxAggregation(Integer[] affected, double[] affectedValues, Integer[] unaffected, double[] unaffectedValues, GeneList genes) {
+		double min = Double.MAX_VALUE;
+		double max = Double.MIN_VALUE;
+		Set<Double> distinctExpression = new HashSet<Double>();
+		
+		for(int i = 0; i < genes.size(); i++) {
+			
+			int count = 0;
+			double[] tmpValues = new double[affected.length];
+			
+			for(int subjectIndex : affected) {
+				tmpValues[count++] = matrix.getViewModel().getDataManipulator().getProbeValues(genes.getGene(i))[subjectIndex];
+			}
+			
+			Arrays.sort(tmpValues);
+			
+			double finalValue = tmpValues[tmpValues.length-1];
+			affectedValues[i] = finalValue;
+			
+			if(affectedValues[i] > max)
+				max = affectedValues[i];
+			if(affectedValues[i] < min)
+				min = affectedValues[i];
+			
+			count = 0;
+			tmpValues = new double[unaffected.length];
+			
+			for(int subjectIndex : unaffected) {
+				tmpValues[count++] = matrix.getViewModel().getDataManipulator().getProbeValues(genes.getGene(i))[subjectIndex];
+			}
+			
+			Arrays.sort(tmpValues);
+			
+			finalValue = tmpValues[tmpValues.length-1];
+			unaffectedValues[i] = finalValue;
+			
+			if(unaffectedValues[i] > max)
+				max = unaffectedValues[i];
+			if(unaffectedValues[i] < min)
+				min = unaffectedValues[i];
+			
+			distinctExpression.add(affectedValues[i]);
+			distinctExpression.add(unaffectedValues[i]);
+		}
+		
+		matrix.setting.setExpressionColorGradient(min, max, Math.max(distinctExpression.size(),1024));
 	}
 
 	public void resizeComps(int rowWidth, int placeHolderWidth) {
@@ -139,15 +306,12 @@ public class AggregatedAffectionRow extends JPanel {
 		public void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g;
 			
-//			double max = data.getMaxValue(false) * setting.getCircleScaling();
 			int cellWidth = matrix.setting.getCellWidth();
 			int cellHeight = matrix.setting.getCellHeight();
-//			int cellSize = Math.min(cellWidth, cellHeight);
 			
 			ColorGradient gradient = matrix.setting.getExpressionColorGradient();
 			
 			for(int i = 0; i < data.nrow(); i++) {
-//				Integer rowIndex = matrix.sortedIndices.get(i);
 				for(int j = 0; j < data.ncol(); j++) {
 					double val = data.getValue(i, j);
 					

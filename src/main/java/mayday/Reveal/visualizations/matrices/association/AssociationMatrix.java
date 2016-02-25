@@ -789,13 +789,19 @@ public class AssociationMatrix extends RevealVisualization {
 
 	@Override
 	public void updatePlot() {
-		if(useTlr) {
-			cellData = calculateMatrixTwo();
-		} else {
-			cellData = calculateMatrixSingle();
+		updatePlot(true);
+	}
+	
+	public void updatePlot(boolean recalculate) {
+		if(recalculate) {
+			if(useTlr) {
+				cellData = calculateMatrixTwo();
+			} else {
+				cellData = calculateMatrixSingle();
+			}
+			
+			this.matrixComp.getAggregationComp().calculateAggregationData();
 		}
-		
-		this.matrixComp.getAggregationComp().calculateAggregationData();
 		
 		if(this.colorGradientPanel != null) {
 			if(setting.getShowGradients()) {
