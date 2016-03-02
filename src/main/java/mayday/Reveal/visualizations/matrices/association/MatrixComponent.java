@@ -50,7 +50,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 	private PlaceHolder placeHolderLeft;
 	private PlaceHolder placeHolderRight;
 	
-	protected AssociationMatrix matrix;
+	protected final AssociationMatrix matrix;
 	
 	private AggregatedAffectionRow aggregatedAffectionRow;
 	
