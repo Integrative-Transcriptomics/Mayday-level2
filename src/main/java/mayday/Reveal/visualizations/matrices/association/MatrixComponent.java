@@ -50,12 +50,12 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 	private PlaceHolder placeHolderLeft;
 	private PlaceHolder placeHolderRight;
 	
-	private AssociationMatrix matrix;
+	protected AssociationMatrix matrix;
 	
 	private AggregatedAffectionRow aggregatedAffectionRow;
 	
-	public MatrixComponent(AssociationMatrix matrix, String[] colHeader, String[] rowHeader) {
-		this.matrix = matrix;
+	public MatrixComponent(AssociationMatrix matrix_arg, String[] colHeader, String[] rowHeader) {
+		this.matrix = matrix_arg;
 		this.colHeader = colHeader;
 		this.rowHeader = rowHeader;
 		
@@ -64,7 +64,7 @@ public class MatrixComponent extends JPanel implements ViewModelListener {
 		this.dataComp = new DataComponent();
 		this.rowComp = new RowHeaderComponent();
 		this.colComp = new ColHeaderComponent();
-		this.aggregatedAffectionRow = new AggregatedAffectionRow(matrix);
+		this.aggregatedAffectionRow = new AggregatedAffectionRow(matrix_arg);
 		
 		compScroller = new JScrollPane(dataComp);
 		add(compScroller, BorderLayout.CENTER);
