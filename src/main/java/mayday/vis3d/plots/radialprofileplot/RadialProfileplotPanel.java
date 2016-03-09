@@ -20,6 +20,7 @@ import mayday.vis3d.AbstractPlot3DPanel;
 import mayday.vis3d.cs.CoordinateSystem3D;
 import mayday.vis3d.cs.StandardCoordinateSystem3D;
 import mayday.vis3d.utilities.Camera3D;
+import mayday.vis3d.utilities.VectorText;
 
 /**
  * 
@@ -52,6 +53,8 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 	private FPSAnimator animator;
 	
 	private double fontScale = 0;
+
+	private VectorText vectorText;
 
 	@Override
 	public void drawNotSelectable(GL2 gl) {
@@ -108,9 +111,18 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 		gl.glPushMatrix();
 			for(int i = 0; i < this.probes.size(); i++) {
 				Probe pb = probes.get(i);
-				
+
+				// get rgb values
+				float r, g, b;
 				if(viewModel.isSelected(pb)) {
-					renderer.setColor(settings.getSelectionColor());
+					r = settings.getSelectionColor().getRed();
+					g = settings.getSelectionColor().getGreen();
+					b = settings.getSelectionColor().getBlue();
+				} else {
+					// default black
+					r = 0;
+					g = 0;
+					b = 0;
 				}
 				
 				gl.glPushMatrix();
@@ -126,18 +138,14 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 						//gl.glRotated(-((Camera3D)this.camera).getRotation()[Camera3D.X], 1, 0, 0);
 						gl.glPushMatrix();
 						//gl.glRotated(backRot, 1, 0, 0);
-						renderer.begin3DRendering();
-						renderer.draw3D(pb.getDisplayName(), 0, 0, 0, scale);
-						renderer.end3DRendering();
+						vectorText.setGL(gl);
+						vectorText.drawText(pb.getDisplayName(), renderer,
+								0, 0, 0, scale, r, g, b);
 						gl.glPopMatrix();
 					gl.glPopMatrix();
 				gl.glPopMatrix();
 				
 				gl.glRotated(angleIncrement, 0, 0, 1);
-				
-				if(viewModel.isSelected(pb)) {
-					renderer.setColor(Color.BLACK);
-				}
 				//backRot -= angleIncrement;
 			}
 		gl.glPopMatrix();
@@ -355,6 +363,8 @@ public class RadialProfileplotPanel extends AbstractPlot3DPanel {
 
 	@Override
 	public void initializeDisplay(GL2 gl) {
+		vectorText = new VectorText(this.glu);
+
 		renderer.setSmoothing(true);
 		renderer.setColor(Color.BLACK);
 		

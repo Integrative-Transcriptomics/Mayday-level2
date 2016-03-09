@@ -9,6 +9,7 @@ import com.jogamp.opengl.glu.GLUquadric;
 
 import mayday.vis3d.AbstractPlot3DPanel;
 import mayday.vis3d.cs.settings.CoordinateSystem3DSetting;
+import mayday.vis3d.utilities.VectorText;
 
 /**
  * @author G\u00FCnter J\u00E4ger
@@ -20,13 +21,15 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 	 * identifier for this coordinate system
 	 */
 	public static final String ID = "Plane";
-	
+
+	private VectorText vectorText;
 	/**
 	 * @param panel
 	 * @param settings
 	 */
 	public PlaneCoordinateSystem3D(AbstractPlot3DPanel panel, CoordinateSystem3DSetting settings) {
 		super(panel, settings);
+		vectorText = new VectorText(panel.glu);
 	}
 	/**
 	 * @param panel
@@ -35,6 +38,7 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 	 */
 	public PlaneCoordinateSystem3D(AbstractPlot3DPanel panel, CoordinateSystem3DSetting settings, boolean oneCS) {
 		super(panel, settings, oneCS);
+		vectorText = new VectorText(panel.glu);
 	}
 
 	@Override
@@ -111,6 +115,7 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 
 	@Override
 	public void drawLabeling(GL2 gl, double[] rotation, double[] timepoints) {
+		vectorText.setGL(gl);
 		double width = settings.getVisibleArea().getWidth();
 		double height = settings.getVisibleArea().getHeight();
 		double depth = settings.getVisibleArea().getDepth();
@@ -174,9 +179,9 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 			gl.glRotated(zrot, 0, 0, 1);
 			gl.glRotated(yrot, 0, 1, 0);
 			gl.glRotated(xrot, 1, 0, 0);
-			getRenderer().begin3DRendering();
-			getRenderer().draw3D(xLabel, -(float)w2, -(float)h2, 0, scale);
-			getRenderer().end3DRendering();
+			vectorText.drawText(xLabel, getRenderer(),
+					-(float)w2, -(float)h2, 0, scale,
+					0,0,0);
 			gl.glPopMatrix();
 			
 			bounds = getRenderer().getBounds(yLabel);
@@ -190,9 +195,9 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 			gl.glRotated(zrot, 0, 0, 1);
 			gl.glRotated(yrot, 0, 1, 0);
 			gl.glRotated(xrot, 1, 0, 0);
-			getRenderer().begin3DRendering();
-			getRenderer().draw3D(yLabel, -(float)w2, -(float)h2, 0, scale);
-			getRenderer().end3DRendering();
+			vectorText.drawText(yLabel, getRenderer(),
+					-(float)w2, -(float)h2, 0, scale,
+					0,0,0);
 			gl.glPopMatrix();
 			
 			bounds = getRenderer().getBounds(zLabel);
@@ -206,9 +211,9 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 			gl.glRotated(zrot, 0, 0, 1);
 			gl.glRotated(yrot, 0, 1, 0);
 			gl.glRotated(xrot, 1, 0, 0);
-			getRenderer().begin3DRendering();
-			getRenderer().draw3D(zLabel, -(float)w2, -(float)h2, -(float)w2, scale);
-			getRenderer().end3DRendering();
+			vectorText.drawText(zLabel, getRenderer(),
+					-(float)w2, -(float)h2, -(float)w2, scale,
+					0,0,0);
 			gl.glPopMatrix();
 			
 			getRenderer().setColor(Color.BLACK);
@@ -244,9 +249,12 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 			gl.glPushMatrix();
 			gl.glRotated(90, 0, 0, 1);
 		}
-		getRenderer().begin3DRendering();
-		getRenderer().draw3D(label, -(float)w2, -(float)h2, 0.0f, (float)scale);
-		getRenderer().end3DRendering();
+
+		vectorText.setGL(gl);
+		vectorText.drawText(label, getRenderer(),
+				-(float)w2, -(float)h2, 0.0f, (float)scale,
+				0,0,0);
+
 		if(!horizontal) {
 			gl.glPopMatrix();
 		}
@@ -271,9 +279,10 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 		gl.glRotated(yrot, 0, 1, 0);
 		gl.glRotated(xrot, 1, 0, 0);
 		
-		getRenderer().begin3DRendering();
-		getRenderer().draw3D(label, -(float)w, -(float)h2, 0.0f, (float)scale);
-		getRenderer().end3DRendering();
+		vectorText.setGL(gl);
+		vectorText.drawText(label, getRenderer(),
+				-(float)w, -(float)h2, 0.0f, (float)scale,
+				0,0,0);
 		
 		gl.glPopMatrix();
 	}
@@ -295,9 +304,10 @@ public class PlaneCoordinateSystem3D extends CoordinateSystem3D {
 		gl.glRotated(yrot, 0, 1, 0);
 		gl.glRotated(xrot, 1, 0, 0);
 		
-		getRenderer().begin3DRendering();
-		getRenderer().draw3D(label, 0.0f, -(float)h2, 0.0f, (float)scale);
-		getRenderer().end3DRendering();
+		vectorText.setGL(gl);
+		vectorText.drawText(label, getRenderer(),
+				0.0f, -(float)h2, 0.0f, (float)scale,
+				0,0,0);
 		
 		gl.glPopMatrix();
 	}

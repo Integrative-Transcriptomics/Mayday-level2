@@ -12,6 +12,8 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Renderer for vectorized 3D-text.
@@ -23,11 +25,21 @@ public class VectorText implements GLUtessellatorCallback {
     /**
      * Measure for resolution of rendered text. Smaller means higher Quality.
      */
-    private static double EPS=0.0001;
+    private static double EPS=0.001;
+    /**
+     * Upper limit of how many element will be allowed to tesselated.
+     * If the number of stored
+     */
+    private static int LIMIT = 100;
 
     private GLU glu;
     private GL gl;
     private GLUtessellator tesselator;
+
+    /**
+     * Remember how many different strings have been drawn sofar.
+     */
+    private HashSet<String> uniqStrings = new HashSet<>();
 
     public VectorText(GLU glu) {
         this.glu= glu;
@@ -71,6 +83,19 @@ public class VectorText implements GLUtessellatorCallback {
                          float x, float y, float z, float scale,
                          float r, float g, float b) {
         GL2 gl2 = gl.getGL2();
+
+        // possible fallback to bitmap text
+        if (uniqStrings == null || uniqStrings.size() > LIMIT) {
+            // too many tesselation objects => Fallback
+            renderer.setColor(r, g, b, 1);
+            renderer.begin3DRendering();
+            renderer.draw3D(text, x, y, z, scale);
+            renderer.end3DRendering();
+            // free uniqStrings space
+            uniqStrings = null;
+            return;
+        }
+        uniqStrings.add(text);
 
         PathIterator iter = calcOutline(text, scale, renderer);
 

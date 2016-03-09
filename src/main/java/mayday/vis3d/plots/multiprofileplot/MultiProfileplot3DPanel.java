@@ -19,6 +19,8 @@ import mayday.vis3d.cs.CoordinateSystem3D;
 import mayday.vis3d.cs.PlaneCoordinateSystem3D;
 import mayday.vis3d.primitives.Lighting;
 import mayday.vis3d.utilities.Camera3D;
+import mayday.vis3d.utilities.VectorText;
+
 /**
  * 
  * @author G\u00FCnter J\u00E4ger
@@ -39,6 +41,8 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 	private int centroids;
 	private int centroidPlanes;
 	private ArrayList<String> zLabels;
+
+	private VectorText vectorText;
 
 	private double minValue = 0;
 	private double maxValue = 0;
@@ -112,10 +116,11 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 		gl.glRotated(-((Camera3D)this.camera).getRotation()[2], 0, 0, 1);
 		gl.glRotated(-((Camera3D)this.camera).getRotation()[1], 0, 1, 0);
 		gl.glRotated(-((Camera3D)this.camera).getRotation()[0], 1, 0, 0);
-		
-		this.coordSystem.getRenderer().begin3DRendering();
-		this.coordSystem.getRenderer().draw3D(label, 0.0f, -(float)h2, 0.0f, (float)this.coordSystem.getScale());
-		this.coordSystem.getRenderer().end3DRendering();
+
+		vectorText.setGL(gl);
+		vectorText.drawText(label, this.coordSystem.getRenderer(),
+				0.0f, -(float)h2, 0.0f, (float)this.coordSystem.getScale(),
+				0,0,0);
 		
 		gl.glPopMatrix();
 	}
@@ -144,6 +149,8 @@ public class MultiProfileplot3DPanel extends AbstractPlot3DPanel {
 
 	@Override
 	public void initializeDisplay(GL2 gl) {
+		vectorText = new VectorText(this.glu);
+
 		Lighting.initLighting(gl);
 		//initialize probe list identifiers
 		int start = gl.glGenLists(this.profileIdentifier.length);

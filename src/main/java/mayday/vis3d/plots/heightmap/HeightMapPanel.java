@@ -16,6 +16,7 @@ import mayday.vis3d.AbstractPlot3DPanel;
 import mayday.vis3d.cs.CoordinateSystem3D;
 import mayday.vis3d.cs.PlaneCoordinateSystem3D;
 import mayday.vis3d.utilities.Camera3D;
+import mayday.vis3d.utilities.VectorText;
 
 /**
  * @author G\u00FCnter J\u00E4ger
@@ -29,6 +30,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 	
 	private TextRenderer renderer = new TextRenderer(new Font("Sans.Serif", Font.BOLD, 24),
 			true, true);
+	private VectorText vectorText;
 	
 	protected HeightMapSetting settings;
 	
@@ -46,7 +48,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 	private double[] experimentTimepoints = new double[0];
 	
 	private CoordinateSystem3D coordSystem;
-	
+
 	@Override
 	public void drawNotSelectable(GL2 gl) {
 		double width2 = coordSystem.getSetting().getVisibleArea().getWidth() / 2.0;
@@ -99,9 +101,18 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 		gl.glPushMatrix();
 			for(int i = 0; i < this.probes.size(); i++) {
 				Probe pb = probes.get(i);
-				
+
+				// get rgb values
+				float r, g, b;
 				if(viewModel.isSelected(pb)) {
-					renderer.setColor(settings.getSelectionColor());
+					r = settings.getSelectionColor().getRed();
+					g = settings.getSelectionColor().getGreen();
+					b = settings.getSelectionColor().getBlue();
+				} else {
+					// default black
+					r = 0;
+					g = 0;
+					b = 0;
 				}
 				
 				gl.glPushMatrix();
@@ -115,16 +126,13 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 						gl.glRotated(-((Camera3D)this.camera).getRotation()[Camera3D.Z], 0, 0, 1);
 						gl.glRotated(-((Camera3D)this.camera).getRotation()[Camera3D.X], 1, 0, 0);
 						gl.glPushMatrix();
-						renderer.begin3DRendering();
-						renderer.draw3D(pb.getDisplayName(), 0, 0, 0, (float)settings.getFontScale());
-						renderer.end3DRendering();
+						vectorText.setGL(gl);
+						vectorText.drawText(pb.getDisplayName(), renderer, 0, 0, 0,
+								(float)settings.getFontScale(),
+								r, g, b);
 						gl.glPopMatrix();
 					gl.glPopMatrix();
 				gl.glPopMatrix();
-				
-				if(viewModel.isSelected(pb)) {
-					renderer.setColor(Color.BLACK);
-				}
 			}
 		gl.glPopMatrix();
 	}
@@ -273,8 +281,9 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 		
 		renderer.setSmoothing(true);
-		renderer.setColor(Color.BLACK);
-		
+
+		vectorText = new VectorText(this.glu);
+
 		this.profiles = gl.glGenLists(1);
 		this.surface = gl.glGenLists(1);
 		
@@ -358,6 +367,7 @@ public class HeightMapPanel extends AbstractPlot3DPanel {
 
 	@Override
 	public void update(GL2 gl) {
+		vectorText.setGL(gl);
 		this.updateDrawTypes(gl);
 		this.setBackgroundColor(settings.getBackgroundColor());
 	}
