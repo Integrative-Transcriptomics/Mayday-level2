@@ -10,6 +10,9 @@ import javax.swing.table.TableModel;
 import mayday.core.io.gudi.GUDIConstants;
 import mayday.core.pluma.PluginInfo;
 import mayday.core.pluma.PluginManagerException;
+import mayday.core.settings.Setting;
+import mayday.core.settings.generic.HierarchicalSetting;
+import mayday.core.settings.typed.StringSetting;
 import mayday.wapiti.containers.featuresummarization.FeatureSummarizationMap;
 import mayday.wapiti.containers.featuresummarization.importer.AbstractFeatureMapImportPlugin;
 import mayday.wapiti.containers.featuresummarization.importer.GenericFeatureMapImporter;
@@ -28,7 +31,7 @@ public class FeatureMapImporter extends GenericFeatureMapImporter<FeatureMapColu
 				"Florian Battke",
 				"battke@informatik.uni-tuebingen.de",
 				"Reads feature mapping from a tabular file",
-				"From tabular file (one line per feature, multiple lines per feature set)"
+				"From tabular file (multiple lines per feature set)"
 		);
 		pli.getProperties().put(GUDIConstants.IMPORTER_TYPE, GUDIConstants.IMPORTERTYPE_FILESYSTEM);
 		pli.getProperties().put(GUDIConstants.FILESYSTEM_IMPORTER_TYPE, GUDIConstants.ONEFILE);
