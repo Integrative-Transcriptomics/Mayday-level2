@@ -12,6 +12,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -23,23 +24,23 @@ import java.util.HashSet;
 public class VectorText implements GLUtessellatorCallback {
 
     /**
-     * Measure for resolution of rendered text. Smaller means higher Quality.
+     * Measure for resolution of rendered text. Smaller means higher Quality,
+     * but lower performance.
      */
     private static double EPS=0.001;
     /**
-     * Upper limit of how many element will be allowed to tesselated.
-     * If the number of stored
+     * Upper limit of how many element will be allowed to be tesselated.
      */
-    private static int LIMIT = 100;
+    private static int LIMIT = 500;
 
     private GLU glu;
     private GL gl;
     private GLUtessellator tesselator;
 
     /**
-     * Remember how many different strings have been drawn sofar.
+     * Map to remember list ids of already identified objects.
      */
-    private HashSet<String> uniqStrings = new HashSet<>();
+    private HashMap<ArrayList<Object>, Integer> listMap = new HashMap<>();
 
     public VectorText(GLU glu) {
         this.glu= glu;
@@ -85,17 +86,44 @@ public class VectorText implements GLUtessellatorCallback {
         GL2 gl2 = gl.getGL2();
 
         // possible fallback to bitmap text
-        if (uniqStrings == null || uniqStrings.size() > LIMIT) {
+        if (listMap == null || listMap.size() > LIMIT) {
             // too many tesselation objects => Fallback
             renderer.setColor(r, g, b, 1);
             renderer.begin3DRendering();
             renderer.draw3D(text, x, y, z, scale);
             renderer.end3DRendering();
-            // free uniqStrings space
-            uniqStrings = null;
+            // free storage space
+            if (listMap != null) {
+                // remove existing gl lists
+                for (int i : listMap.values()) {
+                    gl2.glDeleteLists(i, 1);
+                }
+            }
+            listMap = null;
             return;
         }
-        uniqStrings.add(text);
+        assert listMap != null;
+
+        // identifier for remembering glList index
+        ArrayList<Object> txtID = new ArrayList<>();
+        txtID.add(text);
+        txtID.add(x);
+        txtID.add(y);
+        txtID.add(z);
+        txtID.add(r);
+        txtID.add(g);
+        txtID.add(b);
+
+        // try to load glList
+        if (listMap.containsKey(txtID)) {
+            gl2.glCallList(listMap.get(txtID));
+            return;
+        }
+
+        // create a new list and remember the id
+        int listID = gl2.glGenLists(1);
+        gl2.glNewList(listID, GL2.GL_COMPILE_AND_EXECUTE);
+        listMap.put(txtID, listID);
 
         PathIterator iter = calcOutline(text, scale, renderer);
 
@@ -103,7 +131,7 @@ public class VectorText implements GLUtessellatorCallback {
         gl2.glPushMatrix();
         gl2.glTranslated(x, y, z);
 
-        // Setup wwinding rules.
+        // Setup winding rules.
         // Explanation: http://www.glprogramming.com/red/chapter11.html
         switch(iter.getWindingRule()) {
             case PathIterator.WIND_EVEN_ODD:
@@ -170,6 +198,9 @@ public class VectorText implements GLUtessellatorCallback {
         // undo settings
         gl2.glPopAttrib();
         gl2.glPopMatrix();
+
+        // close list
+        gl2.glEndList();
     }
 
 
