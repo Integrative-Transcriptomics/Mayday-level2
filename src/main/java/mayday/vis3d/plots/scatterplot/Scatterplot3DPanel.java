@@ -237,49 +237,41 @@ public class Scatterplot3DPanel extends AbstractPlot3DPanel {
 			if(!settings.hideSpheres()) {
 				if (glRender == GL2.GL_SELECT) {
 					gl.glLoadName(pb.hashCode());
-					gl.glPushMatrix();
-					gl.glTranslated(x, y, z);
-					gl.glCallList(cross);
-					gl.glPopMatrix();
-				} else {
-					gl.glPushMatrix();
-					gl.glTranslated(x, y, z);
-					gl.glCallList(sphere);
-					gl.glPopMatrix();
 				}
+				gl.glPushMatrix();
+				gl.glTranslated(x, y, z);
+				gl.glColor3fv(color, 0);
+				gl.glCallList(sphere);
+				gl.glPopMatrix();
 			}
 			
 			//projections are not selectable
-			if(glRender != GL2.GL_SELECT) {
-				if(settings.getDrawProjections()) {
-					gl.glDisable(GL2.GL_LIGHTING);
-					gl.glColor3fv(color, 0);
-					// project spheres as filled circles
-					gl.glPushMatrix();
-					gl.glTranslated(-width, y, z);
-					gl.glRotated(90.0, 0, 1, 0);
-					gl.glCallList(sphereProjection);
-					gl.glPopMatrix();
+			if(glRender != GL2.GL_SELECT && settings.getDrawProjections()) {
+				gl.glDisable(GL2.GL_LIGHTING);
+				gl.glColor3fv(color, 0);
+				// project spheres as filled circles
+				gl.glPushMatrix();
+				gl.glTranslated(-width, y, z);
+				gl.glRotated(90.0, 0, 1, 0);
+				gl.glCallList(sphereProjection);
+				gl.glPopMatrix();
 
-					gl.glPushMatrix();
-					gl.glTranslated(x, -height, z);
-					gl.glRotated(-90, 1, 0, 0);
-					gl.glCallList(sphereProjection);
-					gl.glPopMatrix();
+				gl.glPushMatrix();
+				gl.glTranslated(x, -height, z);
+				gl.glRotated(-90, 1, 0, 0);
+				gl.glCallList(sphereProjection);
+				gl.glPopMatrix();
 
-					gl.glPushMatrix();
-					gl.glTranslated(x, y, -depth);
-					gl.glCallList(sphereProjection);
-					gl.glPopMatrix();
-					gl.glEnable(GL2.GL_LIGHTING);
-				}
+				gl.glPushMatrix();
+				gl.glTranslated(x, y, -depth);
+				gl.glCallList(sphereProjection);
+				gl.glPopMatrix();
+				gl.glEnable(GL2.GL_LIGHTING);
 			}
 		}
 		gl.glPopMatrix();
 		
-		if(glRender != GL2.GL_SELECT) {
-			gl.glDisable(GL2.GL_LIGHTING);
-		}
+		gl.glDisable(GL2.GL_LIGHTING);
 	}
 	/*
 	 * scale values to plot dimensions
