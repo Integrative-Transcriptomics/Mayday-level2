@@ -2,11 +2,8 @@ package mayday.Reveal.statistics.ChiSquaredTest;
 
 import mayday.Reveal.statistics.StatisticalTest;
 
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.ChiSquaredDistribution;
-import org.apache.commons.math.distribution.ChiSquaredDistributionImpl;
-import org.apache.commons.math.distribution.NormalDistribution;
-import org.apache.commons.math.distribution.NormalDistributionImpl;
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.commons.math3.distribution.NormalDistribution;
 
 /**
  * @author jaeger
@@ -16,7 +13,7 @@ public class Chi2Test implements StatisticalTest {
 
 	@Override
 	public double test(double[][] table, boolean one_sided)
-			throws MathException {
+			throws Exception {
 	
 		double a_case = table[0][1];
 		double A_case = table[0][0];
@@ -39,10 +36,10 @@ public class Chi2Test implements StatisticalTest {
 		double p_val = 0;
 		
 		if(one_sided) {
-			NormalDistribution dist = new NormalDistributionImpl(0, 1);
+			NormalDistribution dist = new NormalDistribution(0, 1);
 			p_val = 1 - dist.cumulativeProbability(Math.sqrt(Z2));
 		} else {
-			ChiSquaredDistribution dist = new ChiSquaredDistributionImpl(1);
+			ChiSquaredDistribution dist = new ChiSquaredDistribution(1);
 			p_val = 1 - dist.cumulativeProbability(Z2);
 		}
 		

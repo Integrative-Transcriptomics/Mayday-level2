@@ -2,8 +2,6 @@ package mayday.Reveal.statistics.FisherExactTest;
 
 import mayday.Reveal.statistics.StatisticalTest;
 
-import org.apache.commons.math.MathException;
-
 public class FisherExactTest implements StatisticalTest {
 
 	@Override
@@ -12,7 +10,7 @@ public class FisherExactTest implements StatisticalTest {
 	}
 
 	@Override
-	public double test(double[][] table, boolean one_sided) throws MathException {
+	public double test(double[][] table, boolean one_sided) throws Exception {
 		
 		double a_case = table[0][1];
 		double A_case = table[0][0];

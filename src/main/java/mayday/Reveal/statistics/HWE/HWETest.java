@@ -4,8 +4,6 @@ import java.util.Arrays;
 
 import mayday.Reveal.statistics.StatisticalTest;
 
-import org.apache.commons.math.MathException;
-
 /**
  * Exact test for HWE based on Wigginton et al. 2005
  * @author GJ
@@ -19,7 +17,7 @@ public class HWETest implements StatisticalTest {
 	}
 
 	@Override
-	public double test(double[][] table, boolean one_sided) throws MathException {
+	public double test(double[][] table, boolean one_sided) throws Exception {
 		double AA_case = table[0][0];
 		double Aa_case = table[0][1];
 		double aa_case = table[0][2];

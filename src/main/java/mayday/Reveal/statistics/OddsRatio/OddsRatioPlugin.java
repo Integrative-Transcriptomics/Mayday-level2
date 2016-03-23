@@ -29,7 +29,6 @@ import mayday.core.settings.generic.PluginTypeSetting;
 import mayday.core.settings.typed.BooleanSetting;
 import mayday.core.settings.typed.StringSetting;
 
-import org.apache.commons.math.MathException;
 
 public class OddsRatioPlugin extends SNVListPlugin {
 
@@ -116,7 +115,7 @@ public class OddsRatioPlugin extends SNVListPlugin {
 		task.start();
 	}
 	
-	private StatisticalTestResult applyTest(RevealTask task, StatisticalTest test, DataStorage ds, SNVList snps, boolean one_sided) throws MathException {
+	private StatisticalTestResult applyTest(RevealTask task, StatisticalTest test, DataStorage ds, SNVList snps, boolean one_sided) throws Exception {
 		StatisticalTestResult res = new StatisticalTestResult(test.getName());
 		
 		SubjectList persons = ds.getSubjects();

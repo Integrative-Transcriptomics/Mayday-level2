@@ -2,16 +2,13 @@ package mayday.Reveal.statistics.OddsRatio;
 
 import mayday.Reveal.statistics.StatisticalTest;
 
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.ChiSquaredDistribution;
-import org.apache.commons.math.distribution.ChiSquaredDistributionImpl;
-import org.apache.commons.math.distribution.NormalDistribution;
-import org.apache.commons.math.distribution.NormalDistributionImpl;
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.commons.math3.distribution.NormalDistribution;
 
 public class OddsRatio implements StatisticalTest {
 
 	@Override
-	public double test(double[][] table, boolean one_sided) throws MathException {
+	public double test(double[][] table, boolean one_sided) throws Exception {
 		
 		double a_case = table[0][1];
 		double A_case = table[0][0];
@@ -50,13 +47,13 @@ public class OddsRatio implements StatisticalTest {
 		if(one_sided) {
 			//for the one sided test the test statistic follows approximately the standard normal distribution
 			//under the null hypothesis
-			NormalDistribution std_norm_dist = new NormalDistributionImpl(0,1);
+			NormalDistribution std_norm_dist = new NormalDistribution(0,1);
 			//Prob(N(0,1) >= Z)
 			p_value = 1 - std_norm_dist.cumulativeProbability(Z);
 		} else { //two-sided test
 			//for the two-sided case the test based on Z is equivalent to the test based on Z^2, which
 			//approximately follows a chi^2 distribution with 1 degree of freedom
-			ChiSquaredDistribution chiSq_dist = new ChiSquaredDistributionImpl(1);
+			ChiSquaredDistribution chiSq_dist = new ChiSquaredDistribution(1);
 			//Prob(Chi^2 >= Z^2)
 			p_value = 1 - chiSq_dist.cumulativeProbability(Z*Z);
 		}

@@ -2,11 +2,8 @@ package mayday.Reveal.statistics.CochranArmitageTrendTest;
 
 import mayday.Reveal.statistics.StatisticalTest;
 
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.ChiSquaredDistribution;
-import org.apache.commons.math.distribution.ChiSquaredDistributionImpl;
-import org.apache.commons.math.distribution.NormalDistribution;
-import org.apache.commons.math.distribution.NormalDistributionImpl;
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.commons.math3.distribution.NormalDistribution;
 
 public class CochranArmitageTrendTest implements StatisticalTest {
 	
@@ -33,7 +30,7 @@ public class CochranArmitageTrendTest implements StatisticalTest {
 	 * the table is assumed to be a 2x3 contingency table
 	 */
 	@Override
-	public double test(double[][] table, boolean one_sided) throws MathException {
+	public double test(double[][] table, boolean one_sided) throws Exception {
 		/*
 		 * check wether there is a difference in allele frequency
 		 * if there is no difference, then p = 1
@@ -108,14 +105,14 @@ public class CochranArmitageTrendTest implements StatisticalTest {
 //		System.out.println("Z_U^2 " + Z_T*Z_T);
 		
 		if(one_sided) {
-			NormalDistribution dist = new NormalDistributionImpl(0, 1);
+			NormalDistribution dist = new NormalDistribution(0, 1);
 			//one-sided alternative, that the minor allele is positively associated with the disease of interest
 			p_value = 1 - dist.cumulativeProbability(Z_T);
 			
 			System.out.println(p_value);
 			
 		} else {
-			ChiSquaredDistribution dist = new ChiSquaredDistributionImpl(1);
+			ChiSquaredDistribution dist = new ChiSquaredDistribution(1);
 			//two-sided alternative
 			p_value = 1 - dist.cumulativeProbability(Math.pow(Z_T,2));
 		}

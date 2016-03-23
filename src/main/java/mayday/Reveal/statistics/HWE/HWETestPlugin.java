@@ -6,8 +6,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.apache.commons.math.MathException;
-
 import mayday.Reveal.actions.RevealTask;
 import mayday.Reveal.actions.snplist.SNVListPlugin;
 import mayday.Reveal.data.DataStorage;
@@ -115,7 +113,7 @@ public class HWETestPlugin extends SNVListPlugin {
 		task.start();
 	}
 	
-	private StatisticalTestResult applyTest(RevealTask task, StatisticalTest test, DataStorage ds, SNVList snps, boolean one_sided) throws MathException {
+	private StatisticalTestResult applyTest(RevealTask task, StatisticalTest test, DataStorage ds, SNVList snps, boolean one_sided) throws Exception {
 		StatisticalTestResult res = new StatisticalTestResult(test.getName());
 		
 		SubjectList persons = ds.getSubjects();
