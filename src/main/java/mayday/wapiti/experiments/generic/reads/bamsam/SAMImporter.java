@@ -50,6 +50,8 @@ public class SAMImporter extends AbstractMappingImportPlugin {
 	protected BooleanSetting eachFileAlone;
 	protected BooleanSetting movePairs;
 
+
+	protected BooleanSetting showStats;
 	
 	public SAMImporter() {
 		super(true, false);
@@ -62,8 +64,15 @@ public class SAMImporter extends AbstractMappingImportPlugin {
 					"If checked, the second mate in paired-end reads are moved to the opposite strand.\n" +
 					"Use this if your mapping software does not place paired-end reads on the same strand.",true);
 			completeReads = new BooleanSetting("Also import read details","If selected, read identifiers, mapping quality and alignment data are imported\n" +
-					"and can be added as meta data to the experiments. \n This consumes a considerably larger amount of memory.", true);			
-			mySetting = new HierarchicalSetting("Mapping import").addSetting(super.getSetting()).addSetting(completeReads).addSetting(eachFileAlone).addSetting(movePairs);
+					"and can be added as meta data to the experiments. \n This consumes a considerably larger amount of memory.", true);
+			showStats = new BooleanSetting("Show Stats", "Show additional statistics for the mapping files", true);
+
+			mySetting = new HierarchicalSetting("Mapping import")
+					.addSetting(super.getSetting())
+					.addSetting(completeReads)
+					.addSetting(eachFileAlone)
+					.addSetting(movePairs)
+					.addSetting(showStats);
 		}
 		return mySetting;
 	}
@@ -105,7 +114,13 @@ public class SAMImporter extends AbstractMappingImportPlugin {
 		} else {
 			getMappingExperiments0(files, transMatrix, result, psett);
 		}
-		
+
+		if (showStats.getBooleanValue()) {
+			// Calculate statistics in background (class is Task)
+			RNAseqStat stats = new RNAseqStat(files);
+			stats.start();
+		}
+
 		return result;
 	}
 

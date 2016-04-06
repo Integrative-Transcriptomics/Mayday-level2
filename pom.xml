@@ -113,6 +113,13 @@
         	<artifactId>docking-frames-core</artifactId>
         	<version>1.1.2</version>
         </dependency>
+
+        <!-- needed for additional statistics of BAM files -->
+        <dependency>
+            <groupId>com.github.broadinstitute</groupId>
+            <artifactId>picard</artifactId>
+            <version>2.2.1</version>
+        </dependency>
     </dependencies>
 
     <build>
