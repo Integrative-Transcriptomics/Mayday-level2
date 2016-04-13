@@ -1,5 +1,6 @@
 package mayday.wapiti.experiments.generic.reads.bamsam;
 
+import com.google.common.io.Files;
 import mayday.core.*;
 import mayday.core.pluginrunner.ProbeListPluginRunner;
 import mayday.core.pluma.PluginInfo;
@@ -8,21 +9,19 @@ import mayday.core.settings.SettingDialog;
 import mayday.core.settings.generic.ComponentPlaceHolderSetting;
 import mayday.core.settings.generic.HierarchicalSetting;
 import mayday.core.settings.generic.ObjectSelectionSetting;
-import mayday.core.settings.typed.BooleanSetting;
 import mayday.core.settings.typed.PathSetting;
 import mayday.core.tasks.AbstractTask;
 import mayday.vis3.tables.ExpressionTable;
 
-import org.apache.commons.compress.compressors.FileNameUtil;
-import picard.analysis.AlignmentSummaryMetrics;
+import org.apache.commons.lang3.StringEscapeUtils;
 import picard.analysis.CollectAlignmentSummaryMetrics;
 import picard.analysis.CollectRnaSeqMetrics;
-import picard.analysis.RnaSeqMetrics;
+import picard.sam.SortSam;
+import picard.sam.ViewSam;
 import picard.util.TabbedTextFileWithHeaderParser;
 
 import javax.swing.*;
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -50,6 +49,14 @@ public class RNAseqStat extends AbstractTask {
      * Map File -> Property -> Value
      */
     private Map<String, Map<String, Double>> statistics = new HashMap<>();
+
+
+    /*
+     The settings from the user.
+     */
+    private String strand;
+    private String refflat;
+    private String reference;
 
     /**
      * Subset of Picard's values to show and their user-friendly explanation.
@@ -80,45 +87,128 @@ public class RNAseqStat extends AbstractTask {
         this.samFiles = samFiles;
     }
 
+
+    /**
+     * Check if a SAM/BAM file is sorted by coordinate.
+     */
+    public boolean isSorted(String path) {
+        // Stream to collect picard output
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        // Work, pipe output to 'ps'
+        PrintStream original = System.out;
+        try {
+            System.setOut(ps);
+            (new ViewSam()).instanceMain(new String[]{
+                            "INPUT=" + StringEscapeUtils.escapeJava(path),
+                            "HEADER_ONLY=true",
+                            "QUIET=true"
+                    }
+            );
+        } finally {
+            // what-ever happens, make sure to restore System.out!!!
+            System.setOut(original);
+        }
+        // Parse
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            BufferedReader br = new BufferedReader(new InputStreamReader(bais));
+            String line;
+            // find "@HD ... SO:coordinate" header line
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("@hd") && line.endsWith("SO:coordinate")) {
+                    // is coordinate sorted
+                    return true;
+                }
+            }
+        } catch (IOException e) { }
+        // nothing matched or HD flag is not set -> probably not sorted
+        return false;
+    }
+
+    /**
+     * Creates a sorted version of the specified file. Returns path to new file.
+     * @param path
+     * @return
+     */
+    public String sortSam(String path) {
+        String newpath = pathForSorting(path);
+        (new SortSam()).instanceMain(new String[]{
+                "INPUT=" + StringEscapeUtils.escapeJava(path),
+                "OUTPUT=" + StringEscapeUtils.escapeJava(newpath),
+                "SORT_ORDER=coordinate"
+        });
+        return newpath;
+    }
+
+
+    /**
+     * Find path to a new SAM file close to original 'path', that does
+     * not overwrite anything.
+     * @param path
+     * @return
+     */
+    public String pathForSorting(String path) {
+        File f = new File(path);
+        String name = Files.getNameWithoutExtension(path);
+
+        File result = new File(f.getParent(), name + "_coordinatesorted.bam");
+        // If needed add numbers to filename
+        int i=1 ;
+        while (result.exists() && i > 0) {
+            result = new File(f.getParent(),
+                    name + "_coordinatesorted_" + i + ".bam");
+            i += 1;
+        }
+        if (i <= 0) {
+            throw new RuntimeException("Was unable to create a new file of pattern: " +
+                    "<oldname>_coordinatesorted[_<number>].bam");
+        }
+        return result.getAbsolutePath();
+    }
+
     /**
      * Ask user about wanted settings.
-    ASSUME_SORTED
-    REF_FLAT
-    STRAND_SPECIFICITY
-    {NONE, FIRST_READ_TRANSCRIPTION_STRAND, SECOND_READ_TRANSCRIPTION_STRAND}
-
-     Set individual for each file:
-     //INPUT
-     //OUTPUT
-    */
-    private List<String> createBasicPicardSettings() {
+     * @return  false if cancel
+     */
+    private boolean askPicardSettings() {
         List<String> settings = new ArrayList<>();
 
         HierarchicalSetting hs = new HierarchicalSetting("Picard Settings");
 
-        BooleanSetting sorted = new BooleanSetting("Sorted?",
-                "Are the files sorted", true);
         ObjectSelectionSetting strand = new ObjectSelectionSetting(
                 "Strand specificity", null, 1, MODES
         );
-        PathSetting ref = new PathSetting("REF_FLAT", null, "", false, true, false);
+        PathSetting refflat = new PathSetting("REF_FLAT", null, "", false, true,
+                // prohibit empty
+                false);
+        PathSetting reference = new PathSetting("Reference fasta (optional)", null, "", false, true,
+                // allow empty
+                true);
 
         hs.addSetting(strand)
-                .addSetting(ref)
-                .addSetting(sorted)
+                .addSetting(refflat)
+                .addSetting(reference)
                 .addSetting(explanation());
 
         SettingDialog sd = new SettingDialog(null, "Stat Settings", hs);
         sd.showAsInputDialog();
         if (sd.canceled()) {
-            return null;
+            return false;
         }
 
-        settings.add("ASSUME_SORTED=" + sorted.getBooleanValue());
-        settings.add("REF_FLAT=" + ref.getStringValue());
-        settings.add("STRAND_SPECIFICITY=" + strand.getStringValue());
+        // store results
+        this.strand = strand.getStringValue();
+        this.refflat = refflat.getStringValue();
 
-        return settings;
+        if(new File(reference.getStringValue()).exists()) {
+            this.reference = reference.getStringValue();
+        } else {
+            this.reference = null;
+        }
+
+        // not canceled
+        return true;
     }
 
     /**
@@ -137,44 +227,28 @@ public class RNAseqStat extends AbstractTask {
      * Run Picard's RNASeqMetric for the specified bam file 'in'.
      * @param in
      * @param out
-     * @param settings
      */
-    private void runRNAMetric(String in, String out, List<String> settings) {
-        // temporary settings object for this run
-        List<String> runSettings =  new ArrayList<>(settings);
-        runSettings.add("INPUT=" + in);
-        runSettings.add("OUTPUT=" + out);
-
-        String[] s = runSettings.toArray(new String[0]);
-        // run without exit
-        CollectRnaSeqMetrics prog = new CollectRnaSeqMetrics();
-        //RnaSeqMetrics
-        (new CollectRnaSeqMetrics()).instanceMain(s);
+    private void runRNAMetric(String in, String out) {
+        (new CollectRnaSeqMetrics()).instanceMain(new String[]{
+                "INPUT=" + StringEscapeUtils.escapeJava(in),
+                "OUTPUT=" + StringEscapeUtils.escapeJava(out),
+                "REF_FLAT=" + StringEscapeUtils.escapeJava(refflat),
+                "STRAND_SPECIFICITY=" + strand
+        });
     }
 
     /**
      * Run Picard's RNASeqMetric for the specified bam file 'in'.
      * @param in
      * @param out
-     * @param settings
      */
-    private void runSummary(String in, String out, List<String> settings) {
-        // temporary settings object for this run
-        List<String> runSettings =  new ArrayList<>();
-        runSettings.add("INPUT=" + in);
-        runSettings.add("OUTPUT=" + out);
-
-        // Keep RNAseqMetric specific settings out
-        // (Only AssumeSorted is of interest)
-        for (String set : settings) {
-            if (set.startsWith("ASSUME_SORTED=")) {
-                runSettings.add(set);
-            }
-        }
-
-        String[] s = runSettings.toArray(new String[0]);
+    private void runSummary(String in, String out) {
         // run without exit
-        (new CollectAlignmentSummaryMetrics()).instanceMain(s);
+        (new CollectAlignmentSummaryMetrics()).instanceMain(new String[]{
+                "INPUT=" + StringEscapeUtils.escapeJava(in),
+                "OUTPUT=" + StringEscapeUtils.escapeJava(out),
+                "REFERENCE_SEQUENCE=" + reference
+        });
     }
 
     /**
@@ -215,8 +289,7 @@ public class RNAseqStat extends AbstractTask {
     @Override
     protected void doWork() throws Exception {
         // Ask for general Settings
-        List<String> settings = createBasicPicardSettings();
-        if (settings ==  null) {
+        if (!askPicardSettings()) {
             // user cancelled
             return;
         }
@@ -226,11 +299,16 @@ public class RNAseqStat extends AbstractTask {
             // Prepare Map for Storage
             Map<String, Double> data = new HashMap<>();
             statistics.put(sam, data);
+            // create sorted SAM if needed
+            if (!isSorted(sam)) {
+                // sort and get new path
+                sam = sortSam(sam);
+            }
             // run RNASeqMetrics
-            runRNAMetric(sam, tmp, settings);
+            runRNAMetric(sam, tmp);
             readPicard(data, tmp);
             // run Summary tool (overwrite last tmp)
-            runSummary(sam, tmp, settings);
+            runSummary(sam, tmp);
             readPicard(data, tmp);
         }
         // cleanup
