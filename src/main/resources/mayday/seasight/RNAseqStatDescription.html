@@ -1,0 +1,41 @@
+<!-- Description of how to use the RNAseqStat tool for the dialog -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RNASeqStat</title>
+</head>
+<body>
+
+    <!-- the extra br's ensure that the text is wrapped in the JTextPane that
+    evanutally contains this text. (Doesn't work otherwise because of the
+    LayoutManager of SettingsDialog. -->
+    <p>
+        This tool generates statistics about your loaded SAM/BAM files with the <br />
+        <a href="http://broadinstitute.github.io/picard/">picard</a> tool.      <br />
+        However, you must still specify some details about your files:
+    </p>
+    <p>
+        <b>Strand specificity of your library:</b>                              <br />
+        Use FIRST_READ_TRANSCRIPTION_STRAND if the unpaired reads or the first  <br />
+        read of a pair are expected to be on the transcription strand.
+    </p>
+    <p>
+        <b>Refflat</b>:                                                         <br />
+        Refflat is a small annotation file that you can download from           <br />
+        <a href="http://hgdownload.cse.ucsc.edu/downloads.html">
+            http://hgdownload.cse.ucsc.edu/downloads.html
+        </a>.                                                                   <br />
+        Download the <i>refFlat.txt.gz</i> from under the                       <br />
+        <i>Annotation database</i> section of your corresponding organism and
+        unzip it.
+    </p>
+    <p>
+        <b>Reference</b> (optional):                                            <br />
+        Some metrics, such as the mismatche rate, require a the fasta reference <br />
+        file. That file can be omitted, because it might not be available or    <br />
+        is too large. If you do not specify a reference, the dependent metrics
+        are zero.
+    </p>
+</body>
+</html>

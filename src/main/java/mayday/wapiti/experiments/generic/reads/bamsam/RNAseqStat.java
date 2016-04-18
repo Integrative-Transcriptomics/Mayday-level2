@@ -5,6 +5,7 @@ import mayday.core.*;
 import mayday.core.pluginrunner.ProbeListPluginRunner;
 import mayday.core.pluma.PluginInfo;
 import mayday.core.pluma.PluginManager;
+import mayday.core.pluma.filemanager.FileManager;
 import mayday.core.settings.SettingDialog;
 import mayday.core.settings.generic.ComponentPlaceHolderSetting;
 import mayday.core.settings.generic.HierarchicalSetting;
@@ -21,8 +22,10 @@ import picard.sam.ViewSam;
 import picard.util.TabbedTextFileWithHeaderParser;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Computes some statistics for SAM files and shows them to the user.
@@ -73,13 +76,15 @@ public class RNAseqStat extends AbstractTask {
         put("PF_MISMATCH_RATE", "Mismatch rate for all reads");
         put("PF_HQ_ERROR_RATE", "Mismatch rate hq");
         put("PF_INDEL_RATE", "insertions/deletions per 100 aligned bases");
+        put("BAD_CYCLES", "cycles with 80% of bases no-calls");
         // From RNAseqMetrics
-        put("PCT_CODING_BASES", "% coding bases");
-        put("PCT_UTR_BASES", "% UTR bases");
-        put("PCT_INTRONIC_BASES", "% intronic bases");
-        put("PCT_INTERGENIC_BASES", "% intergenic bases");
+        put("PCT_CODING_BASES", "proportion of coding bases");
+        put("PCT_UTR_BASES", "proportion of UTR bases");
+        put("PCT_INTRONIC_BASES", "proportion of intronic bases");
+        put("PCT_INTERGENIC_BASES", "proportion of intergenic bases");
         put("MEDIAN_CV_COVERAGE", "Mean covariance top 1k transcripts (ideally 0)");
-        put("INCORRECT_STRAND_READS", "# reads aligned with incorrect strand.");
+        put("INCORRECT_STRAND_READS", "# reads on incorrect strand.");
+        put("CORRECT_STRAND_READS", "# reads on correct strand");
     }};
 
     public RNAseqStat(List<String> samFiles) {
@@ -216,11 +221,20 @@ public class RNAseqStat extends AbstractTask {
      * @return
      */
     private ComponentPlaceHolderSetting explanation() {
-        // TODO http://hgdownload.cse.ucsc.edu/downloads.html
-        //For strand-specific library prep. For unpaired reads, use
-        // FIRST_READ_TRANSCRIPTION_STRAND if the reads are expected to be on
-        // the transcription strand.
-        return new ComponentPlaceHolderSetting("", new JTextArea("Hello"));
+        // We have to use mayday's PluginManager for retrieving streams
+        InputStream is = PluginManager.getInstance().getFilemanager()
+                .getFile("/mayday/seasight/RNAseqStatDescription.html")
+                .getStream();
+        JTextPane jtp = new JTextPane();
+        jtp.setEditable(false);
+        try {
+            jtp.setContentType("text/html");
+            jtp.read(new InputStreamReader(is), null);
+        } catch (IOException e) {
+            jtp.setText("Error, couldn't load RNAseqStatDescription.html");
+        }
+        JScrollPane jsp = new JScrollPane(jtp);
+        return new ComponentPlaceHolderSetting("", jsp);
     }
 
     /**
@@ -370,6 +384,16 @@ public class RNAseqStat extends AbstractTask {
         ProbeListPluginRunner plpr = new ProbeListPluginRunner(plugin,
                 pl , ds);
         plpr.execute();
+    }
+
+    public Object convert(String s) {
+        try{
+            return Double.valueOf(s);
+        } catch (NumberFormatException e) {}
+        try{
+            return Integer.valueOf(s);
+        } catch (NumberFormatException e) {}
+        return s;
     }
 
     @Override
